@@ -5,6 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Text } from '~/components/ui/text';
 import { Card, CardContent } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
+import { useTheme } from '~/lib/theme-provider';
 
 interface ProfileModalProps {
   visible: boolean;
@@ -13,10 +14,26 @@ interface ProfileModalProps {
 
 export function ProfileModal({ visible, onClose }: ProfileModalProps) {
   const router = useRouter();
+  const { theme, setTheme, colorScheme } = useTheme();
 
   const handleNavigation = (route: string) => {
     onClose();
     router.push(route);
+  };
+
+  const toggleTheme = () => {
+    if (theme === 'light') {
+      setTheme('dark');
+    } else if (theme === 'dark') {
+      setTheme('system');
+    } else {
+      setTheme('light');
+    }
+  };
+
+  const getThemeLabel = () => {
+    if (theme === 'system') return `System (${colorScheme})`;
+    return theme.charAt(0).toUpperCase() + theme.slice(1);
   };
 
   const menuItems = [
@@ -64,6 +81,27 @@ export function ProfileModal({ visible, onClose }: ProfileModalProps) {
                   <Text variant="muted" size="sm">
                     john.doe@example.com
                   </Text>
+                </View>
+
+                <Separator />
+
+                {/* Theme Toggle */}
+                <View className="px-6 py-3">
+                  <Pressable
+                    className="flex-row items-center justify-between active:opacity-70"
+                    onPress={toggleTheme}>
+                    <View className="flex-row items-center gap-3">
+                      <Ionicons
+                        name={colorScheme === 'dark' ? 'moon' : 'sunny'}
+                        size={24}
+                        color="#666"
+                      />
+                      <Text>Theme</Text>
+                    </View>
+                    <Text variant="muted" size="sm">
+                      {getThemeLabel()}
+                    </Text>
+                  </Pressable>
                 </View>
 
                 <Separator />
