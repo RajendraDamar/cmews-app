@@ -1,5 +1,8 @@
-import { View, Text, TextInput } from 'react-native';
+import { View } from 'react-native';
 import { Button } from '~/components/ui/button';
+import { Input } from '~/components/ui/input';
+import { Text } from '~/components/ui/text';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 
@@ -16,43 +19,47 @@ export default function RegisterScreen() {
 
   return (
     <View className="flex-1 justify-center bg-background px-6">
-      <Text className="mb-8 text-3xl font-bold text-foreground">Create Account</Text>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle className="text-3xl">Create Account</CardTitle>
+          <CardDescription>Sign up to get started</CardDescription>
+        </CardHeader>
+        <CardContent className="gap-4">
+          <View className="gap-2">
+            <Text className="text-sm font-medium">Full Name</Text>
+            <Input placeholder="John Doe" value={name} onChangeText={setName} />
+          </View>
 
-      <TextInput
-        placeholder="Full Name"
-        value={name}
-        onChangeText={setName}
-        className="mb-4 rounded-lg border border-border px-4 py-3 text-foreground"
-        placeholderTextColor="#999"
-      />
+          <View className="gap-2">
+            <Text className="text-sm font-medium">Email</Text>
+            <Input
+              placeholder="email@example.com"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
+          </View>
 
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        className="mb-4 rounded-lg border border-border px-4 py-3 text-foreground"
-        placeholderTextColor="#999"
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
+          <View className="gap-2">
+            <Text className="text-sm font-medium">Password</Text>
+            <Input
+              placeholder="••••••••"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+          </View>
 
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        className="mb-6 rounded-lg border border-border px-4 py-3 text-foreground"
-        placeholderTextColor="#999"
-      />
+          <Button label="Sign Up" onPress={handleRegister} className="mt-2" />
 
-      <Button label="Sign Up" onPress={handleRegister} />
-
-      <Button
-        label="Already have an account? Sign In"
-        variant="ghost"
-        onPress={() => router.push('/(auth)/login')}
-        className="mt-4"
-      />
+          <Button
+            label="Already have an account? Sign In"
+            variant="ghost"
+            onPress={() => router.push('/(auth)/login')}
+          />
+        </CardContent>
+      </Card>
     </View>
   );
 }

@@ -1,13 +1,18 @@
-import { Tabs, useRouter } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { useColorScheme, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useState } from 'react';
+import { ProfileModal } from '~/components/profile-modal';
 
 function ProfileButton() {
-  const router = useRouter();
+  const [modalVisible, setModalVisible] = useState(false);
   return (
-    <Pressable onPress={() => router.push('/settings')} className="mr-4">
-      <Ionicons name="person-circle-outline" size={28} color="#666" />
-    </Pressable>
+    <>
+      <Pressable onPress={() => setModalVisible(true)} className="mr-4">
+        <Ionicons name="person-circle-outline" size={28} color="#666" />
+      </Pressable>
+      <ProfileModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+    </>
   );
 }
 
