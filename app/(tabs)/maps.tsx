@@ -1,14 +1,19 @@
 import { Stack } from 'expo-router';
-import { View, useWindowDimensions, Platform, Text } from 'react-native';
+import { View, useWindowDimensions, Platform } from 'react-native';
 import { useState } from 'react';
 import { SearchBar } from '~/components/maps/search-bar';
 import { PlaceCard } from '~/components/maps/place-card';
+import { Text } from '~/components/ui/text';
 
 // Conditionally import MapLibre only on native platforms
 let MapLibreGL: any = null;
 if (Platform.OS !== 'web') {
-  MapLibreGL = require('@maplibre/maplibre-react-native').default;
-  MapLibreGL?.setAccessToken?.(null);
+  try {
+    MapLibreGL = require('@maplibre/maplibre-react-native').default;
+    MapLibreGL?.setAccessToken?.(null);
+  } catch (error) {
+    console.error('Failed to load MapLibre:', error);
+  }
 }
 
 export default function MapsScreen() {
@@ -22,19 +27,23 @@ export default function MapsScreen() {
       <View className="flex-1">
         {Platform.OS === 'web' ? (
           <View className="flex-1 items-center justify-center bg-muted">
-            <Text className="text-xl text-muted-foreground">
+            <Text variant="muted" size="xl">
               Map view is available on native platforms
             </Text>
           </View>
         ) : MapLibreGL ? (
           <MapLibreGL.MapView
             style={{ flex: 1 }}
-            styleURL="https://demotiles.maplibre.org/style.json">
+            styleURL="https://demotiles.maplibre.org/style.json"
+            logoEnabled={false}
+            attributionEnabled={false}>
             <MapLibreGL.Camera zoomLevel={12} centerCoordinate={[-74.006, 40.7128]} />
           </MapLibreGL.MapView>
         ) : (
           <View className="flex-1 items-center justify-center bg-muted">
-            <Text className="text-xl text-muted-foreground">Map unavailable</Text>
+            <Text variant="muted" size="xl">
+              Map unavailable
+            </Text>
           </View>
         )}
 
