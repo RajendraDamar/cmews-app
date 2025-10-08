@@ -1,19 +1,19 @@
 import { Stack } from 'expo-router';
 
 import { ScrollView, View } from 'react-native';
-import { Button } from '~/components/ui/button';
 import {
+  Button,
   Card,
   CardContent,
   CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-} from '~/components/ui/card';
-import { Text } from '~/components/ui/text';
-import { Separator } from '~/components/ui/separator';
-import { Badge } from '~/components/ui/badge';
-import { Input } from '~/components/ui/input';
+  Text,
+  Separator,
+  Badge,
+  Input,
+} from '~/components/ui';
 
 export default function Home() {
   return (
