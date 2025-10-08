@@ -32,11 +32,23 @@ jobs:
       - name: Install Expo CLI
         run: npm install -g @expo/cli@latest
 
+      - name: Run Expo doctor
+        run: expo doctor
+
       - name: Verify TypeScript configuration
         run: npx tsc --noEmit --skipLibCheck
 
       - name: Run linting check
         run: npm run lint
+
+      - name: Install React Native Reusables CLI
+        run: npx install -g @react-native-reusables/cli@latest
+
+      - name: Run react native reusables doctor
+        run: npx @react-native-reusables/cli@latest doctor
+
+      - name: Build the project
+        run: npm run build
 
       - name: Test web build capability
         run: |
