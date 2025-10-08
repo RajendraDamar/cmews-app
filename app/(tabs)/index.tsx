@@ -1,74 +1,30 @@
 import { Stack } from 'expo-router';
 
-import { ScrollView, View } from 'react-native';
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Text,
-  Separator,
-  Badge,
-  Input,
-} from '~/components/ui';
+import { ScrollView, View, Text } from 'react-native';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui';
+import { MOCK_APPS } from '~/constants/mock-data';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Home() {
   return (
     <>
-      <Stack.Screen options={{ title: 'Tab One' }} />
-      <ScrollView className="flex-1 p-6">
-        <Card className="mb-4">
-          <CardHeader>
-            <CardTitle>React Native Reusables</CardTitle>
-            <CardDescription>Beautiful UI components for React Native</CardDescription>
-          </CardHeader>
-          <CardContent className="gap-4">
-            <Text variant="muted" size="sm">
-              Button Variants:
-            </Text>
-            <Button label="Default Button" onPress={() => console.log('Pressed')} />
-            <Button
-              label="Secondary Button"
-              variant="secondary"
-              onPress={() => console.log('Pressed')}
-            />
-            <Button
-              label="Destructive Button"
-              variant="destructive"
-              onPress={() => console.log('Pressed')}
-            />
-            <Button
-              label="Outline Button"
-              variant="outline"
-              onPress={() => console.log('Pressed')}
-            />
-
-            <Separator className="my-4" />
-
-            <Text variant="muted" size="sm">
-              Badge Variants:
-            </Text>
-            <View className="flex-row flex-wrap gap-2">
-              <Badge label="Default" />
-              <Badge label="Secondary" variant="secondary" />
-              <Badge label="Destructive" variant="destructive" />
-              <Badge label="Outline" variant="outline" />
-            </View>
-
-            <Separator className="my-4" />
-
-            <Text variant="muted" size="sm">
-              Input Component:
-            </Text>
-            <Input placeholder="Enter your name" />
-          </CardContent>
-          <CardFooter>
-            <Button label="Footer Action" size="sm" variant="ghost" />
-          </CardFooter>
-        </Card>
+      <Stack.Screen options={{ title: 'Games & Apps' }} />
+      <ScrollView className="flex-1 bg-background p-4">
+        <Text className="mb-4 text-2xl font-bold text-foreground">Popular Apps</Text>
+        {MOCK_APPS.map((app) => (
+          <Card key={app.id} className="mb-4">
+            <CardHeader>
+              <CardTitle>{app.name}</CardTitle>
+              <CardDescription>{app.category}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <View className="flex-row items-center gap-1">
+                <Ionicons name="star" size={16} color="#FFC107" />
+                <Text className="text-sm text-muted-foreground">{app.rating}</Text>
+              </View>
+            </CardContent>
+          </Card>
+        ))}
       </ScrollView>
     </>
   );

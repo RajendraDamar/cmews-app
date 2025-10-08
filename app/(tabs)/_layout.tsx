@@ -1,31 +1,47 @@
-import { Link, Tabs } from 'expo-router';
+import { Tabs, useRouter } from 'expo-router';
+import { useColorScheme, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
-import { HeaderButton } from '../../components/HeaderButton';
-import { TabBarIcon } from '../../components/TabBarIcon';
+function ProfileButton() {
+  const router = useRouter();
+  return (
+    <Pressable onPress={() => router.push('/settings')} className="mr-4">
+      <Ionicons name="person-circle-outline" size={28} color="#666" />
+    </Pressable>
+  );
+}
 
 export default function TabLayout() {
+  const colorScheme = useColorScheme();
+
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: 'black',
+        tabBarActiveTintColor: colorScheme === 'dark' ? '#fff' : '#000',
+        tabBarStyle: {
+          backgroundColor: colorScheme === 'dark' ? '#1a1a1a' : '#fff',
+        },
+        headerRight: () => <ProfileButton />,
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
-          headerRight: () => (
-            <Link href="/modal" asChild>
-              <HeaderButton />
-            </Link>
-          ),
+          title: 'Games',
+          tabBarIcon: ({ color }) => <Ionicons name="game-controller" size={24} color={color} />,
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="books"
         options={{
-          title: 'Tab Two',
-          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+          title: 'Books',
+          tabBarIcon: ({ color }) => <Ionicons name="book" size={24} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="maps"
+        options={{
+          title: 'Maps',
+          tabBarIcon: ({ color }) => <Ionicons name="map" size={24} color={color} />,
         }}
       />
     </Tabs>
