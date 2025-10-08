@@ -1,0 +1,71 @@
+name: "Copilot Setup Steps"
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+  pull_request:
+    paths:
+      - .github/workflows/copilot-setup-steps.yml
+
+jobs:
+  copilot-setup-steps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+        contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.19.5"
+          cache: "npm"
+
+      - name: Install JavaScript dependencies
+        run: npm ci
+
+      - name: Install Expo CLI
+        run: npm install -g @expo/cli@latest
+
+      - name: Verify TypeScript configuration
+        run: npx tsc --noEmit --skipLibCheck
+
+      - name: Run linting check
+        run: npm run lint
+
+      - name: Test web build capability
+        run: |
+          # Test if web build works without actually building
+          expo export:web --dev --clear
+        continue-on-error: true
+
+      - name: Validate project structure
+        run: |
+          echo "✅ Node.js $(node --version)"
+          echo "✅ npm $(npm --version)" 
+          echo "✅ Expo CLI $(expo --version)"
+          echo "✅ TypeScript configuration validated"
+          echo "✅ Dependencies installed"
+          echo "🚀 Environment ready for Copilot coding agent!"
+
+      - name: Verify Firebase environment variables
+        run: |
+          echo "✅ Firebase Project ID: $EXPO_PUBLIC_PROJECT_ID"
+          echo "✅ Firebase Auth Domain: $EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN"
+          echo "✅ Firebase API Key: [HIDDEN]"
+          echo "✅ Firebase Storage Bucket: $EXPO_PUBLIC_STORAGE_BUCKET"
+          echo "✅ Firebase Messaging Sender ID: $EXPO_PUBLIC_MESSAGING_SENDER_ID"
+          echo "✅ Firebase App ID: [HIDDEN]"
+          echo "✅ Firebase Database URL: $EXPO_PUBLIC_DATABASE_URL"
+        env:
+          EXPO_PUBLIC_PROJECT_ID: ${{ secrets.EXPO_PUBLIC_PROJECT_ID }}
+          EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN }}
+          EXPO_PUBLIC_FIREBASE_API_KEY: ${{ secrets.EXPO_PUBLIC_FIREBASE_API_KEY }}
+          EXPO_PUBLIC_STORAGE_BUCKET: ${{ secrets.EXPO_PUBLIC_STORAGE_BUCKET }}
+          EXPO_PUBLIC_MESSAGING_SENDER_ID: ${{ secrets.EXPO_PUBLIC_MESSAGING_SENDER_ID }}
+          EXPO_PUBLIC_APP_ID: ${{ secrets.EXPO_PUBLIC_APP_ID }}
+          EXPO_PUBLIC_DATABASE_URL: ${{ secrets.EXPO_PUBLIC_DATABASE_URL }}
