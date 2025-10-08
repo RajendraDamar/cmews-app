@@ -1,15 +1,21 @@
 import { Tabs } from 'expo-router';
-import { useColorScheme, Pressable } from 'react-native';
+import { Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { ProfileModal } from '~/components/profile-modal';
+import { useTheme } from '~/lib/theme-provider';
 
 function ProfileButton() {
   const [modalVisible, setModalVisible] = useState(false);
+  const { colorScheme } = useTheme();
   return (
     <>
       <Pressable onPress={() => setModalVisible(true)} className="mr-4">
-        <Ionicons name="person-circle-outline" size={28} color="#666" />
+        <Ionicons
+          name="person-circle-outline"
+          size={28}
+          color={colorScheme === 'dark' ? '#fff' : '#666'}
+        />
       </Pressable>
       <ProfileModal visible={modalVisible} onClose={() => setModalVisible(false)} />
     </>
@@ -17,7 +23,7 @@ function ProfileButton() {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
+  const { colorScheme } = useTheme();
 
   return (
     <Tabs
