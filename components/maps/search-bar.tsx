@@ -1,7 +1,10 @@
-import { View, TextInput, FlatList, Text, Pressable } from 'react-native';
+import { View, FlatList, Pressable } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import { MOCK_MAP_PLACES } from '~/constants/mock-data';
+import { Input } from '~/components/ui/input';
+import { Text } from '~/components/ui/text';
+import { Card, CardContent } from '~/components/ui/card';
 
 interface SearchBarProps {
   onPlaceSelect: (place: any) => void;
@@ -21,36 +24,40 @@ export function SearchBar({ onPlaceSelect }: SearchBarProps) {
   };
 
   return (
-    <View className="rounded-lg bg-card shadow-lg">
-      <View className="flex-row items-center border-b border-border px-4 py-3">
-        <Ionicons name="search" size={20} color="#666" />
-        <TextInput
-          value={query}
-          onChangeText={handleSearch}
-          placeholder="Search places..."
-          className="ml-3 flex-1 text-foreground"
-          placeholderTextColor="#999"
-        />
-      </View>
+    <Card className="shadow-lg">
+      <CardContent className="p-0">
+        <View className="flex-row items-center px-4 py-2">
+          <Ionicons name="search" size={20} color="#666" />
+          <Input
+            value={query}
+            onChangeText={handleSearch}
+            placeholder="Search places..."
+            className="ml-2 flex-1 border-0 bg-transparent"
+            placeholderTextColor="#999"
+          />
+        </View>
 
-      {results.length > 0 && (
-        <FlatList
-          data={results}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() => {
-                onPlaceSelect(item);
-                setResults([]);
-                setQuery('');
-              }}
-              className="border-b border-border px-4 py-3">
-              <Text className="font-medium text-foreground">{item.name}</Text>
-              <Text className="text-sm text-muted-foreground">{item.address}</Text>
-            </Pressable>
-          )}
-        />
-      )}
-    </View>
+        {results.length > 0 && (
+          <FlatList
+            data={results}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <Pressable
+                onPress={() => {
+                  onPlaceSelect(item);
+                  setResults([]);
+                  setQuery('');
+                }}
+                className="border-t border-border px-4 py-3 active:bg-muted">
+                <Text className="font-medium">{item.name}</Text>
+                <Text variant="muted" size="sm">
+                  {item.address}
+                </Text>
+              </Pressable>
+            )}
+          />
+        )}
+      </CardContent>
+    </Card>
   );
 }

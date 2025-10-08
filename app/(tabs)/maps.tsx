@@ -1,9 +1,10 @@
 import { Stack } from 'expo-router';
-import { View, useWindowDimensions, Platform } from 'react-native';
+import { View, useWindowDimensions, Platform, Pressable } from 'react-native';
 import { useState } from 'react';
 import { SearchBar } from '~/components/maps/search-bar';
 import { PlaceCard } from '~/components/maps/place-card';
 import { Text } from '~/components/ui/text';
+import { Ionicons } from '@expo/vector-icons';
 
 // Conditionally import MapLibre based on platform
 let MapLibreGL: any = null;
@@ -59,6 +60,11 @@ export default function MapsScreen() {
   const isDesktop = width >= 1024;
   const [selectedPlace, setSelectedPlace] = useState<any>(null);
 
+  const handleLocationPress = () => {
+    // TODO: Implement geolocation
+    console.log('Get current location');
+  };
+
   return (
     <>
       <Stack.Screen options={{ title: 'Maps' }} />
@@ -87,6 +93,14 @@ export default function MapsScreen() {
           style={{ zIndex: 10 }}>
           <SearchBar onPlaceSelect={setSelectedPlace} />
         </View>
+
+        {/* Location FAB */}
+        <Pressable
+          onPress={handleLocationPress}
+          className={`absolute ${isDesktop ? 'right-4' : 'right-4'} ${selectedPlace ? 'bottom-48' : 'bottom-4'} h-14 w-14 items-center justify-center rounded-full bg-card shadow-lg active:opacity-70`}
+          style={{ zIndex: 10 }}>
+          <Ionicons name="locate" size={24} color="#666" />
+        </Pressable>
 
         {/* Place Card */}
         {selectedPlace && (

@@ -1,5 +1,7 @@
-import { View, Text, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { Text } from '~/components/ui/text';
+import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
+import { Button } from '~/components/ui/button';
 
 interface PlaceCardProps {
   place: {
@@ -11,20 +13,23 @@ interface PlaceCardProps {
 
 export function PlaceCard({ place }: PlaceCardProps) {
   return (
-    <View className="rounded-lg bg-card p-4 shadow-lg">
-      <Text className="mb-1 text-xl font-bold text-foreground">{place.name}</Text>
-      <Text className="mb-4 text-muted-foreground">{place.address}</Text>
-
-      <View className="flex-row gap-2">
-        <Pressable className="flex-1 flex-row items-center justify-center gap-2 rounded-md bg-primary px-4 py-3">
+    <Card className="shadow-lg">
+      <CardHeader className="pb-3">
+        <CardTitle>{place.name}</CardTitle>
+        <Text variant="muted" size="sm">
+          {place.address}
+        </Text>
+      </CardHeader>
+      <CardContent className="flex-row gap-2 pt-0">
+        <Button className="flex-1 flex-row items-center gap-2">
           <Ionicons name="navigate" size={16} color="#fff" />
           <Text className="font-medium text-primary-foreground">Directions</Text>
-        </Pressable>
-        <Pressable className="flex-1 flex-row items-center justify-center gap-2 rounded-md border border-border bg-background px-4 py-3">
+        </Button>
+        <Button variant="outline" className="flex-1 flex-row items-center gap-2">
           <Ionicons name="star-outline" size={16} color="#666" />
-          <Text className="font-medium text-foreground">Save</Text>
-        </Pressable>
-      </View>
-    </View>
+          <Text className="font-medium">Save</Text>
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
