@@ -4,10 +4,7 @@
     "slug": "cmews-app",
     "version": "1.0.0",
     "scheme": "cmews-app",
-    "platforms": [
-      "web",
-      "android"
-    ],
+    "platforms": ["ios", "android", "web"],
     "web": {
       "bundler": "metro",
       "output": "static",

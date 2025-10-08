@@ -1,23 +1,75 @@
 import { Stack } from 'expo-router';
 
-import { StyleSheet, View } from 'react-native';
-
-import { ScreenContent } from '~/components/ScreenContent';
+import { ScrollView, View } from 'react-native';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  Text,
+  Separator,
+  Badge,
+  Input,
+} from '~/components/ui';
 
 export default function Home() {
   return (
     <>
       <Stack.Screen options={{ title: 'Tab One' }} />
-      <View style={styles.container}>
-        <ScreenContent path="app/(tabs)/index.tsx" title="Tab One" />
-      </View>
+      <ScrollView className="flex-1 p-6">
+        <Card className="mb-4">
+          <CardHeader>
+            <CardTitle>React Native Reusables</CardTitle>
+            <CardDescription>Beautiful UI components for React Native</CardDescription>
+          </CardHeader>
+          <CardContent className="gap-4">
+            <Text variant="muted" size="sm">
+              Button Variants:
+            </Text>
+            <Button label="Default Button" onPress={() => console.log('Pressed')} />
+            <Button
+              label="Secondary Button"
+              variant="secondary"
+              onPress={() => console.log('Pressed')}
+            />
+            <Button
+              label="Destructive Button"
+              variant="destructive"
+              onPress={() => console.log('Pressed')}
+            />
+            <Button
+              label="Outline Button"
+              variant="outline"
+              onPress={() => console.log('Pressed')}
+            />
+
+            <Separator className="my-4" />
+
+            <Text variant="muted" size="sm">
+              Badge Variants:
+            </Text>
+            <View className="flex-row flex-wrap gap-2">
+              <Badge label="Default" />
+              <Badge label="Secondary" variant="secondary" />
+              <Badge label="Destructive" variant="destructive" />
+              <Badge label="Outline" variant="outline" />
+            </View>
+
+            <Separator className="my-4" />
+
+            <Text variant="muted" size="sm">
+              Input Component:
+            </Text>
+            <Input placeholder="Enter your name" />
+          </CardContent>
+          <CardFooter>
+            <Button label="Footer Action" size="sm" variant="ghost" />
+          </CardFooter>
+        </Card>
+      </ScrollView>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-  },
-});
