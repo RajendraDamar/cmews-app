@@ -1,12 +1,13 @@
 import { withLayoutContext } from 'expo-router';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useTheme } from '~/lib/theme-provider';
+import { MOCK_3DAY_FORECAST } from '~/constants/mock-data';
 
 const { Navigator } = createMaterialTopTabNavigator();
 
 export const MaterialTopTabs = withLayoutContext(Navigator);
 
-export default function BooksLayout() {
+export default function ForecastLayout() {
   const { colorScheme } = useTheme();
 
   return (
@@ -28,27 +29,21 @@ export default function BooksLayout() {
         tabBarScrollEnabled: true,
       }}>
       <MaterialTopTabs.Screen
-        name="for-you"
+        name="day-1"
         options={{
-          title: 'For You',
+          title: MOCK_3DAY_FORECAST[0].date,
         }}
       />
       <MaterialTopTabs.Screen
-        name="top-charts"
+        name="day-2"
         options={{
-          title: 'Top Charts',
+          title: MOCK_3DAY_FORECAST[1].date,
         }}
       />
       <MaterialTopTabs.Screen
-        name="categories"
+        name="day-3"
         options={{
-          title: 'Categories',
-        }}
-      />
-      <MaterialTopTabs.Screen
-        name="popular"
-        options={{
-          title: 'Popular',
+          title: MOCK_3DAY_FORECAST[2].date,
         }}
       />
     </MaterialTopTabs>
