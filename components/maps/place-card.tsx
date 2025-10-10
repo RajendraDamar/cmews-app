@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons';
+import { Navigation, Star } from 'lucide-react-native';
 import { Pressable } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
@@ -25,14 +25,13 @@ export function PlaceCard({ place }: PlaceCardProps) {
       </CardHeader>
       <CardContent className="flex-row gap-2 pt-0">
         <Pressable className="flex-1 flex-row items-center justify-center gap-2 rounded-md bg-primary px-4 py-3">
-          <Ionicons name="navigate" size={16} color="#fff" />
+          <Navigation size={16} color="hsl(210 40% 98%)" />
           <Text className="font-medium text-primary-foreground">Directions</Text>
         </Pressable>
         <Pressable className="flex-1 flex-row items-center justify-center gap-2 rounded-md border border-input bg-background px-4 py-3">
-          <Ionicons
-            name="star-outline"
+          <Star
             size={16}
-            color={colorScheme === 'dark' ? '#999' : '#666'}
+            color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
           />
           <Text className="font-medium">Save</Text>
         </Pressable>

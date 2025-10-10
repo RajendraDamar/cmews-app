@@ -2,7 +2,7 @@ import { ScrollView, View } from 'react-native';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui';
 import { Text } from '~/components/ui/text';
 import { MOCK_TODAY_WEATHER, MOCK_HOURLY_FORECAST } from '~/constants/mock-data';
-import { Ionicons } from '@expo/vector-icons';
+import { CloudRain, Droplets, Wind, Sun, Eye } from 'lucide-react-native';
 import { Stack } from 'expo-router';
 import { useTheme } from '~/lib/theme-provider';
 
@@ -23,8 +23,7 @@ export default function Home() {
                   {MOCK_TODAY_WEATHER.location}
                 </CardDescription>
               </View>
-              <Ionicons
-                name="partly-sunny"
+              <CloudRain
                 size={64}
                 color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
               />
@@ -54,15 +53,13 @@ export default function Home() {
                   <Text className="mb-2 text-sm" variant="muted">
                     {hour.time}
                   </Text>
-                  <Ionicons
-                    name={hour.icon as any}
+                  <CloudRain
                     size={32}
                     color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
                   />
                   <Text className="mt-2 text-lg font-semibold">{hour.temp}°</Text>
                   <View className="mt-1 flex-row items-center gap-1">
-                    <Ionicons
-                      name="water"
+                    <Droplets
                       size={12}
                       color={colorScheme === 'dark' ? '#999' : '#666'}
                     />
@@ -83,8 +80,7 @@ export default function Home() {
             <Card className="min-w-[45%] flex-1">
               <CardContent className="p-4">
                 <View className="flex-row items-center gap-2">
-                  <Ionicons
-                    name="water"
+                  <Droplets
                     size={20}
                     color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
                   />
@@ -97,8 +93,7 @@ export default function Home() {
             <Card className="min-w-[45%] flex-1">
               <CardContent className="p-4">
                 <View className="flex-row items-center gap-2">
-                  <Ionicons
-                    name="speedometer"
+                  <Wind
                     size={20}
                     color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
                   />
@@ -113,8 +108,7 @@ export default function Home() {
             <Card className="min-w-[45%] flex-1">
               <CardContent className="p-4">
                 <View className="flex-row items-center gap-2">
-                  <Ionicons
-                    name="sunny"
+                  <Sun
                     size={20}
                     color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
                   />
@@ -127,8 +121,7 @@ export default function Home() {
             <Card className="min-w-[45%] flex-1">
               <CardContent className="p-4">
                 <View className="flex-row items-center gap-2">
-                  <Ionicons
-                    name="eye"
+                  <Eye
                     size={20}
                     color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
                   />

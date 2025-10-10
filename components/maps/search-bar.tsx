@@ -1,6 +1,6 @@
 import { View, FlatList, Pressable } from 'react-native';
 import { useState } from 'react';
-import { Ionicons } from '@expo/vector-icons';
+import { Search } from 'lucide-react-native';
 import { MOCK_MAP_PLACES } from '~/constants/mock-data';
 import { Input } from '~/components/ui/input';
 import { Text } from '~/components/ui/text';
@@ -27,7 +27,7 @@ export function SearchBar({ onPlaceSelect }: SearchBarProps) {
     <Card className="shadow-lg">
       <CardContent className="p-0">
         <View className="flex-row items-center px-4 py-2">
-          <Ionicons name="search" size={20} color="#666" />
+          <Search size={20} color="#666" />
           <Input
             value={query}
             onChangeText={handleSearch}
