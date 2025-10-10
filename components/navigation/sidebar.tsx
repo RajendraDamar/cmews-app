@@ -27,7 +27,7 @@ const navItems = [
 export function Sidebar() {
   const router = useRouter();
   const pathname = usePathname();
-  const { colorScheme, theme, setTheme } = useTheme();
+  const { colorScheme, setTheme } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
 
