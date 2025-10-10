@@ -1,5 +1,5 @@
 import { View, Platform, Pressable, ScrollView } from 'react-native';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { SearchAutocomplete } from '~/components/maps/search-autocomplete';
 import { PlaceCard } from '~/components/maps/place-card';
 import { DirectionsPanel } from '~/components/maps/directions-panel';
@@ -8,6 +8,8 @@ import { LayerSwitcher } from '~/components/maps/layer-switcher';
 import { SavedPlacesDrawer } from '~/components/maps/saved-places-drawer';
 import { BottomSheet } from '~/components/maps/bottom-sheet';
 import { MapMarker } from '~/components/maps/map-marker';
+import { MapSkeleton } from '~/components/maps/map-skeleton';
+import { MapErrorState } from '~/components/maps/map-error-state';
 import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
 import { Plus, Minus, Navigation, Maximize, Star, Route as RouteIcon } from 'lucide-react-native';
@@ -80,7 +82,26 @@ export default function MapsScreen() {
     bicycle: false,
   });
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [mapError, setMapError] = useState<string | null>(null);
   const cameraRef = useRef<any>(null);
+
+  // Simulate map loading
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleRetry = () => {
+    setMapError(null);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  };
 
   const handleLocationPress = () => {
     // Center to default location (New York)
@@ -187,74 +208,85 @@ export default function MapsScreen() {
   );
 
   // Map View with Markers
-  const renderMap = () => (
-    <View className="flex-1">
-      {Platform.OS === 'web' ? (
-        <WebMap />
-      ) : MapLibreGL ? (
-        <MapLibreGL.MapView
-          style={{ flex: 1 }}
-          styleURL={
-            mapType === 'satellite'
-              ? 'https://demotiles.maplibre.org/style.json'
-              : mapType === 'terrain'
+  const renderMap = () => {
+    if (isLoading) {
+      return <MapSkeleton />;
+    }
+
+    if (mapError) {
+      return <MapErrorState message={mapError} onRetry={handleRetry} />;
+    }
+
+    return (
+      <View className="flex-1">
+        {Platform.OS === 'web' ? (
+          <WebMap />
+        ) : MapLibreGL ? (
+          <MapLibreGL.MapView
+            style={{ flex: 1 }}
+            styleURL={
+              mapType === 'satellite'
                 ? 'https://demotiles.maplibre.org/style.json'
-                : 'https://demotiles.maplibre.org/style.json'
-          }
-          logoEnabled={false}
-          attributionEnabled={false}
-          compassEnabled={!isDesktop}
-          compassViewMargins={{ x: 16, y: 100 }}
-          rotateEnabled={true}
-          pitchEnabled={true}>
-          <MapLibreGL.Camera
-            ref={cameraRef}
-            zoomLevel={12}
-            centerCoordinate={[-74.006, 40.7128]}
-            animationMode="flyTo"
-            animationDuration={1000}
-          />
-
-          {/* User Location Marker */}
-          <MapLibreGL.MarkerView coordinate={[-74.006, 40.7128]}>
-            <View
-              style={{
-                width: 20,
-                height: 20,
-                borderRadius: 10,
-                backgroundColor: colorScheme === 'dark' ? '#60a5fa' : '#3b82f6',
-                borderWidth: 3,
-                borderColor: '#fff',
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 2 },
-                shadowOpacity: 0.25,
-                shadowRadius: 4,
-                elevation: 5,
-              }}
+                : mapType === 'terrain'
+                  ? 'https://demotiles.maplibre.org/style.json'
+                  : 'https://demotiles.maplibre.org/style.json'
+            }
+            logoEnabled={false}
+            attributionEnabled={false}
+            compassEnabled={!isDesktop}
+            compassViewMargins={{ x: 16, y: 100 }}
+            rotateEnabled={true}
+            pitchEnabled={true}>
+            <MapLibreGL.Camera
+              ref={cameraRef}
+              zoomLevel={12}
+              centerCoordinate={[-74.006, 40.7128]}
+              animationMode="flyTo"
+              animationDuration={1000}
             />
-          </MapLibreGL.MarkerView>
 
-          {/* Place Markers */}
-          {filteredPlaces.map((place) => (
-            <MapLibreGL.MarkerView key={place.id} coordinate={[place.lon, place.lat]}>
-              <Pressable onPress={() => handlePlaceSelect(place)}>
-                <MapMarker
-                  category={place.category || 'landmark'}
-                  selected={selectedPlace?.id === place.id}
-                />
-              </Pressable>
+            {/* User Location Marker */}
+            <MapLibreGL.MarkerView coordinate={[-74.006, 40.7128]}>
+              <View
+                style={{
+                  width: 20,
+                  height: 20,
+                  borderRadius: 10,
+                  backgroundColor: colorScheme === 'dark' ? '#60a5fa' : '#3b82f6',
+                  borderWidth: 3,
+                  borderColor: '#fff',
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 4,
+                  elevation: 5,
+                }}
+              />
             </MapLibreGL.MarkerView>
-          ))}
-        </MapLibreGL.MapView>
-      ) : (
-        <View className="flex-1 items-center justify-center bg-muted">
-          <Text variant="muted" size="xl">
-            Map unavailable
-          </Text>
-        </View>
-      )}
-    </View>
-  );
+
+            {/* Place Markers */}
+            {filteredPlaces.map((place) => (
+              <MapLibreGL.MarkerView key={place.id} coordinate={[place.lon, place.lat]}>
+                <Pressable onPress={() => handlePlaceSelect(place)}>
+                  <MapMarker
+                    category={place.category || 'landmark'}
+                    selected={selectedPlace?.id === place.id}
+                  />
+                </Pressable>
+              </MapLibreGL.MarkerView>
+            ))}
+          </MapLibreGL.MapView>
+        ) : (
+          <MapErrorState
+            message="MapLibre is not available"
+            onRetry={() => {
+              /* Reload the app */
+            }}
+          />
+        )}
+      </View>
+    );
+  };
 
   return (
     <View className="flex-1">

@@ -5,6 +5,7 @@ import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { Button } from '~/components/ui/button';
 import { MOCK_SAVED_PLACES } from '~/constants/mock-data';
+import { EmptyPlacesState } from '~/components/maps/empty-states';
 import { useTheme } from '~/lib/theme-provider';
 
 interface SavedPlacesDrawerProps {
@@ -46,33 +47,37 @@ export function SavedPlacesDrawer({ onPlaceSelect, onClose }: SavedPlacesDrawerP
         <Separator className="mb-4" />
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          <View className="gap-2">
-            {MOCK_SAVED_PLACES.map((place) => {
-              const Icon = getPlaceIcon(place.name);
-              return (
-                <Pressable
-                  key={place.id}
-                  onPress={() => {
-                    onPlaceSelect(place);
-                    onClose();
-                  }}
-                  className="rounded-lg border border-border bg-card p-4 active:bg-muted">
-                  <View className="flex-row items-center gap-3">
-                    <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                      <Icon size={20} color="#3b82f6" />
+          {MOCK_SAVED_PLACES.length === 0 ? (
+            <EmptyPlacesState />
+          ) : (
+            <View className="gap-2">
+              {MOCK_SAVED_PLACES.map((place) => {
+                const Icon = getPlaceIcon(place.name);
+                return (
+                  <Pressable
+                    key={place.id}
+                    onPress={() => {
+                      onPlaceSelect(place);
+                      onClose();
+                    }}
+                    className="rounded-lg border border-border bg-card p-4 active:bg-muted">
+                    <View className="flex-row items-center gap-3">
+                      <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                        <Icon size={20} color="#3b82f6" />
+                      </View>
+                      <View className="flex-1">
+                        <Text className="font-semibold">{place.name}</Text>
+                        <Text variant="muted" size="sm" numberOfLines={1}>
+                          {place.address}
+                        </Text>
+                      </View>
+                      <Star size={20} color="#f59e0b" fill="#f59e0b" />
                     </View>
-                    <View className="flex-1">
-                      <Text className="font-semibold">{place.name}</Text>
-                      <Text variant="muted" size="sm" numberOfLines={1}>
-                        {place.address}
-                      </Text>
-                    </View>
-                    <Star size={20} color="#f59e0b" fill="#f59e0b" />
-                  </View>
-                </Pressable>
-              );
-            })}
-          </View>
+                  </Pressable>
+                );
+              })}
+            </View>
+          )}
         </ScrollView>
       </CardContent>
     </Card>

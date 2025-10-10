@@ -6,6 +6,7 @@ import { Input } from '~/components/ui/input';
 import { Text } from '~/components/ui/text';
 import { Card, CardContent } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
+import { EmptySearchState } from '~/components/maps/empty-states';
 import { useTheme } from '~/lib/theme-provider';
 
 interface SearchAutocompleteProps {
@@ -97,6 +98,7 @@ export function SearchAutocomplete({ onPlaceSelect, onFocus, onBlur }: SearchAut
             <FlatList
               data={results}
               keyExtractor={(item) => item.id}
+              ListEmptyComponent={<EmptySearchState />}
               renderItem={({ item }) => (
                 <Pressable
                   onPress={() => {
