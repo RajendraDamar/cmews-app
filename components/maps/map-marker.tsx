@@ -17,8 +17,6 @@ interface MapMarkerProps {
 }
 
 export function MapMarker({ category, selected = false }: MapMarkerProps) {
-  const { colorScheme } = useTheme();
-
   const iconMap: Record<string, any> = {
     restaurant: Utensils,
     gas: Fuel,
