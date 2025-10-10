@@ -147,12 +147,18 @@ export default function MapsScreen() {
           <Pressable
             onPress={handleZoomIn}
             className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-card shadow-lg active:opacity-70">
-            <Plus size={24} color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'} />
+            <Plus
+              size={24}
+              color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'}
+            />
           </Pressable>
           <Pressable
             onPress={handleZoomOut}
             className="h-12 w-12 items-center justify-center rounded-full bg-card shadow-lg active:opacity-70">
-            <Minus size={24} color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'} />
+            <Minus
+              size={24}
+              color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'}
+            />
           </Pressable>
         </View>
       )}
