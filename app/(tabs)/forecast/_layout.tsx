@@ -1,7 +1,6 @@
 import { withLayoutContext } from 'expo-router';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { useTheme } from '~/lib/theme-provider';
-import { MOCK_3DAY_FORECAST } from '~/constants/mock-data';
 
 const { Navigator } = createMaterialTopTabNavigator();
 
@@ -34,21 +33,27 @@ export default function ForecastLayout() {
         tabBarScrollEnabled: true,
       }}>
       <MaterialTopTabs.Screen
-        name="day-1"
+        name="weather"
         options={{
-          title: MOCK_3DAY_FORECAST[0].date,
+          title: 'Cuaca',
         }}
       />
       <MaterialTopTabs.Screen
-        name="day-2"
+        name="wind"
         options={{
-          title: MOCK_3DAY_FORECAST[1].date,
+          title: 'Angin',
         }}
       />
       <MaterialTopTabs.Screen
-        name="day-3"
+        name="wave"
         options={{
-          title: MOCK_3DAY_FORECAST[2].date,
+          title: 'Gelombang',
+        }}
+      />
+      <MaterialTopTabs.Screen
+        name="current"
+        options={{
+          title: 'Arus Laut',
         }}
       />
     </MaterialTopTabs>
