@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { View, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Home, CloudRain, Map, User, Cloud } from 'lucide-react-native';
 import { useState } from 'react';
 import { ProfileModal } from '~/components/profile-modal';
 import { useTheme } from '~/lib/theme-provider';
@@ -13,10 +13,9 @@ function ProfileButton() {
   return (
     <>
       <Pressable onPress={() => setModalVisible(true)} className="mr-4">
-        <Ionicons
-          name="person-circle-outline"
-          size={28}
-          color={colorScheme === 'dark' ? '#fff' : '#666'}
+        <User
+          size={24}
+          color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(215.4 16.3% 46.9%)'}
         />
       </Pressable>
       <ProfileModal visible={modalVisible} onClose={() => setModalVisible(false)} />
@@ -25,9 +24,13 @@ function ProfileButton() {
 }
 
 function LogoHeader() {
+  const { colorScheme } = useTheme();
   return (
     <View className="ml-4">
-      <Ionicons name="partly-sunny" size={28} color="#3b82f6" />
+      <Cloud 
+        size={24} 
+        color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'} 
+      />
     </View>
   );
 }
@@ -60,10 +63,22 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: colorScheme === 'dark' ? '#fff' : '#000',
+        tabBarActiveTintColor: colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)',
+        tabBarInactiveTintColor: colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)',
         tabBarStyle: {
-          backgroundColor: colorScheme === 'dark' ? '#1a1a1a' : '#fff',
+          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+          borderTopColor: colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+          borderTopWidth: 1,
+          height: 60,
+          paddingBottom: 8,
+          paddingTop: 8,
         },
+        headerStyle: {
+          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+          borderBottomColor: colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+          borderBottomWidth: 1,
+        },
+        headerTintColor: colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)',
         headerLeft: () => <LogoHeader />,
         headerRight: () => <ProfileButton />,
       }}>
@@ -71,14 +86,14 @@ export default function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Home size={24} color={color} />,
         }}
       />
       <Tabs.Screen
         name="forecast"
         options={{
           title: 'Forecast',
-          tabBarIcon: ({ color }) => <Ionicons name="partly-sunny" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <CloudRain size={24} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -86,7 +101,7 @@ export default function TabLayout() {
         options={{
           title: 'Maps',
           headerShown: false,
-          tabBarIcon: ({ color }) => <Ionicons name="map" size={24} color={color} />,
+          tabBarIcon: ({ color }) => <Map size={24} color={color} />,
         }}
       />
     </Tabs>
