@@ -5,3 +5,8 @@ export { Input } from './input';
 export { Separator } from './separator';
 export { Badge, badgeVariants, badgeTextVariants } from './badge';
 export { Skeleton } from './skeleton';
+export { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from './sheet';
+export { Avatar, AvatarImage, AvatarFallback } from './avatar';
+export { Checkbox } from './checkbox';
+export { Textarea } from './textarea';
+export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select';

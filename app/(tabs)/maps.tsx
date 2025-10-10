@@ -1,21 +1,20 @@
-import { View, Platform, Pressable, ScrollView } from 'react-native';
+// Maps Tab - Weather Observation Reporting Platform
+import { View, Platform, Pressable } from 'react-native';
 import { useState, useRef, useEffect } from 'react';
-import { SearchAutocomplete } from '~/components/maps/search-autocomplete';
-import { PlaceCard } from '~/components/maps/place-card';
-import { DirectionsPanel } from '~/components/maps/directions-panel';
-import { CategoryFilter } from '~/components/maps/category-filter';
-import { LayerSwitcher } from '~/components/maps/layer-switcher';
-import { SavedPlacesDrawer } from '~/components/maps/saved-places-drawer';
-import { BottomSheet } from '~/components/maps/bottom-sheet';
-import { MapMarker } from '~/components/maps/map-marker';
+import { SearchBar } from '~/components/maps/search-bar';
+import { SeverityMarker } from '~/components/maps/severity-marker';
+import { ReportBottomSheet } from '~/components/maps/report-bottom-sheet';
+import { ReportFormDialog } from '~/components/maps/report-form-dialog';
+import { DesktopSidebar } from '~/components/maps/desktop-sidebar';
+import { WeatherLayerToggle } from '~/components/maps/weather-layer-toggle';
 import { MapSkeleton } from '~/components/maps/map-skeleton';
 import { MapErrorState } from '~/components/maps/map-error-state';
 import { Text } from '~/components/ui/text';
-import { Button } from '~/components/ui/button';
-import { Plus, Minus, Navigation, Maximize, Star, Route as RouteIcon } from 'lucide-react-native';
+import { Plus, Minus, MapPin } from 'lucide-react-native';
 import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
-import { MOCK_MAP_PLACES } from '~/constants/mock-data';
+import { mockWeatherReports } from '~/lib/data/weather-reports-mock';
+import { WeatherReport, WeatherReportFilters } from '~/lib/types/weather-report';
 
 // Conditionally import MapLibre based on platform
 let MapLibreGL: any = null;
@@ -41,9 +40,9 @@ if (Platform.OS !== 'web') {
 
 function WebMap() {
   const [viewState, setViewState] = useState({
-    longitude: -74.006,
-    latitude: 40.7128,
-    zoom: 12,
+    longitude: 106.8272,
+    latitude: -6.1754,
+    zoom: 11,
   });
 
   if (!MapGL) {
@@ -70,20 +69,19 @@ function WebMap() {
 
 export default function MapsScreen() {
   const { colorScheme } = useTheme();
-  const { isTablet, isDesktop } = useBreakpoint();
-  const [selectedPlace, setSelectedPlace] = useState<any>(null);
-  const [showDirections, setShowDirections] = useState(false);
-  const [showSavedPlaces, setShowSavedPlaces] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [mapType, setMapType] = useState<'standard' | 'satellite' | 'terrain'>('standard');
-  const [layers, setLayers] = useState({
-    traffic: false,
-    transit: false,
-    bicycle: false,
+  const { isDesktop } = useBreakpoint();
+  const [selectedReport, setSelectedReport] = useState<WeatherReport | null>(null);
+  const [showReportForm, setShowReportForm] = useState(false);
+  const [showWeatherLayer, setShowWeatherLayer] = useState(false);
+  const [filters, setFilters] = useState<WeatherReportFilters>({
+    all: true,
+    low: true,
+    medium: true,
+    high: true,
   });
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [mapError, setMapError] = useState<string | null>(null);
+  const [reports, setReports] = useState<WeatherReport[]>(mockWeatherReports);
   const cameraRef = useRef<any>(null);
 
   // Simulate map loading
@@ -104,11 +102,11 @@ export default function MapsScreen() {
   };
 
   const handleLocationPress = () => {
-    // Center to default location (New York)
+    // Center to Jakarta
     if (Platform.OS !== 'web' && cameraRef.current) {
       cameraRef.current.setCamera({
-        centerCoordinate: [-74.006, 40.7128],
-        zoomLevel: 12,
+        centerCoordinate: [106.8272, -6.1754],
+        zoomLevel: 11,
         animationDuration: 1000,
       });
     }
@@ -122,89 +120,60 @@ export default function MapsScreen() {
 
   const handleZoomOut = () => {
     if (Platform.OS !== 'web' && cameraRef.current) {
-      cameraRef.current.zoomTo(10, 500);
+      cameraRef.current.zoomTo(9, 500);
     }
   };
 
-  const handlePlaceSelect = (place: any) => {
-    setSelectedPlace(place);
-    if (Platform.OS !== 'web' && cameraRef.current && place.lat && place.lon) {
+  const handleReportSelect = (report: WeatherReport) => {
+    setSelectedReport(report);
+    if (Platform.OS !== 'web' && cameraRef.current) {
       cameraRef.current.setCamera({
-        centerCoordinate: [place.lon, place.lat],
-        zoomLevel: 15,
+        centerCoordinate: [report.lon, report.lat],
+        zoomLevel: 14,
         animationDuration: 1000,
       });
     }
   };
 
-  const handleDirections = () => {
-    setShowDirections(true);
+  const handleReportSubmit = (data: any) => {
+    const newReport: WeatherReport = {
+      id: Date.now().toString(),
+      location: data.location,
+      lat: -6.1754,
+      lon: 106.8272,
+      weather: data.weather,
+      severity: data.severity,
+      temperature: data.temperature,
+      humidity: 70,
+      windSpeed: data.windSpeed,
+      windDirection: 'Utara',
+      notes: data.notes,
+      user: {
+        name: 'Anda',
+        initials: 'A',
+      },
+      timestamp: new Date().toISOString(),
+    };
+    setReports([newReport, ...reports]);
+    setShowReportForm(false);
   };
 
-  const handleLayerToggle = (layer: 'traffic' | 'transit' | 'bicycle') => {
-    setLayers((prev) => ({ ...prev, [layer]: !prev[layer] }));
-  };
-
-  const filteredPlaces = selectedCategory
-    ? MOCK_MAP_PLACES.filter((p) => p.category === selectedCategory)
-    : MOCK_MAP_PLACES;
+  const filteredReports = reports.filter((report) => {
+    if (filters.all) return true;
+    return filters[report.severity];
+  });
 
   const iconColor = colorScheme === 'dark' ? '#e5e7eb' : '#1f2937';
 
   // Desktop Sidebar
   const renderDesktopSidebar = () => (
-    <View className="w-[30%] border-r border-border bg-card">
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        {/* Search */}
-        <View className="border-b border-border p-4">
-          <SearchAutocomplete onPlaceSelect={handlePlaceSelect} />
-        </View>
-
-        {/* Quick Actions */}
-        <View className="border-b border-border p-4">
-          <View className="flex-row gap-2">
-            <Button
-              label="Directions"
-              variant="outline"
-              className="flex-1"
-              onPress={() => setShowDirections(true)}>
-              <RouteIcon size={16} color={iconColor} />
-            </Button>
-            <Button
-              label="Saved"
-              variant="outline"
-              className="flex-1"
-              onPress={() => setShowSavedPlaces(true)}>
-              <Star size={16} color={iconColor} />
-            </Button>
-          </View>
-        </View>
-
-        {/* Place Details or Directions Panel */}
-        {showDirections ? (
-          <DirectionsPanel
-            origin="Your location"
-            destination={selectedPlace?.name}
-            onClose={() => setShowDirections(false)}
-          />
-        ) : showSavedPlaces ? (
-          <SavedPlacesDrawer
-            onPlaceSelect={handlePlaceSelect}
-            onClose={() => setShowSavedPlaces(false)}
-          />
-        ) : selectedPlace ? (
-          <View className="p-4">
-            <PlaceCard place={selectedPlace} onDirections={handleDirections} />
-          </View>
-        ) : (
-          <View className="p-6">
-            <Text variant="muted" className="text-center">
-              Search for a place or select a marker on the map
-            </Text>
-          </View>
-        )}
-      </ScrollView>
-    </View>
+    <DesktopSidebar
+      selectedReport={selectedReport}
+      recentReports={filteredReports.slice(0, 10)}
+      filters={filters}
+      onFilterChange={setFilters}
+      onSelectReport={handleReportSelect}
+    />
   );
 
   // Map View with Markers
@@ -224,13 +193,7 @@ export default function MapsScreen() {
         ) : MapLibreGL ? (
           <MapLibreGL.MapView
             style={{ flex: 1 }}
-            styleURL={
-              mapType === 'satellite'
-                ? 'https://demotiles.maplibre.org/style.json'
-                : mapType === 'terrain'
-                  ? 'https://demotiles.maplibre.org/style.json'
-                  : 'https://demotiles.maplibre.org/style.json'
-            }
+            styleURL="https://demotiles.maplibre.org/style.json"
             logoEnabled={false}
             attributionEnabled={false}
             compassEnabled={!isDesktop}
@@ -239,40 +202,20 @@ export default function MapsScreen() {
             pitchEnabled={true}>
             <MapLibreGL.Camera
               ref={cameraRef}
-              zoomLevel={12}
-              centerCoordinate={[-74.006, 40.7128]}
+              zoomLevel={11}
+              centerCoordinate={[106.8272, -6.1754]}
               animationMode="flyTo"
               animationDuration={1000}
             />
 
-            {/* User Location Marker */}
-            <MapLibreGL.MarkerView coordinate={[-74.006, 40.7128]}>
-              <View
-                style={{
-                  width: 20,
-                  height: 20,
-                  borderRadius: 10,
-                  backgroundColor: colorScheme === 'dark' ? '#60a5fa' : '#3b82f6',
-                  borderWidth: 3,
-                  borderColor: '#fff',
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 2 },
-                  shadowOpacity: 0.25,
-                  shadowRadius: 4,
-                  elevation: 5,
-                }}
-              />
-            </MapLibreGL.MarkerView>
-
-            {/* Place Markers */}
-            {filteredPlaces.map((place) => (
-              <MapLibreGL.MarkerView key={place.id} coordinate={[place.lon, place.lat]}>
-                <Pressable onPress={() => handlePlaceSelect(place)}>
-                  <MapMarker
-                    category={place.category || 'landmark'}
-                    selected={selectedPlace?.id === place.id}
-                  />
-                </Pressable>
+            {/* Weather Report Markers */}
+            {filteredReports.map((report) => (
+              <MapLibreGL.MarkerView key={report.id} coordinate={[report.lon, report.lat]}>
+                <SeverityMarker
+                  report={report}
+                  onPress={() => handleReportSelect(report)}
+                  selected={selectedReport?.id === report.id}
+                />
               </MapLibreGL.MarkerView>
             ))}
           </MapLibreGL.MapView>
@@ -293,124 +236,101 @@ export default function MapsScreen() {
       {isDesktop ? (
         <View className="flex-1 flex-row">
           {renderDesktopSidebar()}
-          <View className="flex-[0.7]">{renderMap()}</View>
+          <View className="relative flex-[0.7]">
+            {renderMap()}
+            {/* Weather Layer Toggle (Desktop) */}
+            <WeatherLayerToggle
+              showLayer={showWeatherLayer}
+              onToggle={() => setShowWeatherLayer(!showWeatherLayer)}
+            />
+            {/* Map Controls (Desktop - Right Side) */}
+            {Platform.OS !== 'web' && MapLibreGL && (
+              <View className="absolute right-8 top-1/3 gap-2" style={{ zIndex: 10 }}>
+                <Pressable
+                  onPress={handleZoomIn}
+                  className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
+                  <Plus size={24} color={iconColor} />
+                </Pressable>
+
+                <Pressable
+                  onPress={handleZoomOut}
+                  className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
+                  <Minus size={24} color={iconColor} />
+                </Pressable>
+
+                <Pressable
+                  onPress={handleLocationPress}
+                  className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
+                  <MapPin size={20} color={iconColor} />
+                </Pressable>
+              </View>
+            )}
+            {/* Floating Action Button (Desktop) */}
+            <Pressable
+              onPress={() => setShowReportForm(true)}
+              className="absolute bottom-8 right-8 h-16 w-16 items-center justify-center rounded-full bg-primary shadow-lg active:opacity-90"
+              style={{ zIndex: 10 }}>
+              <Plus size={28} color="#fff" />
+            </Pressable>
+          </View>
         </View>
       ) : (
         <>
           {renderMap()}
 
-          {/* Mobile/Tablet Overlays */}
+          {/* Mobile Overlays */}
           {/* Search Bar */}
-          <View
-            className={`absolute left-4 right-4 top-4 ${isTablet ? 'w-96 self-center' : ''}`}
-            style={{ zIndex: 10 }}>
-            <SearchAutocomplete onPlaceSelect={handlePlaceSelect} />
-          </View>
+          <SearchBar placeholder="Cari lokasi..." />
 
-          {/* Category Filter */}
-          <View className="absolute left-0 right-0 top-20" style={{ zIndex: 9 }}>
-            <CategoryFilter
-              selectedCategory={selectedCategory}
-              onSelectCategory={setSelectedCategory}
-            />
-          </View>
+          {/* Weather Layer Toggle (Mobile) */}
+          <WeatherLayerToggle
+            showLayer={showWeatherLayer}
+            onToggle={() => setShowWeatherLayer(!showWeatherLayer)}
+          />
 
-          {/* Map Controls (Right Side) */}
+          {/* Map Controls (Mobile - Right Side) */}
           {Platform.OS !== 'web' && MapLibreGL && (
             <View className="absolute bottom-32 right-4 gap-2" style={{ zIndex: 10 }}>
-              <LayerSwitcher
-                mapType={mapType}
-                onMapTypeChange={setMapType}
-                layers={layers}
-                onLayerToggle={handleLayerToggle}
-              />
-
               <Pressable
                 onPress={handleZoomIn}
-                className="h-12 w-12 items-center justify-center rounded-full bg-card shadow-lg active:opacity-70">
+                className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
                 <Plus size={24} color={iconColor} />
               </Pressable>
 
               <Pressable
                 onPress={handleZoomOut}
-                className="h-12 w-12 items-center justify-center rounded-full bg-card shadow-lg active:opacity-70">
+                className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
                 <Minus size={24} color={iconColor} />
               </Pressable>
 
               <Pressable
-                onPress={() => setIsFullscreen(!isFullscreen)}
-                className="h-12 w-12 items-center justify-center rounded-full bg-card shadow-lg active:opacity-70">
-                <Maximize size={20} color={iconColor} />
+                onPress={handleLocationPress}
+                className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
+                <MapPin size={20} color={iconColor} />
               </Pressable>
             </View>
           )}
 
-          {/* Location FAB */}
+          {/* Floating Action Button (Mobile) */}
           <Pressable
-            onPress={handleLocationPress}
-            className="absolute bottom-32 left-4 h-14 w-14 items-center justify-center rounded-full bg-card shadow-lg active:opacity-70"
+            onPress={() => setShowReportForm(true)}
+            className="absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full bg-primary shadow-lg active:opacity-90"
             style={{ zIndex: 10 }}>
-            <Navigation size={24} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
+            <Plus size={28} color="#fff" />
           </Pressable>
 
-          {/* Bottom Action Buttons */}
-          <View className="absolute bottom-4 left-4 right-4 flex-row gap-2" style={{ zIndex: 10 }}>
-            <Button
-              label="Directions"
-              variant="outline"
-              className="flex-1 bg-card"
-              onPress={() => setShowDirections(true)}>
-              <RouteIcon size={16} color={iconColor} />
-            </Button>
-            <Button
-              label="Saved Places"
-              variant="outline"
-              className="flex-1 bg-card"
-              onPress={() => setShowSavedPlaces(true)}>
-              <Star size={16} color={iconColor} />
-            </Button>
-          </View>
-
-          {/* Bottom Sheet for Place Details (Mobile) */}
-          {selectedPlace && !showDirections && (
-            <BottomSheet
-              isOpen={!!selectedPlace}
-              onClose={() => setSelectedPlace(null)}
-              snapPoints={[0.4, 0.7]}
-              initialSnap={0}>
-              <View className="px-4">
-                <PlaceCard place={selectedPlace} onDirections={handleDirections} />
-              </View>
-            </BottomSheet>
+          {/* Bottom Sheet for Report Details (Mobile) */}
+          {selectedReport && (
+            <ReportBottomSheet report={selectedReport} onClose={() => setSelectedReport(null)} />
           )}
 
-          {/* Bottom Sheet for Directions (Mobile) */}
-          {showDirections && (
-            <BottomSheet
-              isOpen={showDirections}
-              onClose={() => setShowDirections(false)}
-              snapPoints={[0.5, 0.9]}
-              initialSnap={1}>
-              <DirectionsPanel
-                origin="Your location"
-                destination={selectedPlace?.name}
-                onClose={() => setShowDirections(false)}
-              />
-            </BottomSheet>
-          )}
-
-          {/* Bottom Sheet for Saved Places (Mobile) */}
-          {showSavedPlaces && (
-            <BottomSheet
-              isOpen={showSavedPlaces}
-              onClose={() => setShowSavedPlaces(false)}
-              snapPoints={[0.6, 0.9]}
-              initialSnap={0}>
-              <SavedPlacesDrawer
-                onPlaceSelect={handlePlaceSelect}
-                onClose={() => setShowSavedPlaces(false)}
-              />
-            </BottomSheet>
+          {/* Report Form Dialog */}
+          {showReportForm && (
+            <ReportFormDialog
+              location="Lokasi Terpilih"
+              onSubmit={handleReportSubmit}
+              onCancel={() => setShowReportForm(false)}
+            />
           )}
         </>
       )}
