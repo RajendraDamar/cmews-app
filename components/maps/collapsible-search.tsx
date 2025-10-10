@@ -4,6 +4,7 @@ import { Card } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Search, X } from 'lucide-react-native';
 import { useTheme } from '~/lib/theme-provider';
+import * as Haptics from 'expo-haptics';
 
 interface CollapsibleSearchProps {
   placeholder?: string;
@@ -22,15 +23,18 @@ export function CollapsibleSearch({
   const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
 
   const handleExpand = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setIsExpanded(true);
   };
 
   const handleCollapse = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setIsExpanded(false);
     setSearchText('');
   };
 
   const handleSearch = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (onSearch) {
       onSearch(searchText);
     }

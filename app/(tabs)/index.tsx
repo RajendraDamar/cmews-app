@@ -183,14 +183,20 @@ export default function Home() {
             {/* Daily Forecast */}
             <View className="px-4 pb-4">
               <DailyForecastCard
-                forecast={weatherData.dailyForecast.map((d) => ({
-                  day: d.day,
-                  date: d.date,
-                  weather: d.weather.description,
-                  tempHigh: d.tempMax,
-                  tempLow: d.tempMin,
-                  precipitation: d.humidity || 50,
-                }))}
+                forecast={weatherData.dailyForecast.map((d, index) => {
+                  const dateObj = new Date(
+                    d.date.substring(0, 4) + '-' + d.date.substring(4, 6) + '-' + d.date.substring(6, 8)
+                  );
+                  const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                  return {
+                    day: index === 0 ? 'Hari Ini' : dayNames[dateObj.getDay()],
+                    date: dateObj.toISOString(),
+                    weather: d.weather.description,
+                    tempHigh: d.tempMax,
+                    tempLow: d.tempMin,
+                    precipitation: d.precipitation || d.humidity || 50,
+                  };
+                })}
               />
             </View>
           </>

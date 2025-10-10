@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Dimensions } from 'react-native';
 import { Text } from '~/components/ui/text';
-import { VictoryChart, VictoryLine, VictoryArea, VictoryAxis, VictoryTheme } from 'victory-native';
+import { CartesianChart, Line, Area } from 'victory-native';
 import { useTheme } from '~/lib/theme-provider';
 import { COLORS } from '~/lib/constants';
 
@@ -17,62 +17,41 @@ interface TemperatureChartProps {
 
 export function TemperatureChart({ data }: TemperatureChartProps) {
   const { colorScheme } = useTheme();
-  const width = Dimensions.get('window').width - 32;
-
-  const tempData = data.map((d, i) => ({ x: i, y: d.temp }));
-  const humidityData = data.map((d, i) => ({ x: i, y: d.humidity }));
-
-  const axisColor = colorScheme === 'dark' ? '#888' : '#666';
-  const gridColor = colorScheme === 'dark' ? '#333' : '#e5e7eb';
+  
+  // Transform data for victory-native v41
+  const chartData = data.map((d, i) => ({
+    x: i,
+    temp: d.temp,
+    humidity: d.humidity,
+  }));
 
   return (
     <View>
-      <VictoryChart
-        width={width}
-        height={200}
-        theme={VictoryTheme.material}
-        padding={{ top: 20, bottom: 40, left: 50, right: 20 }}>
-        {/* Grid lines */}
-        <VictoryAxis
-          dependentAxis
-          style={{
-            axis: { stroke: gridColor },
-            tickLabels: { fill: axisColor, fontSize: 10 },
-            grid: { stroke: gridColor, strokeDasharray: '4,4' },
-          }}
-        />
-        <VictoryAxis
-          tickFormat={(t) => data[t]?.time || ''}
-          style={{
-            axis: { stroke: gridColor },
-            tickLabels: { fill: axisColor, fontSize: 10, angle: -45, textAnchor: 'end' },
-          }}
-        />
-
-        {/* Humidity Area */}
-        <VictoryArea
-          data={humidityData}
-          style={{
-            data: {
-              fill: COLORS.chart.humidity,
-              fillOpacity: 0.2,
-              stroke: COLORS.chart.humidity,
-              strokeWidth: 2,
-            },
-          }}
-        />
-
-        {/* Temperature Line */}
-        <VictoryLine
-          data={tempData}
-          style={{
-            data: {
-              stroke: COLORS.chart.temperature,
-              strokeWidth: 3,
-            },
-          }}
-        />
-      </VictoryChart>
+      <View style={{ height: 200 }}>
+        <CartesianChart
+          data={chartData}
+          xKey="x"
+          yKeys={['temp', 'humidity']}
+          domainPadding={{ left: 10, right: 10, top: 20, bottom: 20 }}>
+          {({ points }) => (
+            <>
+              <Area
+                points={points.humidity}
+                y0={0}
+                color={COLORS.chart.humidity}
+                opacity={0.2}
+                curveType="catmullRom"
+              />
+              <Line
+                points={points.temp}
+                color={COLORS.chart.temperature}
+                strokeWidth={3}
+                curveType="catmullRom"
+              />
+            </>
+          )}
+        </CartesianChart>
+      </View>
 
       {/* Legend */}
       <View className="flex-row justify-center gap-6 mt-2">
