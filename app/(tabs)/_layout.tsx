@@ -10,16 +10,23 @@ import { Sidebar } from '~/components/navigation/sidebar';
 function ProfileButton() {
   const [modalVisible, setModalVisible] = useState(false);
   const { colorScheme } = useTheme();
+  const { isDesktop } = useBreakpoint();
+
+  const trigger = (
+    <Pressable onPress={() => setModalVisible(true)} className="mr-4">
+      <User
+        size={24}
+        color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(215.4 16.3% 46.9%)'}
+      />
+    </Pressable>
+  );
+
   return (
-    <>
-      <Pressable onPress={() => setModalVisible(true)} className="mr-4">
-        <User
-          size={24}
-          color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(215.4 16.3% 46.9%)'}
-        />
-      </Pressable>
-      <ProfileModal visible={modalVisible} onClose={() => setModalVisible(false)} />
-    </>
+    <ProfileModal
+      visible={modalVisible}
+      onClose={() => setModalVisible(false)}
+      trigger={isDesktop ? trigger : undefined}
+    />
   );
 }
 

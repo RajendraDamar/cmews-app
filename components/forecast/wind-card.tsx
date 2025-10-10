@@ -4,6 +4,7 @@ import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '~/components/ui/collapsible';
 import { ChevronDown, Wind } from 'lucide-react-native';
+import { DirectionArrow } from '~/components/weather/direction-arrow';
 import { CartesianChart, Line } from 'victory-native';
 import type { WindForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
@@ -110,9 +111,9 @@ export function WindCard({ seaArea, direction, speedMin, speedMax, hourly }: Win
                 <View key={index}>
                   <View className="flex-row items-center justify-between py-2">
                     <Text className="w-16 font-medium">{entry.time}</Text>
-                    <Text className="flex-1 text-center" variant="muted" size="sm">
-                      {entry.direction}
-                    </Text>
+                    <View className="flex-1 items-center">
+                      <DirectionArrow direction={entry.direction} size={20} showLabel />
+                    </View>
                     <Text className="w-20 text-right font-semibold">{entry.speed} km/h</Text>
                   </View>
                   {index < hourly.length - 1 && <Separator />}

@@ -2,13 +2,15 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { Card, CardContent } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
-import { Droplets, Wind, Thermometer } from 'lucide-react-native';
+import { Droplets, Thermometer } from 'lucide-react-native';
+import { DirectionArrow } from '~/components/weather/direction-arrow';
 import { useTheme } from '~/lib/theme-provider';
 
 interface QuickStatsProps {
   humidity: number;
   windSpeed: number;
   feelsLike: number;
+  windDirection?: string;
 }
 
 interface StatCardProps {
@@ -46,7 +48,12 @@ function StatCard({ icon: Icon, label, value, progress }: StatCardProps) {
   );
 }
 
-export function QuickStats({ humidity, windSpeed, feelsLike }: QuickStatsProps) {
+export function QuickStats({
+  humidity,
+  windSpeed,
+  feelsLike,
+  windDirection = 'Utara',
+}: QuickStatsProps) {
   return (
     <View className="px-4 pt-4">
       <Text className="mb-3 text-lg font-semibold">Ringkasan Cepat</Text>
@@ -55,7 +62,19 @@ export function QuickStats({ humidity, windSpeed, feelsLike }: QuickStatsProps) 
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{ gap: 12 }}>
         <StatCard icon={Droplets} label="Kelembapan" value={`${humidity}%`} progress={humidity} />
-        <StatCard icon={Wind} label="Kecepatan Angin" value={`${windSpeed} km/h`} />
+        <Card className="min-w-[140px]">
+          <CardContent className="p-4">
+            <View className="flex-row items-center gap-3">
+              <DirectionArrow direction={windDirection} size={24} />
+              <View className="flex-1">
+                <Text variant="muted" size="sm">
+                  Kecepatan Angin
+                </Text>
+                <Text className="text-xl font-semibold">{windSpeed} km/h</Text>
+              </View>
+            </View>
+          </CardContent>
+        </Card>
         <StatCard icon={Thermometer} label="Terasa Seperti" value={`${feelsLike}°`} />
       </ScrollView>
     </View>

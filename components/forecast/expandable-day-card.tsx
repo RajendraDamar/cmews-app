@@ -6,10 +6,12 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '~/component
 import { ChevronDown } from 'lucide-react-native';
 import { WeatherIcon } from './weather-icon';
 import { HourlyBreakdown } from './hourly-breakdown';
-import { WeatherChart } from './weather-chart';
+import { TemperatureChart } from './temperature-chart';
+import { PrecipitationChart } from './precipitation-chart';
 import type { WeatherForecastDay } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
+import * as Haptics from 'expo-haptics';
 
 export function ExpandableDayCard({
   day,
@@ -22,11 +24,16 @@ export function ExpandableDayCard({
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
 
+  const handleToggle = (open: boolean) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setIsOpen(open);
+  };
+
   const dateObj = new Date(date);
   const dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+    <Collapsible open={isOpen} onOpenChange={handleToggle}>
       <Card>
         <CollapsibleTrigger asChild>
           <CardContent className="p-4">
@@ -68,7 +75,15 @@ export function ExpandableDayCard({
 
             {/* Temperature & Humidity Chart */}
             <Text className="mb-2 font-semibold">Grafik Suhu & Kelembapan</Text>
-            <WeatherChart data={hourly} />
+            <TemperatureChart data={hourly} />
+
+            <Separator className="my-4" />
+
+            {/* Precipitation Chart */}
+            <Text className="mb-2 font-semibold">Curah Hujan</Text>
+            <PrecipitationChart
+              data={hourly.map((h) => ({ time: h.time, precipitation: h.humidity }))}
+            />
 
             <Separator className="my-4" />
 
