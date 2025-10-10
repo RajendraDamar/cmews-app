@@ -25,18 +25,26 @@ const textVariants = cva('', {
   },
 });
 
+// Context for passing className to child Text components
+const TextClassContext = React.createContext<string | undefined>(undefined);
+
 interface TextProps
   extends React.ComponentPropsWithoutRef<typeof RNText>,
     VariantProps<typeof textVariants> {}
 
 const Text = React.forwardRef<React.ElementRef<typeof RNText>, TextProps>(
   ({ className, variant, size, ...props }, ref) => {
+    const textClass = React.useContext(TextClassContext);
     return (
-      <RNText ref={ref} className={cn(textVariants({ variant, size, className }))} {...props} />
+      <RNText
+        ref={ref}
+        className={cn(textVariants({ variant, size }), textClass, className)}
+        {...props}
+      />
     );
   }
 );
 
 Text.displayName = 'Text';
 
-export { Text, textVariants };
+export { Text, TextClassContext, textVariants };
