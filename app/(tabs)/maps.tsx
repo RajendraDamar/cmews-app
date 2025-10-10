@@ -1,7 +1,8 @@
 // Maps Tab - Weather Observation Reporting Platform
-import { View, Platform, Pressable } from 'react-native';
+import { View, Platform, Pressable, useWindowDimensions } from 'react-native';
 import { useState, useRef, useEffect } from 'react';
-import { SearchBar } from '~/components/maps/search-bar';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { CollapsibleSearch } from '~/components/maps/collapsible-search';
 import { SeverityMarker } from '~/components/maps/severity-marker';
 import { ReportBottomSheet } from '~/components/maps/report-bottom-sheet';
 import { ReportFormDialog } from '~/components/maps/report-form-dialog';
@@ -70,6 +71,8 @@ function WebMap() {
 export default function MapsScreen() {
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
+  const insets = useSafeAreaInsets();
+  const { height } = useWindowDimensions();
   const [selectedReport, setSelectedReport] = useState<WeatherReport | null>(null);
   const [showReportForm, setShowReportForm] = useState(false);
   const [showWeatherLayer, setShowWeatherLayer] = useState(false);
@@ -83,6 +86,9 @@ export default function MapsScreen() {
   const [mapError, setMapError] = useState<string | null>(null);
   const [reports, setReports] = useState<WeatherReport[]>(mockWeatherReports);
   const cameraRef = useRef<any>(null);
+
+  // Calculate exact map height for full screen
+  const mapHeight = height - insets.top - insets.bottom;
 
   // Simulate map loading
   useEffect(() => {
@@ -187,7 +193,7 @@ export default function MapsScreen() {
     }
 
     return (
-      <View className="flex-1">
+      <View style={{ flex: 1, height: isDesktop ? '100%' : mapHeight }}>
         {Platform.OS === 'web' ? (
           <WebMap />
         ) : MapLibreGL ? (
@@ -238,6 +244,8 @@ export default function MapsScreen() {
           {renderDesktopSidebar()}
           <View className="relative flex-[0.7]">
             {renderMap()}
+            {/* Collapsible Search */}
+            <CollapsibleSearch placeholder="Cari lokasi..." />
             {/* Weather Layer Toggle (Desktop) */}
             <WeatherLayerToggle
               showLayer={showWeatherLayer}
@@ -279,8 +287,8 @@ export default function MapsScreen() {
           {renderMap()}
 
           {/* Mobile Overlays */}
-          {/* Search Bar */}
-          <SearchBar placeholder="Cari lokasi..." />
+          {/* Collapsible Search */}
+          <CollapsibleSearch placeholder="Cari lokasi..." />
 
           {/* Weather Layer Toggle (Mobile) */}
           <WeatherLayerToggle

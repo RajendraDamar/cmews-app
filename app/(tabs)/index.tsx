@@ -9,7 +9,7 @@ import { HeroCard } from '~/components/weather/hero-card';
 import { QuickStats } from '~/components/weather/quick-stats';
 import { HourlyForecastCard } from '~/components/weather/hourly-forecast-card';
 import { DetailedMetrics } from '~/components/weather/detailed-metrics';
-import { DailyForecast } from '~/components/weather/daily-forecast';
+import { DailyForecastCard } from '~/components/weather/daily-forecast-card';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { useTheme } from '~/lib/theme-provider';
 
@@ -131,6 +131,7 @@ export default function Home() {
                     humidity={weatherData.currentWeather.humidity}
                     windSpeed={weatherData.currentWeather.windSpeed}
                     feelsLike={weatherData.currentWeather.feelsLike}
+                    windDirection={weatherData.currentWeather.windDirection}
                   />
                 </View>
               </View>
@@ -151,6 +152,7 @@ export default function Home() {
                   humidity={weatherData.currentWeather.humidity}
                   windSpeed={weatherData.currentWeather.windSpeed}
                   feelsLike={weatherData.currentWeather.feelsLike}
+                  windDirection={weatherData.currentWeather.windDirection}
                 />
               </>
             )}
@@ -179,7 +181,18 @@ export default function Home() {
             />
 
             {/* Daily Forecast */}
-            <DailyForecast dailyData={weatherData.dailyForecast} />
+            <View className="px-4 pb-4">
+              <DailyForecastCard
+                forecast={weatherData.dailyForecast.map((d) => ({
+                  day: d.day,
+                  date: d.date,
+                  weather: d.weather.description,
+                  tempHigh: d.tempMax,
+                  tempLow: d.tempMin,
+                  precipitation: d.humidity || 50,
+                }))}
+              />
+            </View>
           </>
         )}
       </ScrollView>
