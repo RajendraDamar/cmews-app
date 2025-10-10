@@ -2,7 +2,7 @@ import { ScrollView, View } from 'react-native';
 import { Card, CardContent } from '~/components/ui';
 import { Text } from '~/components/ui/text';
 import { MOCK_3DAY_FORECAST } from '~/constants/mock-data';
-import { Ionicons } from '@expo/vector-icons';
+import { Droplets, CloudRain, Wind } from 'lucide-react-native';
 import { useTheme } from '~/lib/theme-provider';
 
 export default function Day3Forecast() {
@@ -21,8 +21,7 @@ export default function Day3Forecast() {
                   <Text className="text-lg font-semibold">{hour.time}</Text>
                   <View className="mt-2 flex-row gap-4">
                     <View className="flex-row items-center gap-1">
-                      <Ionicons
-                        name="water"
+                      <Droplets
                         size={16}
                         color={colorScheme === 'dark' ? '#999' : '#666'}
                       />
@@ -31,8 +30,7 @@ export default function Day3Forecast() {
                       </Text>
                     </View>
                     <View className="flex-row items-center gap-1">
-                      <Ionicons
-                        name="rainy"
+                      <CloudRain
                         size={16}
                         color={colorScheme === 'dark' ? '#999' : '#666'}
                       />
@@ -41,8 +39,7 @@ export default function Day3Forecast() {
                       </Text>
                     </View>
                     <View className="flex-row items-center gap-1">
-                      <Ionicons
-                        name="speedometer"
+                      <Wind
                         size={16}
                         color={colorScheme === 'dark' ? '#999' : '#666'}
                       />
@@ -53,8 +50,7 @@ export default function Day3Forecast() {
                   </View>
                 </View>
                 <View className="items-center">
-                  <Ionicons
-                    name={hour.icon as any}
+                  <CloudRain
                     size={40}
                     color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
                   />

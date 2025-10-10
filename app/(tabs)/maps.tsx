@@ -3,7 +3,7 @@ import { useState, useRef } from 'react';
 import { SearchBar } from '~/components/maps/search-bar';
 import { PlaceCard } from '~/components/maps/place-card';
 import { Text } from '~/components/ui/text';
-import { Ionicons } from '@expo/vector-icons';
+import { Plus, Minus, Navigation } from 'lucide-react-native';
 import { useTheme } from '~/lib/theme-provider';
 
 // Conditionally import MapLibre based on platform
@@ -147,12 +147,12 @@ export default function MapsScreen() {
           <Pressable
             onPress={handleZoomIn}
             className="mb-2 h-12 w-12 items-center justify-center rounded-full bg-card shadow-lg active:opacity-70">
-            <Ionicons name="add" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+            <Plus size={24} color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'} />
           </Pressable>
           <Pressable
             onPress={handleZoomOut}
             className="h-12 w-12 items-center justify-center rounded-full bg-card shadow-lg active:opacity-70">
-            <Ionicons name="remove" size={24} color={colorScheme === 'dark' ? '#fff' : '#000'} />
+            <Minus size={24} color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'} />
           </Pressable>
         </View>
       )}
@@ -162,7 +162,7 @@ export default function MapsScreen() {
         onPress={handleLocationPress}
         className={`absolute ${isDesktop ? 'right-4' : 'right-4'} ${selectedPlace ? 'bottom-48' : 'bottom-4'} h-14 w-14 items-center justify-center rounded-full bg-card shadow-lg active:opacity-70`}
         style={{ zIndex: 10 }}>
-        <Ionicons name="locate" size={24} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
+        <Navigation size={24} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
       </Pressable>
 
       {/* Place Card */}

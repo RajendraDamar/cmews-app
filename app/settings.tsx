@@ -1,7 +1,8 @@
 import { Stack, useRouter } from 'expo-router';
 import { View, Text, Switch, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Moon, Bell, Lock, LogOut, ChevronRight } from 'lucide-react-native';
 import { useState } from 'react';
+import { useTheme } from '~/lib/theme-provider';
 
 function SettingRow({ icon, label, trailing, onPress }: any) {
   return (
@@ -15,8 +16,11 @@ function SettingRow({ icon, label, trailing, onPress }: any) {
 
 export default function SettingsScreen() {
   const router = useRouter();
+  const { colorScheme } = useTheme();
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
+  
+  const iconColor = colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)';
 
   return (
     <>
@@ -27,28 +31,28 @@ export default function SettingsScreen() {
 
           <View className="rounded-lg bg-card">
             <SettingRow
-              icon={<Ionicons name="moon" size={20} color="#666" />}
+              icon={<Moon size={20} color={iconColor} />}
               label="Dark Mode"
               trailing={<Switch value={darkMode} onValueChange={setDarkMode} />}
             />
 
             <SettingRow
-              icon={<Ionicons name="notifications" size={20} color="#666" />}
+              icon={<Bell size={20} color={iconColor} />}
               label="Notifications"
               trailing={<Switch value={notifications} onValueChange={setNotifications} />}
             />
 
             <SettingRow
-              icon={<Ionicons name="lock-closed" size={20} color="#666" />}
+              icon={<Lock size={20} color={iconColor} />}
               label="Privacy"
-              trailing={<Ionicons name="chevron-forward" size={20} color="#666" />}
+              trailing={<ChevronRight size={20} color={iconColor} />}
               onPress={() => router.push('/privacy')}
             />
 
             <SettingRow
-              icon={<Ionicons name="log-out" size={20} color="#666" />}
+              icon={<LogOut size={20} color={iconColor} />}
               label="Sign Out"
-              trailing={<Ionicons name="chevron-forward" size={20} color="#666" />}
+              trailing={<ChevronRight size={20} color={iconColor} />}
               onPress={() => router.replace('/(auth)/login')}
             />
           </View>
