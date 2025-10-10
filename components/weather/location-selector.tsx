@@ -45,7 +45,7 @@ export function LocationSelector({
           accessibilityLabel="Perbarui cuaca">
           <RefreshCw size={20} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
         </Pressable>
-        <Text variant="muted" size="xs">
+        <Text variant="muted" size="sm">
           {lastUpdated}
         </Text>
       </View>

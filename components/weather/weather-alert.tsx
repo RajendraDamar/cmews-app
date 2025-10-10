@@ -39,13 +39,17 @@ export function WeatherAlertCard({ alert, onDismiss }: WeatherAlertProps) {
             <View className="flex-1">
               <View className="mb-2 flex-row items-center gap-2">
                 <Text className={`font-bold ${colors.text}`}>{alert.title}</Text>
-                <Badge variant="outline" className="text-xs">
-                  {alert.type === 'warning'
-                    ? 'Peringatan'
-                    : alert.type === 'watch'
-                      ? 'Pengawasan'
-                      : 'Pemberitahuan'}
-                </Badge>
+                <Badge
+                  variant="outline"
+                  className="text-xs"
+                  label={
+                    alert.type === 'warning'
+                      ? 'Peringatan'
+                      : alert.type === 'watch'
+                        ? 'Pengawasan'
+                        : 'Pemberitahuan'
+                  }
+                />
               </View>
               <Text className="mb-2">{alert.description}</Text>
               <Text variant="muted" size="sm">
