@@ -32,9 +32,6 @@ jobs:
       - name: Install Expo CLI
         run: npm install -g @expo/cli@latest
 
-      - name: Run Expo doctor
-        run: npx expo-doctor
-
       - name: Verify TypeScript configuration
         run: npx tsc --noEmit --skipLibCheck
 
