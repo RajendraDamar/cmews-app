@@ -23,15 +23,18 @@ export function HeroCard({ temperature, weather, location, lastUpdate }: HeroCar
   return (
     <Card
       className={cn(
-        'mx-4 mt-2 overflow-hidden border-0',
+        'mx-4 mt-2 overflow-hidden border-0 shadow-lg',
         colorScheme === 'dark' ? 'bg-blue-900' : 'bg-gradient-to-br'
       )}
       style={
         colorScheme === 'light'
           ? {
               backgroundColor: '#3b82f6', // blue-500 base
+              elevation: 8, // Android shadow
             }
-          : undefined
+          : {
+              elevation: 8, // Android shadow
+            }
       }>
       <CardContent className="p-6">
         <View className="flex-row items-start justify-between">
