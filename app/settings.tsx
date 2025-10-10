@@ -19,7 +19,7 @@ export default function SettingsScreen() {
   const { colorScheme } = useTheme();
   const [darkMode, setDarkMode] = useState(false);
   const [notifications, setNotifications] = useState(true);
-  
+
   const iconColor = colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)';
 
   return (

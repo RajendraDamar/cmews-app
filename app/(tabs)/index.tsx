@@ -23,10 +23,7 @@ export default function Home() {
                   {MOCK_TODAY_WEATHER.location}
                 </CardDescription>
               </View>
-              <CloudRain
-                size={64}
-                color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
-              />
+              <CloudRain size={64} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
             </View>
           </CardHeader>
           <CardContent>
@@ -53,16 +50,10 @@ export default function Home() {
                   <Text className="mb-2 text-sm" variant="muted">
                     {hour.time}
                   </Text>
-                  <CloudRain
-                    size={32}
-                    color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
-                  />
+                  <CloudRain size={32} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
                   <Text className="mt-2 text-lg font-semibold">{hour.temp}°</Text>
                   <View className="mt-1 flex-row items-center gap-1">
-                    <Droplets
-                      size={12}
-                      color={colorScheme === 'dark' ? '#999' : '#666'}
-                    />
+                    <Droplets size={12} color={colorScheme === 'dark' ? '#999' : '#666'} />
                     <Text variant="muted" size="sm">
                       {hour.precipitation}%
                     </Text>
@@ -80,10 +71,7 @@ export default function Home() {
             <Card className="min-w-[45%] flex-1">
               <CardContent className="p-4">
                 <View className="flex-row items-center gap-2">
-                  <Droplets
-                    size={20}
-                    color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
-                  />
+                  <Droplets size={20} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
                   <Text variant="muted">Humidity</Text>
                 </View>
                 <Text className="mt-2 text-2xl font-semibold">{MOCK_TODAY_WEATHER.humidity}%</Text>
@@ -93,10 +81,7 @@ export default function Home() {
             <Card className="min-w-[45%] flex-1">
               <CardContent className="p-4">
                 <View className="flex-row items-center gap-2">
-                  <Wind
-                    size={20}
-                    color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
-                  />
+                  <Wind size={20} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
                   <Text variant="muted">Wind</Text>
                 </View>
                 <Text className="mt-2 text-2xl font-semibold">
@@ -108,10 +93,7 @@ export default function Home() {
             <Card className="min-w-[45%] flex-1">
               <CardContent className="p-4">
                 <View className="flex-row items-center gap-2">
-                  <Sun
-                    size={20}
-                    color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
-                  />
+                  <Sun size={20} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
                   <Text variant="muted">UV Index</Text>
                 </View>
                 <Text className="mt-2 text-2xl font-semibold">{MOCK_TODAY_WEATHER.uvIndex}</Text>
@@ -121,10 +103,7 @@ export default function Home() {
             <Card className="min-w-[45%] flex-1">
               <CardContent className="p-4">
                 <View className="flex-row items-center gap-2">
-                  <Eye
-                    size={20}
-                    color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
-                  />
+                  <Eye size={20} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
                   <Text variant="muted">Visibility</Text>
                 </View>
                 <Text className="mt-2 text-2xl font-semibold">

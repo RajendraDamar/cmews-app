@@ -1,15 +1,15 @@
 import { View, Pressable } from 'react-native';
-import { 
-  Home, 
-  CloudRain, 
-  Map, 
-  ChevronLeft, 
-  ChevronRight, 
-  User, 
-  Settings, 
-  Moon, 
+import {
+  Home,
+  CloudRain,
+  Map,
+  ChevronLeft,
+  ChevronRight,
+  User,
+  Settings,
+  Moon,
   Sun,
-  Cloud
+  Cloud,
 } from 'lucide-react-native';
 import { useRouter, usePathname } from 'expo-router';
 import { Text } from '~/components/ui/text';
@@ -51,31 +51,33 @@ export function Sidebar() {
           borderColor: colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
         }}>
         {/* Logo & Collapse Button */}
-        <View className={`h-14 flex-row items-center justify-between border-b px-4 ${collapsed ? 'px-2' : ''}`}
+        <View
+          className={`h-14 flex-row items-center justify-between border-b px-4 ${collapsed ? 'px-2' : ''}`}
           style={{
-            borderColor: colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+            borderColor:
+              colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
           }}>
           {!collapsed && (
             <View className="flex-row items-center gap-2">
-              <Cloud 
-                size={24} 
-                color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'} 
+              <Cloud
+                size={24}
+                color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'}
               />
               <Text className="text-lg font-semibold">CMEWS</Text>
             </View>
           )}
-          <Pressable 
+          <Pressable
             onPress={() => setCollapsed(!collapsed)}
             className="rounded-md p-1.5 active:bg-accent">
             {collapsed ? (
-              <ChevronRight 
-                size={18} 
-                color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'} 
+              <ChevronRight
+                size={18}
+                color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
               />
             ) : (
-              <ChevronLeft 
-                size={18} 
-                color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'} 
+              <ChevronLeft
+                size={18}
+                color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
               />
             )}
           </Pressable>
@@ -86,7 +88,7 @@ export function Sidebar() {
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
-            
+
             return (
               <Pressable
                 key={item.path}
@@ -127,24 +129,20 @@ export function Sidebar() {
         </View>
 
         {/* Bottom Section */}
-        <View className="border-t px-3 py-2"
+        <View
+          className="border-t px-3 py-2"
           style={{
-            borderColor: colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+            borderColor:
+              colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
           }}>
           {/* Theme Toggle */}
           <Pressable
             onPress={toggleTheme}
             className="mb-1 flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-accent">
             {colorScheme === 'dark' ? (
-              <Moon 
-                size={20} 
-                color="hsl(215 20.2% 65.1%)" 
-              />
+              <Moon size={20} color="hsl(215 20.2% 65.1%)" />
             ) : (
-              <Sun 
-                size={20} 
-                color="hsl(215.4 16.3% 46.9%)" 
-              />
+              <Sun size={20} color="hsl(215.4 16.3% 46.9%)" />
             )}
             {!collapsed && (
               <Text
@@ -161,9 +159,9 @@ export function Sidebar() {
           <Pressable
             onPress={() => router.push('/settings')}
             className="mb-1 flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-accent">
-            <Settings 
-              size={20} 
-              color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'} 
+            <Settings
+              size={20}
+              color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
             />
             {!collapsed && (
               <Text
@@ -182,9 +180,9 @@ export function Sidebar() {
           <Pressable
             onPress={() => setModalVisible(true)}
             className="flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-accent">
-            <User 
-              size={20} 
-              color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'} 
+            <User
+              size={20}
+              color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
             />
             {!collapsed && (
               <Text

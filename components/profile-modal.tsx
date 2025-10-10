@@ -92,15 +92,9 @@ export function ProfileModal({ visible, onClose }: ProfileModalProps) {
                     onPress={toggleTheme}>
                     <View className="flex-row items-center gap-3">
                       {colorScheme === 'dark' ? (
-                        <Moon
-                          size={20}
-                          color="hsl(215 20.2% 65.1%)"
-                        />
+                        <Moon size={20} color="hsl(215 20.2% 65.1%)" />
                       ) : (
-                        <Sun
-                          size={20}
-                          color="hsl(215.4 16.3% 46.9%)"
-                        />
+                        <Sun size={20} color="hsl(215.4 16.3% 46.9%)" />
                       )}
                       <Text className="text-sm">Theme</Text>
                     </View>
@@ -123,7 +117,13 @@ export function ProfileModal({ visible, onClose }: ProfileModalProps) {
                           onPress={item.onPress}>
                           <Icon
                             size={20}
-                            color={item.danger ? 'hsl(0 84.2% 60.2%)' : colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
+                            color={
+                              item.danger
+                                ? 'hsl(0 84.2% 60.2%)'
+                                : colorScheme === 'dark'
+                                  ? 'hsl(215 20.2% 65.1%)'
+                                  : 'hsl(215.4 16.3% 46.9%)'
+                            }
                           />
                           <Text
                             className={`flex-1 text-sm ${item.danger ? 'text-destructive' : 'text-foreground'}`}>

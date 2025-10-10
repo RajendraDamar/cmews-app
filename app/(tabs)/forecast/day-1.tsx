@@ -21,28 +21,19 @@ export default function Day1Forecast() {
                   <Text className="text-lg font-semibold">{hour.time}</Text>
                   <View className="mt-2 flex-row gap-4">
                     <View className="flex-row items-center gap-1">
-                      <Droplets
-                        size={16}
-                        color={colorScheme === 'dark' ? '#999' : '#666'}
-                      />
+                      <Droplets size={16} color={colorScheme === 'dark' ? '#999' : '#666'} />
                       <Text variant="muted" size="sm">
                         {hour.humidity}%
                       </Text>
                     </View>
                     <View className="flex-row items-center gap-1">
-                      <CloudRain
-                        size={16}
-                        color={colorScheme === 'dark' ? '#999' : '#666'}
-                      />
+                      <CloudRain size={16} color={colorScheme === 'dark' ? '#999' : '#666'} />
                       <Text variant="muted" size="sm">
                         {hour.precipitation}%
                       </Text>
                     </View>
                     <View className="flex-row items-center gap-1">
-                      <Wind
-                        size={16}
-                        color={colorScheme === 'dark' ? '#999' : '#666'}
-                      />
+                      <Wind size={16} color={colorScheme === 'dark' ? '#999' : '#666'} />
                       <Text variant="muted" size="sm">
                         {hour.windSpeed} km/h
                       </Text>
@@ -50,10 +41,7 @@ export default function Day1Forecast() {
                   </View>
                 </View>
                 <View className="items-center">
-                  <CloudRain
-                    size={40}
-                    color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
-                  />
+                  <CloudRain size={40} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
                   <Text className="mt-2 text-2xl font-bold">{hour.temp}°</Text>
                 </View>
               </View>
