@@ -49,9 +49,11 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
           <View className="mb-4">
             <View className="mb-2 flex-row items-center justify-between">
               <Text className="flex-1 text-xl font-bold">{report.location}</Text>
-              <Badge variant={severityBadge.variant}>
-                <Text className="font-medium text-white">{severityBadge.label}</Text>
-              </Badge>
+              <Badge
+                variant={severityBadge.variant}
+                label={severityBadge.label}
+                labelClasses="text-white"
+              />
             </View>
           </View>
 

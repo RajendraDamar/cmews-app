@@ -1,5 +1,5 @@
 import { View } from 'react-native';
-import { MapOff, RefreshCw } from 'lucide-react-native';
+import { AlertCircle } from 'lucide-react-native';
 import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
@@ -18,16 +18,12 @@ export function MapErrorState({ message = 'Unable to load map', onRetry }: MapEr
     <View className="flex-1 items-center justify-center bg-muted p-6">
       <Card className="w-full max-w-md">
         <CardContent className="items-center gap-4 p-6">
-          <MapOff size={64} color={iconColor} />
+          <AlertCircle size={64} color={iconColor} />
           <Text className="text-center text-xl font-semibold">Map Unavailable</Text>
           <Text variant="muted" className="text-center">
             {message}
           </Text>
-          {onRetry && (
-            <Button label="Try Again" onPress={onRetry} className="w-full">
-              <RefreshCw size={16} color="#fff" />
-            </Button>
-          )}
+          {onRetry && <Button label="Try Again" onPress={onRetry} className="w-full" />}
         </CardContent>
       </Card>
     </View>

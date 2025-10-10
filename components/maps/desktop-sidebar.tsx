@@ -114,11 +114,11 @@ export function DesktopSidebar({
               <CardContent className="p-4">
                 <View className="mb-3 flex-row items-center justify-between">
                   <Text className="flex-1 text-lg font-bold">{selectedReport.location}</Text>
-                  <Badge variant={getSeverityBadge(selectedReport.severity).variant}>
-                    <Text className="text-xs text-white">
-                      {getSeverityBadge(selectedReport.severity).label}
-                    </Text>
-                  </Badge>
+                  <Badge
+                    variant={getSeverityBadge(selectedReport.severity).variant}
+                    label={getSeverityBadge(selectedReport.severity).label}
+                    labelClasses="text-white"
+                  />
                 </View>
 
                 <Separator className="mb-3" />

@@ -1,6 +1,5 @@
 // Report Form Dialog Component
 import { View, ScrollView } from 'react-native';
-import { Camera } from 'lucide-react-native';
 import {
   Dialog,
   DialogContent,
@@ -120,21 +119,18 @@ export function ReportFormDialog({ location, onSubmit, onCancel }: ReportFormDia
             {/* Photo Upload */}
             <View>
               <Text className="mb-2 font-medium">Foto (opsional)</Text>
-              <Button variant="outline" className="flex-row items-center justify-center gap-2">
-                <Camera size={20} />
-                <Text>Unggah Foto</Text>
-              </Button>
+              <Button
+                variant="outline"
+                label="📷 Unggah Foto"
+                className="flex-row items-center justify-center gap-2"
+              />
             </View>
           </View>
         </ScrollView>
 
         <DialogFooter className="mt-4 flex-row gap-2">
-          <Button variant="outline" onPress={onCancel} className="flex-1">
-            <Text>Batal</Text>
-          </Button>
-          <Button onPress={handleSubmit} className="flex-1">
-            <Text className="text-white">Kirim Laporan</Text>
-          </Button>
+          <Button variant="outline" onPress={onCancel} label="Batal" className="flex-1" />
+          <Button onPress={handleSubmit} label="Kirim Laporan" className="flex-1" />
         </DialogFooter>
       </DialogContent>
     </Dialog>

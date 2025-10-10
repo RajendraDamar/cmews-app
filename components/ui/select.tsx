@@ -24,7 +24,7 @@ const SelectContext = React.createContext<{
   value: string;
   onValueChange: (value: string) => void;
   items: SelectItemProps[];
-  setItems: (items: SelectItemProps[]) => void;
+  setItems: React.Dispatch<React.SetStateAction<SelectItemProps[]>>;
 }>({
   value: '',
   onValueChange: () => {},
@@ -105,8 +105,8 @@ export function SelectItem({ value, children }: { value: string; children: React
   const label = typeof children === 'string' ? children : value;
 
   React.useEffect(() => {
-    setItems((prev) => {
-      const exists = prev.find((item) => item.value === value);
+    setItems((prev: SelectItemProps[]) => {
+      const exists = prev.find((item: SelectItemProps) => item.value === value);
       if (exists) return prev;
       return [...prev, { value, label }];
     });
