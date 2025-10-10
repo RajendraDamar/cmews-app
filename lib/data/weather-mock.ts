@@ -273,3 +273,35 @@ export function getWeatherForLocation(
     dailyForecast: generateDailyForecast(),
   };
 }
+
+// Export mock weather data for 5 different provinces
+export const mockWeatherData = {
+  location: DEFAULT_LOCATION,
+  current: {
+    datetime: formatToBMKGDateTime(new Date()),
+    t: 28, // temperature
+    hu: 75, // humidity
+    weather: 'Cerah Berawan',
+    wd: 'Barat Laut', // wind direction
+    ws: 12, // wind speed
+  },
+  hourly: generateHourlyForecast()
+    .slice(0, 8)
+    .map((h) => ({
+      time: h.datetime,
+      temp: h.temperature,
+      humidity: h.humidity,
+      weather: h.weather.description,
+    })),
+  daily: generateDailyForecast().map((d) => ({
+    day: new Date(
+      parseInt(d.date.substring(0, 4)),
+      parseInt(d.date.substring(4, 6)) - 1,
+      parseInt(d.date.substring(6, 8))
+    ).toLocaleDateString('id-ID', { weekday: 'long' }),
+    date: d.date,
+    tempMin: d.tempMin,
+    tempMax: d.tempMax,
+    weather: d.weather.description,
+  })),
+};

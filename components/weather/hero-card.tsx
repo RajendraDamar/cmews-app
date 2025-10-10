@@ -1,0 +1,56 @@
+import React from 'react';
+import { View } from 'react-native';
+import { Card, CardContent } from '~/components/ui/card';
+import { Text } from '~/components/ui/text';
+import { WeatherIcon } from './weather-icon';
+import { cn } from '~/lib/utils';
+import { useTheme } from '~/lib/theme-provider';
+
+interface HeroCardProps {
+  temperature: number;
+  weather: string;
+  location: {
+    kecamatan: string;
+    kota: string;
+    provinsi: string;
+  };
+  lastUpdate: string;
+}
+
+export function HeroCard({ temperature, weather, location, lastUpdate }: HeroCardProps) {
+  const { colorScheme } = useTheme();
+
+  return (
+    <Card
+      className={cn(
+        'mx-4 mt-2 overflow-hidden border-0',
+        colorScheme === 'dark' ? 'bg-blue-900' : 'bg-gradient-to-br'
+      )}
+      style={
+        colorScheme === 'light'
+          ? {
+              backgroundColor: '#3b82f6', // blue-500 base
+            }
+          : undefined
+      }>
+      <CardContent className="p-6">
+        <View className="flex-row items-start justify-between">
+          <View className="flex-1">
+            <Text className="text-5xl font-bold text-white md:text-6xl">{temperature}°</Text>
+            <Text className="mt-3 text-xl text-white/90">{weather}</Text>
+            <Text className="mt-2 text-sm text-white/70">
+              {location.kecamatan}, {location.kota}
+            </Text>
+            <Text className="mt-1 text-sm text-white/70">{location.provinsi}</Text>
+          </View>
+          <View className="items-center">
+            <WeatherIcon condition={weather} size={80} />
+          </View>
+        </View>
+        <View className="mt-4 border-t border-white/20 pt-3">
+          <Text className="text-xs text-white/60">Diperbarui {lastUpdate}</Text>
+        </View>
+      </CardContent>
+    </Card>
+  );
+}
