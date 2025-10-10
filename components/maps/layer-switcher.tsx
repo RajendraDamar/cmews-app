@@ -1,6 +1,5 @@
 import { View, Pressable } from 'react-native';
-import { useState } from 'react';
-import { Map, Satellite, Mountain, Layers, X } from 'lucide-react-native';
+import { Map, Satellite, Mountain, Layers } from 'lucide-react-native';
 import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { Switch } from '~/components/ui/switch';
@@ -25,25 +24,19 @@ export function LayerSwitcher({
   onLayerToggle,
 }: LayerSwitcherProps) {
   const { colorScheme } = useTheme();
-  const [isOpen, setIsOpen] = useState(false);
 
   const iconColor = colorScheme === 'dark' ? '#e5e7eb' : '#1f2937';
 
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
+    <Popover>
       <PopoverTrigger asChild>
         <Pressable className="h-12 w-12 items-center justify-center rounded-full bg-card shadow-lg active:opacity-70">
           <Layers size={20} color={iconColor} />
         </Pressable>
       </PopoverTrigger>
-      <PopoverContent side="left" className="w-64">
+      <PopoverContent className="w-64">
         <View className="gap-3">
-          <View className="flex-row items-center justify-between">
-            <Text className="text-lg font-semibold">Map Layers</Text>
-            <Pressable onPress={() => setIsOpen(false)}>
-              <X size={20} color={iconColor} />
-            </Pressable>
-          </View>
+          <Text className="text-lg font-semibold">Map Layers</Text>
 
           <Separator />
 
