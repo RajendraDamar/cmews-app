@@ -1,22 +1,24 @@
-import { ScrollView, View } from 'react-native';
-import { Card, CardContent, Skeleton } from '~/components/ui';
-import { Text } from '~/components/ui/text';
-import { Droplets, Wind, Compass, Sun, Eye, Gauge } from 'lucide-react-native';
+import { ScrollView, View, RefreshControl } from 'react-native';
+import { Skeleton } from '~/components/ui';
 import { Stack } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { MOCK_BMKG_WEATHER, MOCK_WEATHER_ALERTS } from '~/lib/data/weather-mock';
+import { MOCK_BMKG_WEATHER } from '~/lib/data/weather-mock';
 import { getRelativeTimeIndonesian, parseBMKGDateTime } from '~/lib/utils/indonesian-locale';
 import { LocationSelector } from '~/components/weather/location-selector';
-import { CurrentWeatherCard } from '~/components/weather/current-weather-card';
-import { WeatherDetailCard } from '~/components/weather/weather-detail-card';
-import { HourlyForecast } from '~/components/weather/hourly-forecast';
+import { HeroCard } from '~/components/weather/hero-card';
+import { QuickStats } from '~/components/weather/quick-stats';
+import { HourlyForecastCard } from '~/components/weather/hourly-forecast-card';
+import { DetailedMetrics } from '~/components/weather/detailed-metrics';
 import { DailyForecast } from '~/components/weather/daily-forecast';
-import { WeatherAlertCard } from '~/components/weather/weather-alert';
+import { useBreakpoint } from '~/lib/breakpoints';
+import { useTheme } from '~/lib/theme-provider';
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [weatherData, setWeatherData] = useState(MOCK_BMKG_WEATHER);
-  const [alerts, setAlerts] = useState(MOCK_WEATHER_ALERTS);
+  const { isDesktop } = useBreakpoint();
+  const { colorScheme } = useTheme();
 
   useEffect(() => {
     // Simulate data loading
@@ -27,10 +29,10 @@ export default function Home() {
   }, []);
 
   const handleRefresh = () => {
-    setLoading(true);
+    setRefreshing(true);
     setTimeout(() => {
       setWeatherData(MOCK_BMKG_WEATHER);
-      setLoading(false);
+      setRefreshing(false);
     }, 1000);
   };
 
@@ -39,17 +41,31 @@ export default function Home() {
     console.log('Open location selector');
   };
 
-  const handleDismissAlert = (alertId: string) => {
-    setAlerts(alerts.filter((alert) => alert.id !== alertId));
-  };
-
   const lastUpdatedDate = parseBMKGDateTime(weatherData.lastUpdated);
   const lastUpdatedText = getRelativeTimeIndonesian(lastUpdatedDate);
+
+  // Prepare data for new components
+  const hourlyData = weatherData.hourlyForecast.slice(0, 8).map((h) => ({
+    time: h.datetime,
+    weather: h.weather.description,
+    temp: h.temperature,
+  }));
+
+  const dailyForecast = weatherData.dailyForecast[0];
 
   return (
     <>
       <Stack.Screen options={{ title: 'Cuaca Hari Ini' }} />
-      <ScrollView className="flex-1 bg-background">
+      <ScrollView
+        className="flex-1 bg-background"
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[colorScheme === 'dark' ? '#60a5fa' : '#3b82f6']}
+            tintColor={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
+          />
+        }>
         {loading ? (
           // Skeleton Loading State
           <>
@@ -58,58 +74,32 @@ export default function Home() {
               <Skeleton className="h-4 w-32" />
             </View>
 
-            <Card className="mx-4 mt-2">
-              <CardContent className="p-6">
-                <View className="flex-row items-start justify-between">
-                  <View className="flex-1">
-                    <Skeleton className="mb-2 h-16 w-32" />
-                    <Skeleton className="mb-2 h-6 w-40" />
-                    <Skeleton className="h-4 w-32" />
-                  </View>
-                  <Skeleton className="h-20 w-20 rounded-full" />
+            <View className="mx-4 mt-2 overflow-hidden rounded-lg bg-blue-500 p-6">
+              <View className="flex-row items-start justify-between">
+                <View className="flex-1">
+                  <Skeleton className="mb-2 h-16 w-32" />
+                  <Skeleton className="mb-2 h-6 w-40" />
+                  <Skeleton className="h-4 w-32" />
                 </View>
-                <View className="mt-4 border-t border-border pt-3">
-                  <Skeleton className="h-4 w-full" />
-                </View>
-              </CardContent>
-            </Card>
+                <Skeleton className="h-20 w-20 rounded-full" />
+              </View>
+            </View>
 
             <View className="px-4 pt-4">
               <Skeleton className="mb-3 h-6 w-32" />
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator={false}
-                className="mb-4"
-                contentContainerStyle={{ gap: 12 }}>
-                {[1, 2, 3, 4, 5, 6].map((_, index) => (
-                  <Card key={index} className="w-24">
-                    <CardContent className="items-center p-3">
-                      <Skeleton className="mb-2 h-4 w-12" />
-                      <Skeleton className="mb-2 h-8 w-8 rounded-full" />
-                      <Skeleton className="mb-1 h-5 w-10" />
-                      <Skeleton className="h-3 w-12" />
-                    </CardContent>
-                  </Card>
-                ))}
-              </ScrollView>
-            </View>
-
-            <View className="px-4 pb-4">
-              <Skeleton className="mb-3 h-6 w-20" />
-              <View className="flex-row flex-wrap gap-3">
-                {[1, 2, 3, 4, 5, 6].map((_, index) => (
-                  <Card key={index} className="min-w-[45%] flex-1">
-                    <CardContent className="p-4">
-                      <Skeleton className="mb-2 h-5 w-20" />
-                      <Skeleton className="h-8 w-16" />
-                    </CardContent>
-                  </Card>
+              <View className="flex-row gap-3">
+                {[1, 2, 3].map((_, index) => (
+                  <Skeleton key={index} className="h-24 w-[140px] rounded-lg" />
                 ))}
               </View>
             </View>
+
+            <View className="px-4 pt-4">
+              <Skeleton className="mb-3 h-6 w-40" />
+              <Skeleton className="h-32 w-full rounded-lg" />
+            </View>
           </>
         ) : (
-          // Actual Content
           <>
             {/* Location Selector */}
             <LocationSelector
@@ -121,54 +111,72 @@ export default function Home() {
               onLocationPress={handleLocationPress}
             />
 
-            {/* Weather Alerts */}
-            {alerts.map((alert) => (
-              <WeatherAlertCard
-                key={alert.id}
-                alert={alert}
-                onDismiss={() => handleDismissAlert(alert.id)}
-              />
-            ))}
+            {/* Hero Card and Quick Stats - Responsive Layout */}
+            {isDesktop ? (
+              <View className="flex-row gap-4 px-4">
+                <View className="w-[40%]">
+                  <HeroCard
+                    temperature={weatherData.currentWeather.temperature}
+                    weather={weatherData.currentWeather.weather.description}
+                    location={{
+                      kecamatan: weatherData.location.kecamatan,
+                      kota: weatherData.location.kota,
+                      provinsi: weatherData.location.provinsi,
+                    }}
+                    lastUpdate={lastUpdatedText}
+                  />
+                </View>
+                <View className="flex-1">
+                  <QuickStats
+                    humidity={weatherData.currentWeather.humidity}
+                    windSpeed={weatherData.currentWeather.windSpeed}
+                    feelsLike={weatherData.currentWeather.feelsLike}
+                  />
+                </View>
+              </View>
+            ) : (
+              <>
+                <HeroCard
+                  temperature={weatherData.currentWeather.temperature}
+                  weather={weatherData.currentWeather.weather.description}
+                  location={{
+                    kecamatan: weatherData.location.kecamatan,
+                    kota: weatherData.location.kota,
+                    provinsi: weatherData.location.provinsi,
+                  }}
+                  lastUpdate={lastUpdatedText}
+                />
 
-            {/* Current Weather Card */}
-            <CurrentWeatherCard
-              temperature={weatherData.currentWeather.temperature}
-              feelsLike={weatherData.currentWeather.feelsLike}
-              weatherCode={weatherData.currentWeather.weather.code}
-              weatherDescription={weatherData.currentWeather.weather.description}
-              location={`${weatherData.location.kecamatan}, ${weatherData.location.kota}`}
-              date={new Date()}
-            />
+                <QuickStats
+                  humidity={weatherData.currentWeather.humidity}
+                  windSpeed={weatherData.currentWeather.windSpeed}
+                  feelsLike={weatherData.currentWeather.feelsLike}
+                />
+              </>
+            )}
 
             {/* Hourly Forecast */}
-            <View className="pt-4">
-              <HourlyForecast hourlyData={weatherData.hourlyForecast} />
-            </View>
+            <HourlyForecastCard hourlyData={hourlyData} />
 
-            {/* Weather Details */}
-            <View className="px-4 pb-4">
-              <Text className="mb-3 text-lg font-semibold">Detail Cuaca</Text>
-              <View className="flex-row flex-wrap gap-3">
-                <WeatherDetailCard
-                  icon={Droplets}
-                  label="Kelembapan"
-                  value={`${weatherData.currentWeather.humidity}%`}
-                />
-                <WeatherDetailCard
-                  icon={Wind}
-                  label="Kecepatan Angin"
-                  value={`${weatherData.currentWeather.windSpeed} km/h`}
-                />
-                <WeatherDetailCard
-                  icon={Compass}
-                  label="Arah Angin"
-                  value={weatherData.currentWeather.windDirection}
-                />
-                <WeatherDetailCard icon={Sun} label="Indeks UV" value="5" />
-                <WeatherDetailCard icon={Eye} label="Jarak Pandang" value="10 km" />
-                <WeatherDetailCard icon={Gauge} label="Tekanan" value="1013 hPa" />
-              </View>
-            </View>
+            {/* Detailed Metrics */}
+            <DetailedMetrics
+              temperature={{
+                current: weatherData.currentWeather.temperature,
+                feelsLike: weatherData.currentWeather.feelsLike,
+                min: dailyForecast.tempMin,
+                max: dailyForecast.tempMax,
+              }}
+              wind={{
+                speed: weatherData.currentWeather.windSpeed,
+                direction: weatherData.currentWeather.windDirection,
+                gust: weatherData.currentWeather.windSpeed + 5,
+              }}
+              atmospheric={{
+                pressure: 1013,
+                humidity: weatherData.currentWeather.humidity,
+                visibility: 10,
+              }}
+            />
 
             {/* Daily Forecast */}
             <DailyForecast dailyData={weatherData.dailyForecast} />
