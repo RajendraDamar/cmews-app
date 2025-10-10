@@ -185,7 +185,11 @@ export default function Home() {
               <DailyForecastCard
                 forecast={weatherData.dailyForecast.map((d, index) => {
                   const dateObj = new Date(
-                    d.date.substring(0, 4) + '-' + d.date.substring(4, 6) + '-' + d.date.substring(6, 8)
+                    d.date.substring(0, 4) +
+                      '-' +
+                      d.date.substring(4, 6) +
+                      '-' +
+                      d.date.substring(6, 8)
                   );
                   const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                   return {

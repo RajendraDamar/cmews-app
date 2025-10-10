@@ -1,5 +1,4 @@
 import React from 'react';
-import { View } from 'react-native';
 import { Card, CardContent } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
@@ -30,7 +29,7 @@ export function EmptyState({
     <Card className="mx-4">
       <CardContent className="items-center justify-center p-8">
         <IconComponent size={64} color={iconColor} />
-        <Text className="mt-4 text-xl font-semibold text-center">{title}</Text>
+        <Text className="mt-4 text-center text-xl font-semibold">{title}</Text>
         <Text variant="muted" className="mt-2 text-center">
           {message}
         </Text>

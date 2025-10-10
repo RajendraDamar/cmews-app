@@ -48,7 +48,12 @@ function StatCard({ icon: Icon, label, value, progress }: StatCardProps) {
   );
 }
 
-export function QuickStats({ humidity, windSpeed, feelsLike, windDirection = 'Utara' }: QuickStatsProps) {
+export function QuickStats({
+  humidity,
+  windSpeed,
+  feelsLike,
+  windDirection = 'Utara',
+}: QuickStatsProps) {
   return (
     <View className="px-4 pt-4">
       <Text className="mb-3 text-lg font-semibold">Ringkasan Cepat</Text>

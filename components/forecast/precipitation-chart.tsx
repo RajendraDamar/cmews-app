@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, Dimensions } from 'react-native';
+import { View } from 'react-native';
 import { CartesianChart, Bar } from 'victory-native';
-import { useTheme } from '~/lib/theme-provider';
 import { getPrecipitationColor } from '~/lib/constants';
 
 interface PrecipitationChartData {
@@ -14,8 +13,6 @@ interface PrecipitationChartProps {
 }
 
 export function PrecipitationChart({ data }: PrecipitationChartProps) {
-  const { colorScheme } = useTheme();
-
   const chartData = data.map((d, i) => ({
     x: i,
     precipitation: d.precipitation,

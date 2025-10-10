@@ -35,7 +35,7 @@ export const DIRECTION_MAP: Record<string, number> = {
   Utara: 0,
   'Timur Laut': 45,
   Timur: 90,
-  'Tenggara': 135,
+  Tenggara: 135,
   Selatan: 180,
   'Barat Daya': 225,
   Barat: 270,

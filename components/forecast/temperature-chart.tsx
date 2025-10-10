@@ -1,8 +1,7 @@
 import React from 'react';
-import { View, Dimensions } from 'react-native';
+import { View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { CartesianChart, Line, Area } from 'victory-native';
-import { useTheme } from '~/lib/theme-provider';
 import { COLORS } from '~/lib/constants';
 
 interface TemperatureChartData {
@@ -16,8 +15,6 @@ interface TemperatureChartProps {
 }
 
 export function TemperatureChart({ data }: TemperatureChartProps) {
-  const { colorScheme } = useTheme();
-  
   // Transform data for victory-native v41
   const chartData = data.map((d, i) => ({
     x: i,
@@ -54,7 +51,7 @@ export function TemperatureChart({ data }: TemperatureChartProps) {
       </View>
 
       {/* Legend */}
-      <View className="flex-row justify-center gap-6 mt-2">
+      <View className="mt-2 flex-row justify-center gap-6">
         <View className="flex-row items-center gap-2">
           <View
             className="h-3 w-3 rounded-full"

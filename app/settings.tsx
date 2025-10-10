@@ -62,9 +62,7 @@ export default function SettingsScreen() {
               <SettingRow
                 icon={<Moon size={20} color={iconColor} />}
                 label="Mode Gelap"
-                trailing={
-                  <Switch value={theme === 'dark'} onValueChange={handleThemeChange} />
-                }
+                trailing={<Switch value={theme === 'dark'} onValueChange={handleThemeChange} />}
               />
             </CardContent>
           </Card>
@@ -79,9 +77,7 @@ export default function SettingsScreen() {
               <SettingRow
                 icon={<Bell size={20} color={iconColor} />}
                 label="Notifikasi Push"
-                trailing={
-                  <Switch value={notifications} onValueChange={setNotifications} />
-                }
+                trailing={<Switch value={notifications} onValueChange={setNotifications} />}
               />
             </CardContent>
           </Card>
@@ -144,11 +140,7 @@ export default function SettingsScreen() {
               <CardDescription>Informasi aplikasi</CardDescription>
             </CardHeader>
             <CardContent className="gap-0">
-              <SettingRow
-                icon={<Info size={20} color={iconColor} />}
-                label="Versi"
-                value="1.0.0"
-              />
+              <SettingRow icon={<Info size={20} color={iconColor} />} label="Versi" value="1.0.0" />
               <Separator />
               <SettingRow
                 icon={<Lock size={20} color={iconColor} />}
