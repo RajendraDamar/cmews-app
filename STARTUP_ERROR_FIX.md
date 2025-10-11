@@ -163,6 +163,7 @@ This error typically indicates that a stream (in this case, Metro's bundling str
 - `components/profile-modal.tsx` - Fixed TypeScript error
 - `METRO_FIX_SUMMARY.md` - Previous Metro fixes (tslib resolution)
 - `VISUAL_GUIDE.md` - Visual guide to Metro configuration
+- `WORKLETS_FIX.md` - Fix for react-native-worklets conflict (October 2025)
 
 ## Success Metrics
 
