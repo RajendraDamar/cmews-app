@@ -51,15 +51,3 @@ jobs:
         run: |
           expo export:web --dev --clear
         continue-on-error: true
-
-      - name: Validate project structure
-        run: |
-          echo "✅ Node.js $(node --version)"
-          echo "✅ npm $(npm --version)" 
-          echo "✅ Expo CLI $(expo --version)"
-          echo "✅ TypeScript configuration validated"
-          echo "✅ Dependencies installed"
-          echo "🚀 Environment ready for Copilot coding agent!"
-          echo ""
-          echo "🔥 Firebase environment variables are configured in 'copilot' environment"
-          echo "   Copilot will have access to all Firebase secrets when working on tasks"
