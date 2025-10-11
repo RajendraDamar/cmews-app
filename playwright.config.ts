@@ -21,7 +21,7 @@ export default defineConfig({
     {
       name: 'mobile',
       use: { 
-        ...devices['iPhone 12'],
+        ...devices['Pixel 5'],
         viewport: { width: 375, height: 667 }
       },
     },
@@ -37,7 +37,7 @@ export default defineConfig({
   webServer: {
     command: 'npm run web',
     url: 'http://localhost:8081',
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true,
     timeout: 120000,
   },
 });
