@@ -4,6 +4,30 @@ Community-based Early Warning System for Weather Monitoring
 
 ## 🎉 Latest Update - October 2025
 
+### Worklets Conflict Fix - All Errors Resolved! 🎊
+
+**Fixed the worklets serialization error** that was causing the app to crash with "unknown" file path errors.
+
+**What was fixed:**
+- ✅ Removed duplicate worklets runtime conflict
+- ✅ Fixed `[Worklets] createSerializableObject should never be called in JSWorklets` error
+- ✅ Fixed `ENOENT: no such file or directory, open '...\unknown'` error
+- ✅ Metro bundler now starts without crashes
+
+**Quick Start:**
+```bash
+# Validate the fix
+./test-worklets-fix.sh
+
+# Start development
+npx expo start --clear
+```
+
+**Documentation:**
+- [WORKLETS_QUICK_REF.md](./WORKLETS_QUICK_REF.md) - Quick reference
+- [WORKLETS_FIX.md](./WORKLETS_FIX.md) - Full documentation
+- [STARTUP_ERROR_FIX.md](./STARTUP_ERROR_FIX.md) - Previous Metro fixes
+
 ### Metro Bundler Fix - Now Supporting All Platforms!
 
 The app now runs smoothly on **web, iOS, and Android** with a comprehensive fix for the Metro bundler tslib error.
@@ -153,11 +177,21 @@ module.exports = {
 
 ### Automated Testing
 ```bash
-# Run comprehensive validation
+# Run worklets fix validation
+./test-worklets-fix.sh
+
+# Run Metro fix validation
 ./test-metro-fix.sh
 ```
 
-This validates:
+**Worklets validation:**
+- Metro configuration
+- react-native-worklets dependency tree
+- No direct worklets imports
+- TypeScript compilation
+- Linting
+
+**Metro validation:**
 - Metro configuration
 - tslib resolution
 - TypeScript compilation
@@ -191,10 +225,13 @@ npx expo prebuild
 ## 📚 Documentation
 
 ### Quick Reference
+- [WORKLETS_QUICK_REF.md](./WORKLETS_QUICK_REF.md) - Worklets fix quick reference
 - [VISUAL_GUIDE.md](./VISUAL_GUIDE.md) - Visual diagrams and explanations
 - [METRO_FIX_SUMMARY.md](./METRO_FIX_SUMMARY.md) - Metro fix overview
 
 ### Detailed Guides
+- [WORKLETS_FIX.md](./WORKLETS_FIX.md) - Worklets conflict fix (October 2025)
+- [STARTUP_ERROR_FIX.md](./STARTUP_ERROR_FIX.md) - Metro startup errors fix
 - [markdown/METRO_TSLIB_FIX.md](./markdown/METRO_TSLIB_FIX.md) - Technical deep dive
 - [markdown/README.md](./markdown/README.md) - Documentation index
 - [CHANGES.md](./CHANGES.md) - Change history
@@ -204,6 +241,17 @@ npx expo prebuild
 - [markdown/FRAMER_MOTION_REMOVAL_SUMMARY.md](./markdown/FRAMER_MOTION_REMOVAL_SUMMARY.md) - Animation strategy
 
 ## 🐛 Troubleshooting
+
+### Worklets errors
+
+**"[Worklets] createSerializableObject should never be called in JSWorklets"**
+- Fixed by removing direct react-native-worklets dependency
+- See [WORKLETS_FIX.md](./WORKLETS_FIX.md)
+- Run: `./test-worklets-fix.sh` to validate
+
+**"ENOENT: no such file or directory, open '...\unknown'"**
+- Related to worklets conflict (already fixed)
+- Clear cache: `npx expo start --clear`
 
 ### Metro bundler errors
 
@@ -220,6 +268,7 @@ npx expo prebuild
 
 3. Run validation:
    ```bash
+   ./test-worklets-fix.sh
    ./test-metro-fix.sh
    ```
 
