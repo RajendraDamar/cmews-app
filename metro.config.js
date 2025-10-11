@@ -1,6 +1,7 @@
 const { getDefaultConfig } = require('expo/metro-config');
 const { withNativeWind } = require('nativewind/metro');
 const path = require('path');
+const fs = require('fs');
 
 /** @type {import('expo/metro-config').MetroConfig} */
 
@@ -11,6 +12,9 @@ config.resolver.unstable_enablePackageExports = true;
 
 // Configure source extensions to prioritize platform-specific files
 config.resolver.sourceExts = [...(config.resolver.sourceExts || []), 'mjs', 'cjs'];
+
+// Add watchFolders to ensure Metro watches the right directories
+config.watchFolders = [__dirname];
 
 // Configure transformer to handle ESM modules
 config.transformer = {
@@ -30,16 +34,25 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   // This prevents "Cannot destructure property '__extends' of 'tslib.default'" error
   if (moduleName === 'tslib' || moduleName.startsWith('tslib/')) {
     const tslibPath = path.join(context.projectRoot || __dirname, 'node_modules/tslib/tslib.js');
-    return {
-      filePath: tslibPath,
-      type: 'sourceFile',
-    };
+    // Verify the file exists before returning
+    try {
+      if (fs.existsSync(tslibPath)) {
+        return {
+          filePath: tslibPath,
+          type: 'sourceFile',
+        };
+      }
+    } catch (err) {
+      // Fall through to default resolver if check fails
+    }
   }
 
   // Use the default resolver for everything else
   if (defaultResolver) {
     return defaultResolver(context, moduleName, platform);
   }
+  
+  // Fallback to context's resolveRequest
   return context.resolveRequest(context, moduleName, platform);
 };
 
