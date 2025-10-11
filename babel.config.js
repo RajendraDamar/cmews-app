@@ -1,8 +1,5 @@
 module.exports = function (api) {
   api.cache(true);
-<<<<<<< HEAD
-  
-=======
   let plugins = [];
 
   // Get the platform from the babel caller (set by Metro)
@@ -16,7 +13,6 @@ module.exports = function (api) {
     plugins.push('react-native-reanimated/plugin');
   }
 
->>>>>>> 4021367bdb50792258062acf76a2b9855f1c8a8e
   return {
     presets: [['babel-preset-expo', { jsxImportSource: 'nativewind' }], 'nativewind/babel'],
     plugins: [
