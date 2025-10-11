@@ -4,29 +4,33 @@ Community-based Early Warning System for Weather Monitoring
 
 ## 🎉 Latest Update - October 2025
 
-### Worklets Conflict Fix - All Errors Resolved! 🎊
+### Worklets Web Error Fix - Development Mode Now Works! 🎊
 
-**Fixed the worklets serialization error** that was causing the app to crash with "unknown" file path errors.
+**Fixed the worklets serialization error on web** that was preventing the app from running in development mode.
 
 **What was fixed:**
-- ✅ Removed duplicate worklets runtime conflict
-- ✅ Fixed `[Worklets] createSerializableObject should never be called in JSWorklets` error
-- ✅ Fixed `ENOENT: no such file or directory, open '...\unknown'` error
-- ✅ Metro bundler now starts without crashes
+- ✅ Fixed `[Worklets] createSerializableObject should never be called in JSWorklets` error on web
+- ✅ Added platform-specific Babel configuration (reanimated plugin disabled on web)
+- ✅ Patched react-native-worklets to skip web serialization in dev mode
+- ✅ Web development server now starts without errors
+- ✅ Full cross-platform support maintained (web, iOS, Android)
 
 **Quick Start:**
 ```bash
-# Validate the fix
-./test-worklets-fix.sh
+# Install dependencies (applies patches automatically)
+npm install
 
-# Start development
+# Start web development
+npx expo start --web --clear
+
+# Or start on native
 npx expo start --clear
 ```
 
 **Documentation:**
+- [WORKLETS_WEB_FIX.md](./WORKLETS_WEB_FIX.md) - Complete web fix documentation
 - [WORKLETS_QUICK_REF.md](./WORKLETS_QUICK_REF.md) - Quick reference
-- [WORKLETS_FIX.md](./WORKLETS_FIX.md) - Full documentation
-- [STARTUP_ERROR_FIX.md](./STARTUP_ERROR_FIX.md) - Previous Metro fixes
+- [WORKLETS_FIX.md](./WORKLETS_FIX.md) - Original dependency fix
 
 ### Metro Bundler Fix - Now Supporting All Platforms!
 
@@ -162,16 +166,30 @@ See [METRO_FIX_SUMMARY.md](./METRO_FIX_SUMMARY.md) for details.
 ### Babel (babel.config.js)
 
 ```javascript
-module.exports = {
-  presets: [
-    ['babel-preset-expo', { jsxImportSource: 'nativewind' }],
-    'nativewind/babel'
-  ],
-  plugins: [
-    'react-native-reanimated/plugin'  // Must be last
-  ]
+module.exports = function (api) {
+  api.cache(true);
+  let plugins = [];
+
+  // Get the platform from the babel caller (set by Metro)
+  const platform = api.caller((caller) => caller?.platform);
+
+  // Only add the reanimated plugin for native platforms, not web
+  // This prevents worklets initialization errors on web
+  if (platform !== 'web') {
+    plugins.push('react-native-reanimated/plugin');
+  }
+
+  return {
+    presets: [
+      ['babel-preset-expo', { jsxImportSource: 'nativewind' }],
+      'nativewind/babel'
+    ],
+    plugins
+  };
 };
 ```
+
+**Note**: The reanimated plugin is conditionally loaded based on platform. See [WORKLETS_WEB_FIX.md](./WORKLETS_WEB_FIX.md) for details.
 
 ## 🧪 Testing & Validation
 
@@ -225,12 +243,13 @@ npx expo prebuild
 ## 📚 Documentation
 
 ### Quick Reference
+- [WORKLETS_WEB_FIX.md](./WORKLETS_WEB_FIX.md) - Web platform worklets fix (October 2025)
 - [WORKLETS_QUICK_REF.md](./WORKLETS_QUICK_REF.md) - Worklets fix quick reference
 - [VISUAL_GUIDE.md](./VISUAL_GUIDE.md) - Visual diagrams and explanations
 - [METRO_FIX_SUMMARY.md](./METRO_FIX_SUMMARY.md) - Metro fix overview
 
 ### Detailed Guides
-- [WORKLETS_FIX.md](./WORKLETS_FIX.md) - Worklets conflict fix (October 2025)
+- [WORKLETS_FIX.md](./WORKLETS_FIX.md) - Worklets dependency conflict fix
 - [STARTUP_ERROR_FIX.md](./STARTUP_ERROR_FIX.md) - Metro startup errors fix
 - [markdown/METRO_TSLIB_FIX.md](./markdown/METRO_TSLIB_FIX.md) - Technical deep dive
 - [markdown/README.md](./markdown/README.md) - Documentation index
@@ -245,12 +264,22 @@ npx expo prebuild
 ### Worklets errors
 
 **"[Worklets] createSerializableObject should never be called in JSWorklets"**
-- Fixed by removing direct react-native-worklets dependency
-- See [WORKLETS_FIX.md](./WORKLETS_FIX.md)
+- Fixed by patching react-native-worklets and updating Babel config
+- See [WORKLETS_WEB_FIX.md](./WORKLETS_WEB_FIX.md) for complete solution
+- Ensure patches are applied: `npm install` (runs postinstall automatically)
 - Run: `./test-worklets-fix.sh` to validate
 
+**Worklets patch not applied**
+```bash
+# Manually apply patches
+npx patch-package
+
+# Verify patch was applied  
+cat node_modules/react-native-worklets/lib/module/threads.js | grep "SHOULD_BE_USE_WEB"
+```
+
 **"ENOENT: no such file or directory, open '...\unknown'"**
-- Related to worklets conflict (already fixed)
+- Related to worklets initialization (fixed by patch)
 - Clear cache: `npx expo start --clear`
 
 ### Metro bundler errors
