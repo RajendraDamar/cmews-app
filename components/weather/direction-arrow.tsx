@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Animated } from 'react-native';
+import { View } from 'react-native';
+import Animated from 'react-native-reanimated';
 import { ArrowUp } from 'lucide-react-native';
 import { Text } from '~/components/ui/text';
 import { DIRECTION_MAP } from '~/lib/constants';
