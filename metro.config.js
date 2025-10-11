@@ -48,12 +48,27 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   }
 
   // Use the default resolver for everything else
-  if (defaultResolver) {
-    return defaultResolver(context, moduleName, platform);
+  // Wrap in try-catch to prevent Metro symbolication errors with invalid file paths
+  try {
+    if (defaultResolver) {
+      return defaultResolver(context, moduleName, platform);
+    }
+  } catch (_error) {
+    // If default resolver fails, try the fallback
+    // This prevents Metro from receiving invalid file paths during error symbolication
   }
 
   // Fallback to context's resolveRequest
-  return context.resolveRequest(context, moduleName, platform);
+  // Also wrap in try-catch to handle any resolution errors gracefully
+  try {
+    return context.resolveRequest(context, moduleName, platform);
+  } catch (error) {
+    // If all resolution attempts fail, throw a descriptive error
+    // This ensures Metro receives a proper error instead of an invalid file path
+    throw new Error(
+      `Failed to resolve module '${moduleName}' from '${context.originModulePath || 'unknown'}': ${error.message}`
+    );
+  }
 };
 
 module.exports = withNativeWind(config, { input: './global.css', inlineRem: 16 });

@@ -59,19 +59,36 @@ config.watchFolders = [__dirname];
 
 This ensures Metro properly watches the project directory and can correctly resolve module paths.
 
-### 3. Improved Error Handling
+### 3. Comprehensive Error Handling
 
-The resolver now gracefully falls back to the default resolver instead of potentially returning invalid paths:
+The resolver now wraps all resolution attempts in try-catch blocks to prevent Metro's symbolication process from receiving invalid file paths:
 
 ```javascript
 // Use the default resolver for everything else
-if (defaultResolver) {
-  return defaultResolver(context, moduleName, platform);
+// Wrap in try-catch to prevent Metro symbolication errors with invalid file paths
+try {
+  if (defaultResolver) {
+    return defaultResolver(context, moduleName, platform);
+  }
+} catch (_error) {
+  // If default resolver fails, try the fallback
+  // This prevents Metro from receiving invalid file paths during error symbolication
 }
 
 // Fallback to context's resolveRequest
-return context.resolveRequest(context, moduleName, platform);
+// Also wrap in try-catch to handle any resolution errors gracefully
+try {
+  return context.resolveRequest(context, moduleName, platform);
+} catch (error) {
+  // If all resolution attempts fail, throw a descriptive error
+  // This ensures Metro receives a proper error instead of an invalid file path
+  throw new Error(
+    `Failed to resolve module '${moduleName}' from '${context.originModulePath || 'unknown'}': ${error.message}`
+  );
+}
 ```
+
+**Key improvement:** When module resolution fails, Metro now receives a descriptive error message with proper context (module name and origin path) instead of attempting to read a file with an "unknown" path, which would cause the ENOENT error.
 
 ### 4. Fixed TypeScript Errors
 
