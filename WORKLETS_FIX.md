@@ -106,6 +106,18 @@ cmews-app@1.0.0
   └── react-native-worklets@0.5.1
 ```
 
+### Run Automated Tests
+```bash
+./test-worklets-fix.sh
+```
+
+This script validates:
+1. ✅ Metro configuration loads correctly
+2. ✅ react-native-worklets is only a peer dependency
+3. ✅ No direct imports of react-native-worklets
+4. ✅ TypeScript compilation passes
+5. ✅ Linting passes
+
 ### Check for Direct Imports
 ```bash
 grep -r "from 'react-native-worklets'" --include="*.ts" --include="*.tsx" --exclude-dir=node_modules
@@ -127,8 +139,15 @@ npx expo start --web --clear
 - `package.json` - Removed react-native-worklets from dependencies
 - `babel.config.js` - Includes react-native-reanimated/plugin (correct)
 - `components/ui/skeleton.tsx` - Uses react-native-reanimated hooks (works correctly)
+- `test-worklets-fix.sh` - Automated validation script
 
 ## Testing & Validation
+
+### ✅ Automated Test Script
+```bash
+./test-worklets-fix.sh
+```
+Result: All tests pass (Metro config, dependency tree, imports, TypeScript, linting)
 
 ### ✅ Linting
 ```bash
