@@ -1,5 +1,10 @@
-import React from 'react';
-import { MotiView } from 'moti';
+import React, { useEffect } from 'react';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+  withDelay,
+} from 'react-native-reanimated';
 import { Card } from '~/components/ui/card';
 import { ViewProps } from 'react-native';
 
@@ -10,18 +15,24 @@ interface AnimatedCardProps extends ViewProps {
 }
 
 export function AnimatedCard({ delay = 0, children, className, ...props }: AnimatedCardProps) {
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(20);
+
+  useEffect(() => {
+    opacity.value = withDelay(delay, withTiming(1, { duration: 400 }));
+    translateY.value = withDelay(delay, withTiming(0, { duration: 400 }));
+  }, [delay, opacity, translateY]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
   return (
-    <MotiView
-      from={{ opacity: 0, translateY: 20 }}
-      animate={{ opacity: 1, translateY: 0 }}
-      transition={{
-        type: 'timing',
-        duration: 400,
-        delay,
-      }}>
+    <Animated.View style={animatedStyle}>
       <Card className={className} {...props}>
         {children}
       </Card>
-    </MotiView>
+    </Animated.View>
   );
 }
