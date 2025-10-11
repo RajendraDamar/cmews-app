@@ -4,8 +4,20 @@ import { cn } from '~/lib/utils';
 import * as PopoverPrimitive from '@rn-primitives/popover';
 import * as React from 'react';
 import { Platform, StyleSheet } from 'react-native';
-import { FadeIn, FadeOut } from 'react-native-reanimated';
 import { FullWindowOverlay as RNFullWindowOverlay } from 'react-native-screens';
+
+// Conditionally import FadeIn and FadeOut only for native platforms
+let FadeIn: any, FadeOut: any;
+if (Platform.OS !== 'web') {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const Reanimated = require('react-native-reanimated');
+    FadeIn = Reanimated.FadeIn;
+    FadeOut = Reanimated.FadeOut;
+  } catch {
+    console.warn('Reanimated animations not available');
+  }
+}
 
 const Popover = PopoverPrimitive.Root;
 
