@@ -4,6 +4,9 @@ module.exports = function (api) {
 
   plugins.push('react-native-worklets/plugin');
 
+  // react-native-reanimated/plugin must be last
+  plugins.push('react-native-reanimated/plugin');
+
   return {
     presets: [['babel-preset-expo', { jsxImportSource: 'nativewind' }], 'nativewind/babel'],
 
