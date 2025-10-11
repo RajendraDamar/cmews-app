@@ -38,6 +38,7 @@
     "expo-web-browser": "~15.0.7",
     "firebase": "^10.5.2",
     "lucide-react-native": "^0.545.0",
+    "maplibre-theme": "^1.0.0",
     "nativewind": "4.1.21",
     "react": "19.1.0",
     "react-dom": "19.1.0",

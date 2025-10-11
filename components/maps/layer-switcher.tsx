@@ -26,6 +26,9 @@ export function LayerSwitcher({
   const { colorScheme } = useTheme();
 
   const iconColor = colorScheme === 'dark' ? '#e5e7eb' : '#1f2937';
+  // oklch(62.3% 0.214 259.815) converts to approximately #5b7dff in light mode
+  // oklch(70.7% 0.165 254.624) for dark mode
+  const activeColor = colorScheme === 'dark' ? '#8b9cff' : '#5b7dff';
 
   return (
     <Popover>
@@ -48,7 +51,7 @@ export function LayerSwitcher({
                 className={`flex-1 items-center gap-1 rounded-lg border p-3 ${
                   mapType === 'standard' ? 'border-primary bg-primary/10' : 'border-border'
                 }`}>
-                <Map size={20} color={mapType === 'standard' ? '#3b82f6' : iconColor} />
+                <Map size={20} color={mapType === 'standard' ? activeColor : iconColor} />
                 <Text
                   className={`text-xs ${mapType === 'standard' ? 'font-semibold text-primary' : ''}`}>
                   Map
@@ -60,7 +63,7 @@ export function LayerSwitcher({
                 className={`flex-1 items-center gap-1 rounded-lg border p-3 ${
                   mapType === 'satellite' ? 'border-primary bg-primary/10' : 'border-border'
                 }`}>
-                <Satellite size={20} color={mapType === 'satellite' ? '#3b82f6' : iconColor} />
+                <Satellite size={20} color={mapType === 'satellite' ? activeColor : iconColor} />
                 <Text
                   className={`text-xs ${mapType === 'satellite' ? 'font-semibold text-primary' : ''}`}>
                   Satellite
@@ -72,7 +75,7 @@ export function LayerSwitcher({
                 className={`flex-1 items-center gap-1 rounded-lg border p-3 ${
                   mapType === 'terrain' ? 'border-primary bg-primary/10' : 'border-border'
                 }`}>
-                <Mountain size={20} color={mapType === 'terrain' ? '#3b82f6' : iconColor} />
+                <Mountain size={20} color={mapType === 'terrain' ? activeColor : iconColor} />
                 <Text
                   className={`text-xs ${mapType === 'terrain' ? 'font-semibold text-primary' : ''}`}>
                   Terrain

@@ -17,6 +17,14 @@ import { useBreakpoint } from '~/lib/breakpoints';
 import { mockWeatherReports } from '~/lib/data/weather-reports-mock';
 import { WeatherReport, WeatherReportFilters } from '~/lib/types/weather-report';
 
+// Import MapLibre theme for web
+if (Platform.OS === 'web') {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require('maplibre-theme/icons.lucide.css');
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require('maplibre-theme/modern.css');
+}
+
 // Conditionally import MapLibre based on platform
 let MapLibreGL: any = null;
 let MapGL: any = null;
@@ -57,14 +65,16 @@ function WebMap() {
   }
 
   return (
-    <MapGL
-      {...viewState}
-      onMove={(evt: any) => setViewState(evt.viewState)}
-      style={{ width: '100%', height: '100%' }}
-      mapStyle="https://demotiles.maplibre.org/style.json"
-      dragRotate={true}
-      pitchWithRotate={true}
-    />
+    <View className="maplibregl-map" style={{ width: '100%', height: '100%' }}>
+      <MapGL
+        {...viewState}
+        onMove={(evt: any) => setViewState(evt.viewState)}
+        style={{ width: '100%', height: '100%' }}
+        mapStyle="https://demotiles.maplibre.org/style.json"
+        dragRotate={true}
+        pitchWithRotate={true}
+      />
+    </View>
   );
 }
 
