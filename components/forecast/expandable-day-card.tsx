@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { Card, CardContent } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
@@ -6,12 +6,23 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '~/component
 import { ChevronDown } from 'lucide-react-native';
 import { WeatherIcon } from './weather-icon';
 import { HourlyBreakdown } from './hourly-breakdown';
-import { TemperatureChart } from './temperature-chart';
-import { PrecipitationChart } from './precipitation-chart';
 import type { WeatherForecastDay } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
 import * as Haptics from 'expo-haptics';
+
+// Conditionally import charts only on native platforms
+let TemperatureChart: any = null;
+let PrecipitationChart: any = null;
+
+if (Platform.OS !== 'web') {
+  try {
+    TemperatureChart = require('./temperature-chart').TemperatureChart;
+    PrecipitationChart = require('./precipitation-chart').PrecipitationChart;
+  } catch (e) {
+    console.warn('Charts not available:', e);
+  }
+}
 
 export function ExpandableDayCard({
   day,
@@ -75,15 +86,31 @@ export function ExpandableDayCard({
 
             {/* Temperature & Humidity Chart */}
             <Text className="mb-2 font-semibold">Grafik Suhu & Kelembapan</Text>
-            <TemperatureChart data={hourly} />
+            {Platform.OS === 'web' || !TemperatureChart ? (
+              <View className="p-4 bg-muted rounded-lg">
+                <Text size="sm" variant="muted" className="text-center mb-2">
+                  Grafik tidak tersedia di web. Lihat detail per jam di bawah.
+                </Text>
+              </View>
+            ) : (
+              <TemperatureChart data={hourly} />
+            )}
 
             <Separator className="my-4" />
 
             {/* Precipitation Chart */}
             <Text className="mb-2 font-semibold">Curah Hujan</Text>
-            <PrecipitationChart
-              data={hourly.map((h) => ({ time: h.time, precipitation: h.humidity }))}
-            />
+            {Platform.OS === 'web' || !PrecipitationChart ? (
+              <View className="p-4 bg-muted rounded-lg">
+                <Text size="sm" variant="muted" className="text-center mb-2">
+                  Grafik tidak tersedia di web. Lihat detail per jam di bawah.
+                </Text>
+              </View>
+            ) : (
+              <PrecipitationChart
+                data={hourly.map((h) => ({ time: h.time, precipitation: h.humidity }))}
+              />
+            )}
 
             <Separator className="my-4" />
 
