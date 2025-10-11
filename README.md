@@ -1,8 +1,8 @@
 # CMEWS App
 
-Community-based Early Warning System for Weather Monitoring
+Community-based Marine and Environmental Weather Service
 
-## 🚀 Getting Started
+## 🚀 Quick Start
 
 ### Prerequisites
 - Node.js 18+ 
@@ -16,29 +16,29 @@ Community-based Early Warning System for Weather Monitoring
 npm install
 
 # Start development server
-expo start
+npm start
 ```
 
 ### Platform-Specific Commands
 
 ```bash
 # Web
-expo start --web
+npm run web
 
 # Android
-expo start --android
+npm run android
 
 # iOS
-expo start --ios
+npm run ios
 ```
 
 ## 📱 Platform Support
 
 | Platform | Status | Details |
 |----------|--------|---------|
-| Web | ✅ Working | Full feature support |
-| Android | ✅ Working | Native performance |
-| iOS | ✅ Working | Native performance |
+| Web | ✅ Working | Full feature support, charts show as text |
+| Android | ✅ Working | Native performance with full chart rendering |
+| iOS | ✅ Working | Native performance with full chart rendering |
 
 ## 🏗️ Tech Stack
 
@@ -52,17 +52,13 @@ expo start --ios
 - **React Native Reusables** - UI component library
 - **Lucide Icons** - Icon library
 
-### Animation
-- **React Native Reanimated** - Smooth animations
-
 ### Navigation & State
 - **Expo Router** - File-based routing
 - **Zustand** - State management
 
 ### Maps & Charts
-- **MapLibre** - Maps (@maplibre/maplibre-react-native)
-- **react-map-gl** - Web maps
-- **Victory Native** - Charts and data visualization
+- **MapLibre** - Maps
+- **Victory Native** - Charts (iOS/Android only)
 
 ### Backend
 - **Firebase** - Authentication and data storage
@@ -86,45 +82,16 @@ cmews-app/
 │   └── maps/             # Map components
 ├── lib/                  # Utilities and types
 ├── store/                # Zustand stores
-└── markdown/             # Documentation
+└── CHANGES.md            # Complete change history
 ```
 
-## 🔧 Configuration
-
-### Metro Bundler (metro.config.js)
-
-Simple configuration using Expo defaults with NativeWind:
-
-```javascript
-const { getDefaultConfig } = require('expo/metro-config');
-const { withNativeWind } = require('nativewind/metro');
-
-const config = getDefaultConfig(__dirname);
-module.exports = withNativeWind(config, { input: './global.css', inlineRem: 16 });
-```
-
-### Babel (babel.config.js)
-
-Standard Expo configuration with NativeWind and Reanimated:
-
-```javascript
-module.exports = function (api) {
-  api.cache(true);
-
-  return {
-    presets: [['babel-preset-expo', { jsxImportSource: 'nativewind' }], 'nativewind/babel'],
-    plugins: ['react-native-reanimated/plugin'],
-  };
-};
-```
-
-## 🧪 Testing & Validation
+## 🧪 Development
 
 ```bash
-# Lint
+# Lint code
 npm run lint
 
-# Format
+# Format code
 npm run format
 
 # TypeScript check
@@ -135,7 +102,7 @@ npx tsc --noEmit
 
 ### Web
 ```bash
-expo export --platform web
+npm run build -- --platform web
 ```
 
 ### Native (iOS/Android)
@@ -145,47 +112,15 @@ expo prebuild
 
 ## 📚 Documentation
 
-See the [markdown/](./markdown/) directory for detailed documentation:
-- Implementation guides
-- Feature documentation
-- Architecture decisions
+- **[CHANGES.md](./CHANGES.md)** - Complete change history and implementation details
 
-## 🐛 Troubleshooting
+## 🐛 Known Issues
 
-### Metro bundler errors
+### Charts on Web
+Victory Native charts use Skia for rendering, which requires CanvasKit on web. To keep bundle size small, charts are disabled on web and data is shown in text format instead.
 
-1. Clear cache:
-   ```bash
-   expo start --clear
-   ```
-
-2. Reinstall dependencies:
-   ```bash
-   rm -rf node_modules package-lock.json
-   npm install
-   ```
-
-### Common Issues
-
-**Web bundle not loading**
-- Clear Metro cache: `expo start --clear`
-- Check browser console for errors
-
-**Native build issues**
-- Run: `expo prebuild --clean`
-- Rebuild native projects
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Run linting and tests
-5. Submit a pull request
-
-## 📄 License
-
-[Add your license here]
+### Animations on Web  
+React Native Reanimated is disabled on web to avoid worklets errors. Web uses CSS animations instead.
 
 ## 🙏 Acknowledgments
 

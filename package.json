@@ -9,13 +9,7 @@
     "web": "expo start --web",
     "build": "expo export",
     "lint": "eslint . --ext .ts,.tsx",
-    "format": "prettier --write .",
-    "test": "playwright test",
-    "test:headed": "playwright test --headed",
-    "test:ui": "playwright test --ui",
-    "test:mobile": "playwright test --project=mobile",
-    "test:desktop": "playwright test --project=desktop",
-    "test:report": "playwright show-report"
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.2",
@@ -62,7 +56,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
-    "@playwright/test": "^1.56.0",
     "@types/node": "^24.7.1",
     "@types/react": "~19.1.10",
     "eslint": "^9.25.1",
