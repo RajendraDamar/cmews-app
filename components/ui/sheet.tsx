@@ -61,12 +61,12 @@ export function SheetContent({ children, side = 'bottom', className }: SheetCont
       <Animated.View
         style={{ transform: [{ translateY }] }}
         className={cn(
-          'rounded-t-3xl p-6',
+          'rounded-t-3xl p-6 shadow-2xl',
           colorScheme === 'dark' ? 'bg-card' : 'bg-background',
           className
         )}>
-        <View {...panResponder.panHandlers} className="items-center py-2">
-          <View className="h-1.5 w-12 rounded-full bg-muted-foreground/30" />
+        <View {...panResponder.panHandlers} className="items-center -mt-2 mb-2 py-2">
+          <View className="h-1.5 w-16 rounded-full bg-muted-foreground/40" />
         </View>
         {children}
       </Animated.View>

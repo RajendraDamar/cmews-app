@@ -263,31 +263,47 @@ export default function MapsScreen() {
             />
             {/* Map Controls (Desktop - Right Side) */}
             {Platform.OS !== 'web' && MapLibreGL && (
-              <View className="absolute right-8 top-1/3 gap-2" style={{ zIndex: 10 }}>
+              <View
+                className="absolute right-8 top-1/3 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+                style={{
+                  zIndex: 10,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.15,
+                  shadowRadius: 8,
+                  elevation: 8,
+                }}>
                 <Pressable
                   onPress={handleZoomIn}
-                  className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
-                  <Plus size={24} color={iconColor} />
+                  className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+                  <Plus size={20} color={iconColor} />
                 </Pressable>
 
                 <Pressable
                   onPress={handleZoomOut}
-                  className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
-                  <Minus size={24} color={iconColor} />
+                  className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+                  <Minus size={20} color={iconColor} />
                 </Pressable>
 
                 <Pressable
                   onPress={handleLocationPress}
-                  className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
-                  <MapPin size={20} color={iconColor} />
+                  className="h-12 w-12 items-center justify-center active:bg-muted/50">
+                  <MapPin size={18} color={iconColor} />
                 </Pressable>
               </View>
             )}
             {/* Floating Action Button (Desktop) */}
             <Pressable
               onPress={() => setShowReportForm(true)}
-              className="absolute bottom-8 right-8 h-16 w-16 items-center justify-center rounded-full bg-primary shadow-lg active:opacity-90"
-              style={{ zIndex: 10 }}>
+              className="absolute bottom-8 right-8 h-16 w-16 items-center justify-center rounded-full bg-primary shadow-xl active:scale-95"
+              style={{
+                zIndex: 10,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.25,
+                shadowRadius: 12,
+                elevation: 10,
+              }}>
               <Plus size={28} color="#fff" />
             </Pressable>
           </View>
@@ -308,23 +324,32 @@ export default function MapsScreen() {
 
           {/* Map Controls (Mobile - Right Side) */}
           {Platform.OS !== 'web' && MapLibreGL && (
-            <View className="absolute bottom-32 right-4 gap-2" style={{ zIndex: 10 }}>
+            <View
+              className="absolute bottom-32 right-4 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+              style={{
+                zIndex: 10,
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.15,
+                shadowRadius: 8,
+                elevation: 8,
+              }}>
               <Pressable
                 onPress={handleZoomIn}
-                className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
-                <Plus size={24} color={iconColor} />
+                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+                <Plus size={20} color={iconColor} />
               </Pressable>
 
               <Pressable
                 onPress={handleZoomOut}
-                className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
-                <Minus size={24} color={iconColor} />
+                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+                <Minus size={20} color={iconColor} />
               </Pressable>
 
               <Pressable
                 onPress={handleLocationPress}
-                className="h-12 w-12 items-center justify-center rounded-lg border border-border bg-card shadow-lg active:opacity-70">
-                <MapPin size={20} color={iconColor} />
+                className="h-12 w-12 items-center justify-center active:bg-muted/50">
+                <MapPin size={18} color={iconColor} />
               </Pressable>
             </View>
           )}
@@ -332,8 +357,15 @@ export default function MapsScreen() {
           {/* Floating Action Button (Mobile) */}
           <Pressable
             onPress={() => setShowReportForm(true)}
-            className="absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full bg-primary shadow-lg active:opacity-90"
-            style={{ zIndex: 10 }}>
+            className="absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full bg-primary shadow-xl active:scale-95"
+            style={{
+              zIndex: 10,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 6 },
+              shadowOpacity: 0.25,
+              shadowRadius: 12,
+              elevation: 10,
+            }}>
             <Plus size={28} color="#fff" />
           </Pressable>
 

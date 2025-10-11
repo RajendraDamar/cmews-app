@@ -48,18 +48,20 @@ export function DesktopSidebar({
   onSelectReport,
 }: DesktopSidebarProps) {
   return (
-    <View className="w-[30%] border-r border-border bg-card">
+    <View className="w-[30%] border-r border-border bg-card/50">
       {/* Search */}
-      <View className="border-b border-border p-4">
+      <View className="border-b border-border bg-card p-4">
         <View className="relative">
-          <Input placeholder="Cari lokasi..." className="pl-10" />
+          <Input placeholder="Cari lokasi..." className="pl-10 h-11" />
           <Search size={18} className="absolute left-3 top-3 text-muted-foreground" />
         </View>
       </View>
 
       {/* Filters */}
-      <View className="border-b border-border p-4">
-        <Text className="mb-3 font-semibold">Filter Laporan</Text>
+      <View className="border-b border-border bg-card p-4">
+        <Text className="mb-3 text-sm font-bold uppercase tracking-wide text-muted-foreground">
+          Filter Laporan
+        </Text>
         <View className="gap-3">
           <View className="flex-row items-center gap-2">
             <Checkbox
@@ -74,7 +76,7 @@ export function DesktopSidebar({
                 })
               }
             />
-            <Text>Semua Laporan</Text>
+            <Text className="font-medium">Semua Laporan</Text>
           </View>
           <View className="flex-row items-center gap-2">
             <Checkbox
@@ -110,58 +112,60 @@ export function DesktopSidebar({
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {selectedReport ? (
           <View className="p-4">
-            <Card>
-              <CardContent className="p-4">
-                <View className="mb-3 flex-row items-center justify-between">
-                  <Text className="flex-1 text-lg font-bold">{selectedReport.location}</Text>
+            <Card className="shadow-lg">
+              <CardContent className="p-5">
+                <View className="mb-4 flex-row items-center justify-between">
+                  <Text className="flex-1 text-xl font-bold">{selectedReport.location}</Text>
                   <Badge
                     variant={getSeverityBadge(selectedReport.severity).variant}
                     label={getSeverityBadge(selectedReport.severity).label}
-                    labelClasses="text-white"
+                    labelClasses="text-white font-semibold"
                   />
                 </View>
 
-                <Separator className="mb-3" />
+                <Separator className="mb-4" />
 
-                <View className="mb-3 flex-row items-center">
-                  <Avatar className="mr-2 h-8 w-8">
+                <View className="mb-4 flex-row items-center">
+                  <Avatar className="mr-3 h-10 w-10">
                     <AvatarFallback>
-                      <Text className="text-xs">{selectedReport.user.initials}</Text>
+                      <Text className="text-sm font-medium">{selectedReport.user.initials}</Text>
                     </AvatarFallback>
                   </Avatar>
                   <View>
-                    <Text className="text-sm font-medium">{selectedReport.user.name}</Text>
+                    <Text className="text-base font-semibold">{selectedReport.user.name}</Text>
                     <Text className="text-xs text-muted-foreground">
                       {formatTimestamp(selectedReport.timestamp)}
                     </Text>
                   </View>
                 </View>
 
-                <Separator className="mb-3" />
+                <Separator className="mb-4" />
 
-                <View className="gap-2">
-                  <View className="flex-row justify-between">
-                    <Text className="text-sm text-muted-foreground">Cuaca:</Text>
-                    <Text className="text-sm font-medium">{selectedReport.weather}</Text>
+                <View className="gap-3">
+                  <View className="flex-row justify-between rounded-lg bg-muted/50 p-3">
+                    <Text className="text-sm font-medium text-muted-foreground">Cuaca:</Text>
+                    <Text className="text-sm font-semibold">{selectedReport.weather}</Text>
                   </View>
-                  <View className="flex-row justify-between">
-                    <Text className="text-sm text-muted-foreground">Suhu:</Text>
-                    <Text className="text-sm font-medium">{selectedReport.temperature}°C</Text>
+                  <View className="flex-row justify-between rounded-lg bg-muted/50 p-3">
+                    <Text className="text-sm font-medium text-muted-foreground">Suhu:</Text>
+                    <Text className="text-sm font-semibold">{selectedReport.temperature}°C</Text>
                   </View>
-                  <View className="flex-row justify-between">
-                    <Text className="text-sm text-muted-foreground">Kelembaban:</Text>
-                    <Text className="text-sm font-medium">{selectedReport.humidity}%</Text>
+                  <View className="flex-row justify-between rounded-lg bg-muted/50 p-3">
+                    <Text className="text-sm font-medium text-muted-foreground">Kelembaban:</Text>
+                    <Text className="text-sm font-semibold">{selectedReport.humidity}%</Text>
                   </View>
-                  <View className="flex-row justify-between">
-                    <Text className="text-sm text-muted-foreground">Angin:</Text>
-                    <Text className="text-sm font-medium">{selectedReport.windSpeed} km/h</Text>
+                  <View className="flex-row justify-between rounded-lg bg-muted/50 p-3">
+                    <Text className="text-sm font-medium text-muted-foreground">Angin:</Text>
+                    <Text className="text-sm font-semibold">{selectedReport.windSpeed} km/h</Text>
                   </View>
                 </View>
 
                 {selectedReport.notes && (
                   <>
-                    <Separator className="my-3" />
-                    <Text className="text-sm text-muted-foreground">{selectedReport.notes}</Text>
+                    <Separator className="my-4" />
+                    <View className="rounded-lg bg-muted/30 p-3">
+                      <Text className="text-sm text-muted-foreground">{selectedReport.notes}</Text>
+                    </View>
                   </>
                 )}
               </CardContent>
@@ -169,8 +173,10 @@ export function DesktopSidebar({
           </View>
         ) : (
           <View>
-            <View className="p-4">
-              <Text className="mb-2 font-semibold">Laporan Terbaru</Text>
+            <View className="bg-card p-4">
+              <Text className="text-sm font-bold uppercase tracking-wide text-muted-foreground">
+                Laporan Terbaru
+              </Text>
             </View>
             <RecentReportsList reports={recentReports} onSelectReport={onSelectReport} />
           </View>
