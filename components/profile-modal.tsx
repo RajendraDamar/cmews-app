@@ -20,7 +20,7 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
   const { theme, setTheme, colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
 
-  const handleNavigation = (route: string) => {
+  const handleNavigation = (route: any) => {
     onClose();
     router.push(route);
   };
