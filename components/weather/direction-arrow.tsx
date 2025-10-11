@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import Animated from 'react-native-reanimated';
 import { ArrowUp } from 'lucide-react-native';
 import { Text } from '~/components/ui/text';
@@ -23,14 +23,17 @@ export function DirectionArrow({
   const rotation = degrees ?? DIRECTION_MAP[direction] ?? 0;
   const iconColor = colorScheme === 'dark' ? '#e5e7eb' : '#1f2937';
 
+  // Use Platform.OS check to avoid worklets on web
+  const AnimatedContainer = Platform.OS === 'web' ? View : Animated.View;
+
   return (
     <View className="items-center gap-1">
-      <Animated.View
+      <AnimatedContainer
         style={{
           transform: [{ rotate: `${rotation}deg` }],
         }}>
         <ArrowUp size={size} color={iconColor} />
-      </Animated.View>
+      </AnimatedContainer>
       {showLabel && (
         <Text size="sm" variant="muted">
           {direction}
