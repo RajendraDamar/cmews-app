@@ -2,9 +2,8 @@ module.exports = function (api) {
   api.cache(true);
   let plugins = [];
 
-  plugins.push('react-native-worklets/plugin');
-
   // react-native-reanimated/plugin must be last
+  // Note: react-native-reanimated already includes worklets functionality
   plugins.push('react-native-reanimated/plugin');
 
   return {
