@@ -5,10 +5,16 @@ const fs = require('fs');
 
 /** @type {import('expo/metro-config').MetroConfig} */
 
-const config = getDefaultConfig(__dirname);
+const config = getDefaultConfig(__dirname, {
+  // Disable CSS support for web to avoid worklets issues
+  isCSSEnabled: false,
+});
 
 // Configure resolver to handle ESM packages properly
 config.resolver.unstable_enablePackageExports = true;
+
+// Add platforms configuration
+config.resolver.platforms = ['ios', 'android', 'native', 'web'];
 
 // Configure source extensions to prioritize platform-specific files
 config.resolver.sourceExts = [...(config.resolver.sourceExts || []), 'mjs', 'cjs'];

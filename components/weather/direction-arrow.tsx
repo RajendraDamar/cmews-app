@@ -1,10 +1,21 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
-import Animated from 'react-native-reanimated';
 import { ArrowUp } from 'lucide-react-native';
 import { Text } from '~/components/ui/text';
 import { DIRECTION_MAP } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
+
+// Conditionally import Animated only for native platforms
+let Animated: any = View;
+if (Platform.OS !== 'web') {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    Animated = require('react-native-reanimated').default;
+  } catch {
+    console.warn('Reanimated not available, falling back to View');
+    Animated = View;
+  }
+}
 
 interface DirectionArrowProps {
   direction: string;
