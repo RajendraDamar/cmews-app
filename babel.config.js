@@ -1,14 +1,11 @@
 module.exports = function (api) {
   api.cache(true);
-  let plugins = [];
-
-  // react-native-reanimated/plugin must be last
-  // Note: react-native-reanimated already includes worklets functionality
-  plugins.push('react-native-reanimated/plugin');
-
+  
   return {
     presets: [['babel-preset-expo', { jsxImportSource: 'nativewind' }], 'nativewind/babel'],
-
-    plugins,
+    plugins: [
+      // Reanimated plugin MUST be last and only for native
+      ...(process.env.EXPO_PUBLIC_PLATFORM !== 'web' ? ['react-native-reanimated/plugin'] : []),
+    ],
   };
 };

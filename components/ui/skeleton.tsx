@@ -1,12 +1,5 @@
 import * as React from 'react';
-import { View } from 'react-native';
-import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withRepeat,
-  withTiming,
-  withSequence,
-} from 'react-native-reanimated';
+import { View, Platform, Animated } from 'react-native';
 import { cn } from '~/utils/cn';
 
 interface SkeletonProps extends React.ComponentPropsWithoutRef<typeof View> {
@@ -15,26 +8,29 @@ interface SkeletonProps extends React.ComponentPropsWithoutRef<typeof View> {
 
 const Skeleton = React.forwardRef<React.ElementRef<typeof View>, SkeletonProps>(
   ({ className, ...props }, ref) => {
-    const opacity = useSharedValue(1);
+    const opacity = React.useRef(new Animated.Value(1)).current;
 
     React.useEffect(() => {
-      opacity.value = withRepeat(
-        withSequence(withTiming(0.5, { duration: 1000 }), withTiming(1, { duration: 1000 })),
-        -1,
-        false
-      );
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(opacity, {
+            toValue: 0.5,
+            duration: 1000,
+            useNativeDriver: Platform.OS !== 'web',
+          }),
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: Platform.OS !== 'web',
+          }),
+        ])
+      ).start();
     }, [opacity]);
-
-    const animatedStyle = useAnimatedStyle(() => {
-      return {
-        opacity: opacity.value,
-      };
-    });
 
     return (
       <Animated.View
         ref={ref}
-        style={animatedStyle}
+        style={{ opacity }}
         className={cn('rounded-md bg-muted', className)}
         {...props}
       />
