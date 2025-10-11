@@ -29,7 +29,7 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   // Force tslib to always resolve to the CommonJS version
   // This prevents "Cannot destructure property '__extends' of 'tslib.default'" error
   if (moduleName === 'tslib' || moduleName.startsWith('tslib/')) {
-    const tslibPath = path.join(context.projectRoot, 'node_modules/tslib/tslib.js');
+    const tslibPath = path.join(context.projectRoot || __dirname, 'node_modules/tslib/tslib.js');
     return {
       filePath: tslibPath,
       type: 'sourceFile',
