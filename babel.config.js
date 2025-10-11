@@ -3,7 +3,7 @@ module.exports = function (api) {
   let plugins = [];
 
   plugins.push('react-native-worklets/plugin');
-  
+
   // react-native-reanimated/plugin must be last
   plugins.push('react-native-reanimated/plugin');
 
