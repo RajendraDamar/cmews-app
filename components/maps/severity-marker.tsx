@@ -39,21 +39,21 @@ export function SeverityMarker({ report, onPress, selected = false }: SeverityMa
     <Pressable onPress={onPress}>
       <View
         style={{
-          width: selected ? 44 : 40,
-          height: selected ? 44 : 40,
-          borderRadius: selected ? 22 : 20,
+          width: selected ? 48 : 42,
+          height: selected ? 48 : 42,
+          borderRadius: selected ? 24 : 21,
           backgroundColor: color,
-          borderWidth: 3,
-          borderColor: color,
+          borderWidth: selected ? 4 : 3,
+          borderColor: '#fff',
           justifyContent: 'center',
           alignItems: 'center',
           shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: 0.25,
-          shadowRadius: 4,
-          elevation: 5,
+          shadowOffset: { width: 0, height: 3 },
+          shadowOpacity: 0.3,
+          shadowRadius: 6,
+          elevation: 6,
         }}>
-        <Icon size={selected ? 22 : 20} color="#fff" />
+        <Icon size={selected ? 24 : 22} color="#fff" />
       </View>
     </Pressable>
   );
