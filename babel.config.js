@@ -2,7 +2,7 @@ module.exports = function (api) {
   // Get the platform from the babel caller (set by Metro)
   // IMPORTANT: caller() must be called before cache() to avoid caching errors
   const platform = api.caller((caller) => caller?.platform);
-  
+
   api.cache(true);
 
   // react-native-reanimated/plugin must be last
