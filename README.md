@@ -247,6 +247,7 @@ npx expo prebuild
 - [WORKLETS_QUICK_REF.md](./WORKLETS_QUICK_REF.md) - Worklets fix quick reference
 - [VISUAL_GUIDE.md](./VISUAL_GUIDE.md) - Visual diagrams and explanations
 - [METRO_FIX_SUMMARY.md](./METRO_FIX_SUMMARY.md) - Metro fix overview
+- [ENOENT_FIX.md](./ENOENT_FIX.md) - ENOENT "unknown" file error fix (October 2025)
 
 ### Detailed Guides
 - [WORKLETS_FIX.md](./WORKLETS_FIX.md) - Worklets dependency conflict fix
@@ -279,8 +280,10 @@ cat node_modules/react-native-worklets/lib/module/threads.js | grep "SHOULD_BE_U
 ```
 
 **"ENOENT: no such file or directory, open '...\unknown'"**
-- Related to worklets initialization (fixed by patch)
+- Fixed by comprehensive error handling in Metro resolver
+- See [ENOENT_FIX.md](./ENOENT_FIX.md) for complete solution
 - Clear cache: `npx expo start --clear`
+- Verify fix: `node -c metro.config.js`
 
 ### Metro bundler errors
 
