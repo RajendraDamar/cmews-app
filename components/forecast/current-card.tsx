@@ -1,14 +1,25 @@
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { Card, CardContent } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '~/components/ui/collapsible';
 import { ChevronDown, MoveHorizontal } from 'lucide-react-native';
 import { DirectionArrow } from '~/components/weather/direction-arrow';
-import { CartesianChart, Line } from 'victory-native';
 import type { CurrentForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
+
+// Conditional import for victory-native (not supported on web)
+let CartesianChart: any, Line: any;
+if (Platform.OS !== 'web') {
+  try {
+    const victory = require('victory-native');
+    CartesianChart = victory.CartesianChart;
+    Line = victory.Line;
+  } catch (e) {
+    // Victory Native not available
+  }
+}
 
 export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForecastData) {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,22 +68,30 @@ export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForeca
 
             {/* Current Speed Chart */}
             <Text className="mb-2 font-semibold">Kecepatan Arus (m/s)</Text>
-            <View style={{ height: 180 }}>
-              <CartesianChart
-                data={chartData}
-                xKey="x"
-                yKeys={['speed']}
-                domainPadding={{ left: 10, right: 10, top: 20, bottom: 20 }}>
-                {({ points }) => (
-                  <Line
-                    points={points.speed}
-                    color="#6366f1"
-                    strokeWidth={2}
-                    curveType="catmullRom"
-                  />
-                )}
-              </CartesianChart>
-            </View>
+            {Platform.OS === 'web' || !CartesianChart ? (
+              <View className="p-4 bg-muted rounded-lg">
+                <Text size="sm" variant="muted" className="text-center">
+                  Grafik tidak tersedia di web. Lihat detail per jam di bawah.
+                </Text>
+              </View>
+            ) : (
+              <View style={{ height: 180 }}>
+                <CartesianChart
+                  data={chartData}
+                  xKey="x"
+                  yKeys={['speed']}
+                  domainPadding={{ left: 10, right: 10, top: 20, bottom: 20 }}>
+                  {({ points }) => (
+                    <Line
+                      points={points.speed}
+                      color="#6366f1"
+                      strokeWidth={2}
+                      curveType="catmullRom"
+                    />
+                  )}
+                </CartesianChart>
+              </View>
+            )}
 
             <Separator className="my-4" />
 

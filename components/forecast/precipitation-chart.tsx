@@ -1,7 +1,19 @@
 import React from 'react';
-import { View } from 'react-native';
-import { CartesianChart, Bar } from 'victory-native';
+import { View, Platform } from 'react-native';
+import { Text } from '~/components/ui/text';
 import { getPrecipitationColor } from '~/lib/constants';
+
+// Conditional import for victory-native (not supported on web)
+let CartesianChart: any, Bar: any;
+if (Platform.OS !== 'web') {
+  try {
+    const victory = require('victory-native');
+    CartesianChart = victory.CartesianChart;
+    Bar = victory.Bar;
+  } catch (e) {
+    // Victory Native not available
+  }
+}
 
 interface PrecipitationChartData {
   time: string;
@@ -13,6 +25,25 @@ interface PrecipitationChartProps {
 }
 
 export function PrecipitationChart({ data }: PrecipitationChartProps) {
+  // Web fallback - show data in text format
+  if (Platform.OS === 'web' || !CartesianChart) {
+    return (
+      <View className="p-4 bg-muted rounded-lg">
+        <Text size="sm" variant="muted" className="text-center mb-2">
+          Grafik tidak tersedia di web
+        </Text>
+        <View className="gap-1">
+          {data.slice(0, 5).map((d, i) => (
+            <View key={i} className="flex-row justify-between">
+              <Text size="sm">{d.time}</Text>
+              <Text size="sm">Curah Hujan: {d.precipitation}mm</Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    );
+  }
+
   const chartData = data.map((d, i) => ({
     x: i,
     precipitation: d.precipitation,

@@ -1,13 +1,24 @@
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { Card, CardContent } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '~/components/ui/collapsible';
 import { ChevronDown, Waves } from 'lucide-react-native';
-import { CartesianChart, Area } from 'victory-native';
 import type { WaveForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
+
+// Conditional import for victory-native (not supported on web)
+let CartesianChart: any, Area: any;
+if (Platform.OS !== 'web') {
+  try {
+    const victory = require('victory-native');
+    CartesianChart = victory.CartesianChart;
+    Area = victory.Area;
+  } catch (e) {
+    // Victory Native not available
+  }
+}
 
 export function WaveCard({
   seaArea,
@@ -84,23 +95,31 @@ export function WaveCard({
 
             {/* Wave Height Chart */}
             <Text className="mb-2 font-semibold">Tinggi Gelombang (m)</Text>
-            <View style={{ height: 180 }}>
-              <CartesianChart
-                data={chartData}
-                xKey="x"
-                yKeys={['height']}
-                domainPadding={{ left: 10, right: 10, top: 20, bottom: 20 }}>
-                {({ points }) => (
-                  <Area
-                    points={points.height}
-                    y0={0}
-                    color="#3b82f6"
-                    opacity={0.3}
-                    curveType="catmullRom"
-                  />
-                )}
-              </CartesianChart>
-            </View>
+            {Platform.OS === 'web' || !CartesianChart ? (
+              <View className="p-4 bg-muted rounded-lg">
+                <Text size="sm" variant="muted" className="text-center">
+                  Grafik tidak tersedia di web. Lihat detail per jam di bawah.
+                </Text>
+              </View>
+            ) : (
+              <View style={{ height: 180 }}>
+                <CartesianChart
+                  data={chartData}
+                  xKey="x"
+                  yKeys={['height']}
+                  domainPadding={{ left: 10, right: 10, top: 20, bottom: 20 }}>
+                  {({ points }) => (
+                    <Area
+                      points={points.height}
+                      y0={0}
+                      color="#3b82f6"
+                      opacity={0.3}
+                      curveType="catmullRom"
+                    />
+                  )}
+                </CartesianChart>
+              </View>
+            )}
 
             <Separator className="my-4" />
 
