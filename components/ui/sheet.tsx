@@ -65,7 +65,7 @@ export function SheetContent({ children, side = 'bottom', className }: SheetCont
           colorScheme === 'dark' ? 'bg-card' : 'bg-background',
           className
         )}>
-        <View {...panResponder.panHandlers} className="items-center -mt-2 mb-2 py-2">
+        <View {...panResponder.panHandlers} className="-mt-2 mb-2 items-center py-2">
           <View className="h-1.5 w-16 rounded-full bg-muted-foreground/40" />
         </View>
         {children}

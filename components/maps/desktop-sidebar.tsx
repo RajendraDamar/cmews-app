@@ -52,7 +52,7 @@ export function DesktopSidebar({
       {/* Search */}
       <View className="border-b border-border bg-card p-4">
         <View className="relative">
-          <Input placeholder="Cari lokasi..." className="pl-10 h-11" />
+          <Input placeholder="Cari lokasi..." className="h-11 pl-10" />
           <Search size={18} className="absolute left-3 top-3 text-muted-foreground" />
         </View>
       </View>

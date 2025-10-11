@@ -79,7 +79,7 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
           {/* Weather Data Grid */}
           <Text className="mb-3 text-base font-semibold">Data Cuaca</Text>
           <View className="mb-4 flex-row flex-wrap gap-2">
-            <View className="flex-1 min-w-[45%]">
+            <View className="min-w-[45%] flex-1">
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
@@ -95,7 +95,7 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
               </Card>
             </View>
 
-            <View className="flex-1 min-w-[45%]">
+            <View className="min-w-[45%] flex-1">
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
@@ -111,7 +111,7 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
               </Card>
             </View>
 
-            <View className="flex-1 min-w-[45%]">
+            <View className="min-w-[45%] flex-1">
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
@@ -127,7 +127,7 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
               </Card>
             </View>
 
-            <View className="flex-1 min-w-[45%]">
+            <View className="min-w-[45%] flex-1">
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
