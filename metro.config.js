@@ -42,7 +42,7 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
           type: 'sourceFile',
         };
       }
-    } catch (err) {
+    } catch (_err) {
       // Fall through to default resolver if check fails
     }
   }
@@ -51,7 +51,7 @@ config.resolver.resolveRequest = (context, moduleName, platform) => {
   if (defaultResolver) {
     return defaultResolver(context, moduleName, platform);
   }
-  
+
   // Fallback to context's resolveRequest
   return context.resolveRequest(context, moduleName, platform);
 };
