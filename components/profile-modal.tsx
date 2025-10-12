@@ -17,7 +17,7 @@ interface ProfileModalProps {
 
 export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
   const router = useRouter();
-  const { theme, setTheme, colorScheme } = useTheme();
+  const { colorScheme, setTheme } = useTheme();
   const { isDesktop } = useBreakpoint();
 
   const handleNavigation = (route: any) => {
@@ -26,18 +26,7 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
   };
 
   const toggleTheme = () => {
-    if (theme === 'light') {
-      setTheme('dark');
-    } else if (theme === 'dark') {
-      setTheme('system');
-    } else {
-      setTheme('light');
-    }
-  };
-
-  const getThemeLabel = () => {
-    if (theme === 'system') return `System (${colorScheme})`;
-    return theme.charAt(0).toUpperCase() + theme.slice(1);
+    setTheme(colorScheme === 'dark' ? 'light' : 'dark');
   };
 
   const menuItems = [
@@ -94,7 +83,7 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
               <Text className="text-sm">Tema</Text>
             </View>
             <Text variant="muted" size="sm">
-              {getThemeLabel()}
+              {colorScheme === 'dark' ? 'Dark' : 'Light'}
             </Text>
           </Pressable>
         </View>
@@ -137,7 +126,7 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
   // Desktop: Use Popover
   if (isDesktop && trigger) {
     return (
-      <Popover onOpenChange={(open) => !open && onClose()}>
+      <Popover>
         <PopoverTrigger asChild>{trigger}</PopoverTrigger>
         <PopoverContent align="end" className="p-0">
           <ProfileContent />

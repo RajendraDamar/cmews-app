@@ -57,15 +57,13 @@ export function Sidebar() {
             borderColor:
               colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
           }}>
-          {!collapsed && (
-            <View className="flex-row items-center gap-2">
-              <Cloud
-                size={24}
-                color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'}
-              />
-              <Text className="text-lg font-semibold">CMEWS</Text>
-            </View>
-          )}
+          <View className="flex-row items-center gap-2">
+            <Cloud
+              size={24}
+              color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'}
+            />
+            {!collapsed && <Text className="text-lg font-semibold">CMEWS</Text>}
+          </View>
           <Pressable
             onPress={() => setCollapsed(!collapsed)}
             className="rounded-md p-1.5 active:bg-accent">

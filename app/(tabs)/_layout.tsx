@@ -21,12 +21,23 @@ function ProfileButton() {
     </Pressable>
   );
 
+  // Always show the button, but on desktop use it as popover trigger
+  if (isDesktop) {
+    return (
+      <ProfileModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        trigger={trigger}
+      />
+    );
+  }
+
+  // On mobile, show button and use modal
   return (
-    <ProfileModal
-      visible={modalVisible}
-      onClose={() => setModalVisible(false)}
-      trigger={isDesktop ? trigger : undefined}
-    />
+    <>
+      {trigger}
+      <ProfileModal visible={modalVisible} onClose={() => setModalVisible(false)} />
+    </>
   );
 }
 

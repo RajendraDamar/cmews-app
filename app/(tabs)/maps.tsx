@@ -180,6 +180,7 @@ export default function MapsScreen() {
   });
 
   const iconColor = colorScheme === 'dark' ? '#e5e7eb' : '#1f2937';
+  const primaryButtonColor = colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(0 0% 100%)';
 
   // Map View with Markers
   const renderMap = () => {
@@ -353,7 +354,7 @@ export default function MapsScreen() {
               shadowRadius: 12,
               elevation: 10,
             }}>
-            <Plus size={28} color="#fff" />
+            <Plus size={28} color={primaryButtonColor} />
           </Pressable>
 
           {/* Bottom Sheet for Report Details (Mobile) */}
