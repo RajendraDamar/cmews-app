@@ -28,6 +28,7 @@ These instructions guide all automated changes for the **cmews-app** repository 
 5. **Lean on Expo SDK 54**: Use enhanced built-in features before adding external dependencies.
 6. **Mock-driven development**: Create realistic mock data that can be easily replaced with real API calls later.
 7. **No architectural rewrites**: Work within Expo Router and current design system. Only refactor when necessary for the change.
+8. **Documentation guidelines**: only README.md and CHANGES.md are allowed for documentation. if exist other docs, combine them into README.md or delete them if outdated.
 
 ## 3. UI Implementation Guidelines
 - Use components from `components/ui` (shadcn-style) and `@rn-primitives/*` for dialogs, sheets, tabs, etc.
