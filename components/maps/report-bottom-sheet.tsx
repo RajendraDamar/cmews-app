@@ -47,12 +47,12 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
         <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
           {/* Header */}
           <View className="mb-4">
-            <View className="mb-2 flex-row items-center justify-between">
-              <Text className="flex-1 text-xl font-bold">{report.location}</Text>
+            <Text className="mb-2 text-2xl font-bold">{report.location}</Text>
+            <View className="flex-row items-center gap-2">
               <Badge
                 variant={severityBadge.variant}
                 label={severityBadge.label}
-                labelClasses="text-white"
+                labelClasses="text-white font-semibold"
               />
             </View>
           </View>
@@ -77,58 +77,66 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
           <Separator className="mb-4" />
 
           {/* Weather Data Grid */}
-          <Text className="mb-3 font-semibold">Data Cuaca</Text>
-          <View className="mb-4 flex-row flex-wrap">
-            <View className="mb-3 w-1/2 pr-2">
-              <Card>
-                <CardContent className="p-3">
-                  <View className="flex-row items-center">
-                    <Thermometer size={20} color="#f97316" className="mr-2" />
-                    <View>
+          <Text className="mb-3 text-base font-semibold">Data Cuaca</Text>
+          <View className="mb-4 flex-row flex-wrap gap-2">
+            <View className="min-w-[45%] flex-1">
+              <Card className="shadow-sm">
+                <CardContent className="p-4">
+                  <View className="flex-row items-center gap-3">
+                    <View className="rounded-lg bg-orange-500/10 p-2">
+                      <Thermometer size={22} color="#f97316" />
+                    </View>
+                    <View className="flex-1">
                       <Text className="text-xs text-muted-foreground">Suhu</Text>
-                      <Text className="font-semibold">{report.temperature}°C</Text>
+                      <Text className="text-lg font-bold">{report.temperature}°C</Text>
                     </View>
                   </View>
                 </CardContent>
               </Card>
             </View>
 
-            <View className="mb-3 w-1/2 pl-2">
-              <Card>
-                <CardContent className="p-3">
-                  <View className="flex-row items-center">
-                    <Droplets size={20} color="#3b82f6" className="mr-2" />
-                    <View>
+            <View className="min-w-[45%] flex-1">
+              <Card className="shadow-sm">
+                <CardContent className="p-4">
+                  <View className="flex-row items-center gap-3">
+                    <View className="rounded-lg bg-blue-500/10 p-2">
+                      <Droplets size={22} color="#3b82f6" />
+                    </View>
+                    <View className="flex-1">
                       <Text className="text-xs text-muted-foreground">Kelembaban</Text>
-                      <Text className="font-semibold">{report.humidity}%</Text>
+                      <Text className="text-lg font-bold">{report.humidity}%</Text>
                     </View>
                   </View>
                 </CardContent>
               </Card>
             </View>
 
-            <View className="mb-3 w-1/2 pr-2">
-              <Card>
-                <CardContent className="p-3">
-                  <View className="flex-row items-center">
-                    <Wind size={20} color="#14b8a6" className="mr-2" />
-                    <View>
-                      <Text className="text-xs text-muted-foreground">Kecepatan Angin</Text>
-                      <Text className="font-semibold">{report.windSpeed} km/h</Text>
+            <View className="min-w-[45%] flex-1">
+              <Card className="shadow-sm">
+                <CardContent className="p-4">
+                  <View className="flex-row items-center gap-3">
+                    <View className="rounded-lg bg-teal-500/10 p-2">
+                      <Wind size={22} color="#14b8a6" />
+                    </View>
+                    <View className="flex-1">
+                      <Text className="text-xs text-muted-foreground">Kec. Angin</Text>
+                      <Text className="text-lg font-bold">{report.windSpeed} km/h</Text>
                     </View>
                   </View>
                 </CardContent>
               </Card>
             </View>
 
-            <View className="mb-3 w-1/2 pl-2">
-              <Card>
-                <CardContent className="p-3">
-                  <View className="flex-row items-center">
-                    <CloudRain size={20} color="#6366f1" className="mr-2" />
-                    <View>
+            <View className="min-w-[45%] flex-1">
+              <Card className="shadow-sm">
+                <CardContent className="p-4">
+                  <View className="flex-row items-center gap-3">
+                    <View className="rounded-lg bg-indigo-500/10 p-2">
+                      <CloudRain size={22} color="#6366f1" />
+                    </View>
+                    <View className="flex-1">
                       <Text className="text-xs text-muted-foreground">Kondisi</Text>
-                      <Text className="font-semibold">{report.weather}</Text>
+                      <Text className="text-sm font-semibold">{report.weather}</Text>
                     </View>
                   </View>
                 </CardContent>

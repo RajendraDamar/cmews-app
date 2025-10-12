@@ -35,29 +35,34 @@ const formatTimestamp = (timestamp: string) => {
 export function RecentReportsList({ reports, onSelectReport }: RecentReportsListProps) {
   return (
     <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-      <View className="gap-2 p-4">
+      <View className="gap-2 px-4 pb-4">
         {reports.map((report) => (
           <Pressable key={report.id} onPress={() => onSelectReport(report)}>
-            <Card>
-              <CardContent className="p-3">
+            <Card className="shadow-sm active:opacity-70">
+              <CardContent className="p-4">
                 <View className="flex-row items-center gap-3">
                   {/* Severity Dot */}
                   <View
                     style={{
-                      width: 12,
-                      height: 12,
-                      borderRadius: 6,
+                      width: 14,
+                      height: 14,
+                      borderRadius: 7,
                       backgroundColor: getSeverityColor(report.severity),
+                      shadowColor: getSeverityColor(report.severity),
+                      shadowOffset: { width: 0, height: 2 },
+                      shadowOpacity: 0.4,
+                      shadowRadius: 3,
+                      elevation: 3,
                     }}
                   />
 
                   {/* Report Info */}
                   <View className="flex-1">
-                    <Text className="font-medium">{report.location}</Text>
+                    <Text className="font-semibold">{report.location}</Text>
                     <Text className="text-sm text-muted-foreground">
                       {formatTimestamp(report.timestamp)}
                     </Text>
-                    <Text className="text-sm text-muted-foreground">
+                    <Text className="mt-1 text-sm font-medium text-foreground/80">
                       {report.weather} • {report.temperature}°C
                     </Text>
                   </View>
