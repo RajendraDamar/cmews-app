@@ -6,7 +6,7 @@ import { CollapsibleSearch } from '~/components/maps/collapsible-search';
 import { SeverityMarker } from '~/components/maps/severity-marker';
 import { ReportBottomSheet } from '~/components/maps/report-bottom-sheet';
 import { ReportFormDialog } from '~/components/maps/report-form-dialog';
-import { DesktopSidebar } from '~/components/maps/desktop-sidebar';
+import { DesktopMapPanel } from '~/components/maps/desktop-map-panel';
 import { WeatherLayerToggle } from '~/components/maps/weather-layer-toggle';
 import { MapSkeleton } from '~/components/maps/map-skeleton';
 import { MapErrorState } from '~/components/maps/map-error-state';
@@ -181,17 +181,6 @@ export default function MapsScreen() {
 
   const iconColor = colorScheme === 'dark' ? '#e5e7eb' : '#1f2937';
 
-  // Desktop Sidebar
-  const renderDesktopSidebar = () => (
-    <DesktopSidebar
-      selectedReport={selectedReport}
-      recentReports={filteredReports.slice(0, 10)}
-      filters={filters}
-      onFilterChange={setFilters}
-      onSelectReport={handleReportSelect}
-    />
-  );
-
   // Map View with Markers
   const renderMap = () => {
     if (isLoading) {
@@ -250,63 +239,61 @@ export default function MapsScreen() {
   return (
     <View className="flex-1">
       {isDesktop ? (
-        <View className="flex-1 flex-row">
-          {renderDesktopSidebar()}
-          <View className="relative flex-[0.7]">
-            {renderMap()}
-            {/* Collapsible Search */}
-            <CollapsibleSearch placeholder="Cari lokasi..." />
-            {/* Weather Layer Toggle (Desktop) */}
-            <WeatherLayerToggle
-              showLayer={showWeatherLayer}
-              onToggle={() => setShowWeatherLayer(!showWeatherLayer)}
-            />
-            {/* Map Controls (Desktop - Right Side) */}
-            {Platform.OS !== 'web' && MapLibreGL && (
-              <View
-                className="absolute right-8 top-1/3 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
-                style={{
-                  zIndex: 10,
-                  shadowColor: '#000',
-                  shadowOffset: { width: 0, height: 4 },
-                  shadowOpacity: 0.15,
-                  shadowRadius: 8,
-                  elevation: 8,
-                }}>
-                <Pressable
-                  onPress={handleZoomIn}
-                  className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                  <Plus size={20} color={iconColor} />
-                </Pressable>
+        <View className="relative flex-1">
+          {renderMap()}
+          
+          {/* Desktop Map Panel - Minimal sidebar overlay */}
+          <DesktopMapPanel
+            showWeatherLayer={showWeatherLayer}
+            onToggleLayer={() => setShowWeatherLayer(!showWeatherLayer)}
+            onAddReport={() => setShowReportForm(true)}
+          />
 
-                <Pressable
-                  onPress={handleZoomOut}
-                  className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                  <Minus size={20} color={iconColor} />
-                </Pressable>
-
-                <Pressable
-                  onPress={handleLocationPress}
-                  className="h-12 w-12 items-center justify-center active:bg-muted/50">
-                  <MapPin size={18} color={iconColor} />
-                </Pressable>
-              </View>
-            )}
-            {/* Floating Action Button (Desktop) */}
-            <Pressable
-              onPress={() => setShowReportForm(true)}
-              className="absolute bottom-8 right-8 h-16 w-16 items-center justify-center rounded-full bg-primary shadow-xl active:scale-95"
+          {/* Map Controls (Desktop - Right Side) */}
+          {Platform.OS !== 'web' && MapLibreGL && (
+            <View
+              className="absolute right-8 top-1/3 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
               style={{
                 zIndex: 10,
                 shadowColor: '#000',
-                shadowOffset: { width: 0, height: 6 },
-                shadowOpacity: 0.25,
-                shadowRadius: 12,
-                elevation: 10,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.15,
+                shadowRadius: 8,
+                elevation: 8,
               }}>
-              <Plus size={28} color="#fff" />
-            </Pressable>
-          </View>
+              <Pressable
+                onPress={handleZoomIn}
+                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+                <Plus size={20} color={iconColor} />
+              </Pressable>
+
+              <Pressable
+                onPress={handleZoomOut}
+                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+                <Minus size={20} color={iconColor} />
+              </Pressable>
+
+              <Pressable
+                onPress={handleLocationPress}
+                className="h-12 w-12 items-center justify-center active:bg-muted/50">
+                <MapPin size={18} color={iconColor} />
+              </Pressable>
+            </View>
+          )}
+
+          {/* Report Form Dialog */}
+          {showReportForm && (
+            <ReportFormDialog
+              location="Lokasi Terpilih"
+              onSubmit={handleReportSubmit}
+              onCancel={() => setShowReportForm(false)}
+            />
+          )}
+
+          {/* Bottom Sheet for Report Details (Desktop) */}
+          {selectedReport && (
+            <ReportBottomSheet report={selectedReport} onClose={() => setSelectedReport(null)} />
+          )}
         </View>
       ) : (
         <>
