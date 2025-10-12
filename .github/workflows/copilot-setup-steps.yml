@@ -23,26 +23,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20.19.5"
+          node-version: "20"
           cache: "npm"
 
       - name: Install JavaScript dependencies
         run: npm ci
-
-      - name: Install Expo CLI
-        run: npm install -g @expo/cli@latest
 
       - name: Verify TypeScript configuration
         run: npx tsc --noEmit --skipLibCheck
 
       - name: Run linting check
         run: npm run lint
-
-      - name: Install React Native Reusables CLI
-        run: npx install -g @react-native-reusables/cli@latest
-
-      - name: Run react native reusables doctor
-        run: npx @react-native-reusables/cli@latest doctor
 
       - name: Build the project
         run: npm run build
