@@ -34,7 +34,7 @@ function SettingRow({ icon, label, value, trailing, onPress }: any) {
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const { colorScheme, setTheme, theme } = useTheme();
+  const { colorScheme, setTheme } = useTheme();
   const { isDesktop } = useBreakpoint();
   const [notifications, setNotifications] = useState(true);
   const [locationPermission, setLocationPermission] = useState(true);
@@ -62,7 +62,7 @@ export default function SettingsScreen() {
               <SettingRow
                 icon={<Moon size={20} color={iconColor} />}
                 label="Mode Gelap"
-                trailing={<Switch value={theme === 'dark'} onValueChange={handleThemeChange} />}
+                trailing={<Switch value={colorScheme === 'dark'} onValueChange={handleThemeChange} />}
               />
             </CardContent>
           </Card>
