@@ -4,9 +4,10 @@
  */
 
 /**
- * Represents a single weather data point with various meteorological measurements
+ * Represents a single chart data point with various meteorological measurements
+ * For rendering weather charts and visualizations
  */
-export interface WeatherDataPoint {
+export interface ChartWeatherDataPoint {
   /** ISO timestamp or formatted time string */
   timestamp: string;
   /** Temperature in Celsius */
@@ -78,7 +79,7 @@ export interface ChartConfig {
  */
 export interface ChartProps {
   /** Array of weather data points to display */
-  data: WeatherDataPoint[];
+  data: ChartWeatherDataPoint[];
   /** Chart width in pixels */
   width?: number;
   /** Chart height in pixels */
