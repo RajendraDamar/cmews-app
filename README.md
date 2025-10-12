@@ -36,9 +36,9 @@ npm run ios
 
 | Platform | Status | Details |
 |----------|--------|---------|
-| Web | ✅ Working | Full feature support, charts show as text |
-| Android | ✅ Working | Native performance with full chart rendering |
-| iOS | ✅ Working | Native performance with full chart rendering |
+| Web | ✅ Working | Full feature support with fallback chart displays |
+| Android | ✅ Working | Native performance with React Native ECharts rendering |
+| iOS | ✅ Working | Native performance with React Native ECharts rendering |
 
 ## 🏗️ Tech Stack
 
@@ -57,11 +57,13 @@ npm run ios
 - **Zustand** - State management
 
 ### Maps & Charts
-- **MapLibre** - Maps
-- **Victory Native** - Charts (iOS/Android only)
+- **MapLibre** - Interactive maps with weather overlays
+- **React Native ECharts** - Cross-platform chart visualization
+- **React Native Animated API** - Smooth 60fps animations
 
 ### Backend
 - **Firebase** - Authentication and data storage
+- **BMKG API** - Indonesian weather data (mock data currently)
 
 ## 📁 Project Structure
 
@@ -117,10 +119,10 @@ expo prebuild
 ## 🐛 Known Issues
 
 ### Charts on Web
-Victory Native charts use Skia for rendering, which requires CanvasKit on web. To keep bundle size small, charts are disabled on web and data is shown in text format instead.
+React Native ECharts requires native modules and is disabled on web. On web, charts display simplified data in text/table format for compatibility. Full interactive charts are available on iOS and Android.
 
 ### Animations on Web  
-React Native Reanimated is disabled on web to avoid worklets errors. Web uses CSS animations instead.
+React Native Reanimated is used sparingly due to web performance concerns. Most animations use the React Native Animated API for better cross-platform stability.
 
 ## 🙏 Acknowledgments
 
