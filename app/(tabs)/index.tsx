@@ -2,7 +2,7 @@ import { ScrollView, View, RefreshControl } from 'react-native';
 import { Skeleton } from '~/components/ui';
 import { Stack } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { MOCK_BMKG_WEATHER } from '~/lib/data/weather-mock';
+import { MOCK_BMKG_WEATHER, MOCK_WEATHER_ALERTS } from '~/lib/data/weather-mock';
 import { getRelativeTimeIndonesian, parseBMKGDateTime } from '~/lib/utils/indonesian-locale';
 import { LocationSelector } from '~/components/weather/location-selector';
 import { HeroCard } from '~/components/weather/hero-card';
@@ -10,6 +10,7 @@ import { QuickStats } from '~/components/weather/quick-stats';
 import { HourlyForecastCard } from '~/components/weather/hourly-forecast-card';
 import { DetailedMetrics } from '~/components/weather/detailed-metrics';
 import { DailyForecastCard } from '~/components/weather/daily-forecast-card';
+import { WeatherAlertCard } from '~/components/weather/weather-alert';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { useTheme } from '~/lib/theme-provider';
 
@@ -17,6 +18,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [weatherData, setWeatherData] = useState(MOCK_BMKG_WEATHER);
+  const [alerts, setAlerts] = useState(MOCK_WEATHER_ALERTS);
   const { isDesktop } = useBreakpoint();
   const { colorScheme } = useTheme();
 
@@ -32,8 +34,13 @@ export default function Home() {
     setRefreshing(true);
     setTimeout(() => {
       setWeatherData(MOCK_BMKG_WEATHER);
+      setAlerts(MOCK_WEATHER_ALERTS);
       setRefreshing(false);
     }, 1000);
+  };
+
+  const handleDismissAlert = (alertId: string) => {
+    setAlerts(alerts.filter((alert) => alert.id !== alertId));
   };
 
   const handleLocationPress = () => {
@@ -110,6 +117,19 @@ export default function Home() {
               onRefresh={handleRefresh}
               onLocationPress={handleLocationPress}
             />
+
+            {/* Weather Alerts */}
+            {alerts.length > 0 && (
+              <View className="mt-2">
+                {alerts.map((alert) => (
+                  <WeatherAlertCard
+                    key={alert.id}
+                    alert={alert}
+                    onDismiss={() => handleDismissAlert(alert.id)}
+                  />
+                ))}
+              </View>
+            )}
 
             {/* Hero Card and Quick Stats - Responsive Layout */}
             {isDesktop ? (
