@@ -17,6 +17,8 @@ export function DesktopMapPanel({
   onAddReport,
 }: DesktopMapPanelProps) {
   const { colorScheme } = useTheme();
+  
+  const primaryButtonColor = colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(0 0% 100%)';
 
   return (
     <View
@@ -70,7 +72,7 @@ export function DesktopMapPanel({
           shadowRadius: 8,
           elevation: 8,
         }}>
-        <Plus size={24} color="#fff" />
+        <Plus size={24} color={primaryButtonColor} />
       </Pressable>
     </View>
   );

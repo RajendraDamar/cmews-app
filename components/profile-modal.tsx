@@ -137,7 +137,7 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
   // Desktop: Use Popover
   if (isDesktop && trigger) {
     return (
-      <Popover onOpenChange={(open) => !open && onClose()}>
+      <Popover>
         <PopoverTrigger asChild>{trigger}</PopoverTrigger>
         <PopoverContent align="end" className="p-0">
           <ProfileContent />
