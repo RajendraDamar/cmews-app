@@ -3,11 +3,10 @@ import { ScrollView, View } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import {
-  SkiaTemperatureChart,
-  SkiaPrecipitationChart,
-  SkiaWindChart,
-  SkiaWaveChart,
-  SmartChartWrapper,
+  ChartKitTemperatureChart,
+  ChartKitPrecipitationChart,
+  ChartKitWindChart,
+  ChartKitWaveChart,
 } from '~/components/charts';
 
 // Sample data for demonstration
@@ -53,13 +52,13 @@ const waveData = [
 /**
  * Chart Examples Demo Page
  * 
- * This page demonstrates all the high-performance Skia charts available in the app.
- * Each chart is built with React Native Skia for hardware-accelerated 60fps rendering.
+ * This page demonstrates all the cross-platform charts available in the app.
+ * Each chart is built with React Native Chart Kit for perfect web compatibility.
  * 
  * Features:
- * - Hardware-accelerated GPU rendering
- * - Smooth 60fps animations
- * - Cross-platform (iOS, Android, Web)
+ * - Cross-platform SVG rendering
+ * - Smooth bezier animations
+ * - 100% React Native Web compatible
  * - Responsive to theme changes
  * - Indonesian language labels
  */
@@ -69,9 +68,9 @@ export default function ChartExamplesPage() {
       <View className="p-4 gap-4">
         {/* Header */}
         <View className="mb-2">
-          <Text className="text-2xl font-bold">Skia Charts Demo</Text>
+          <Text className="text-2xl font-bold">Chart Kit Demo</Text>
           <Text className="text-muted-foreground mt-1">
-            High-performance weather visualization charts
+            Cross-platform weather visualization charts
           </Text>
         </View>
 
@@ -81,11 +80,9 @@ export default function ChartExamplesPage() {
             <CardTitle>Temperature & Humidity Chart</CardTitle>
           </CardHeader>
           <CardContent>
-            <SmartChartWrapper height={220}>
-              <SkiaTemperatureChart data={temperatureData} animated={true} />
-            </SmartChartWrapper>
+            <ChartKitTemperatureChart data={temperatureData} animated={true} />
             <Text className="text-xs text-muted-foreground mt-2">
-              Dual Y-axis line chart with gradient fill and animated data points
+              Dual-line chart with bezier curves and gradient fill
             </Text>
           </CardContent>
         </Card>
@@ -96,11 +93,9 @@ export default function ChartExamplesPage() {
             <CardTitle>Precipitation Bar Chart</CardTitle>
           </CardHeader>
           <CardContent>
-            <SmartChartWrapper height={220}>
-              <SkiaPrecipitationChart data={precipitationData} animated={true} />
-            </SmartChartWrapper>
+            <ChartKitPrecipitationChart data={precipitationData} animated={true} />
             <Text className="text-xs text-muted-foreground mt-2">
-              Animated bar chart showing rainfall intensity over time
+              Bar chart showing rainfall intensity over time
             </Text>
           </CardContent>
         </Card>
@@ -108,14 +103,12 @@ export default function ChartExamplesPage() {
         {/* Wind Chart */}
         <Card>
           <CardHeader>
-            <CardTitle>Wind Compass Chart</CardTitle>
+            <CardTitle>Wind Speed Chart</CardTitle>
           </CardHeader>
           <CardContent>
-            <SmartChartWrapper height={220}>
-              <SkiaWindChart data={windData} animated={true} />
-            </SmartChartWrapper>
+            <ChartKitWindChart data={windData} animated={true} />
             <Text className="text-xs text-muted-foreground mt-2">
-              Circular compass visualization with direction and speed indicators
+              Bar chart visualization with direction and speed indicators
             </Text>
           </CardContent>
         </Card>
@@ -126,11 +119,9 @@ export default function ChartExamplesPage() {
             <CardTitle>Maritime Wave Chart</CardTitle>
           </CardHeader>
           <CardContent>
-            <SmartChartWrapper height={220}>
-              <SkiaWaveChart data={waveData} animated={true} />
-            </SmartChartWrapper>
+            <ChartKitWaveChart data={waveData} animated={true} />
             <Text className="text-xs text-muted-foreground mt-2">
-              Wave height visualization with fluid animations for maritime data
+              Wave height visualization with smooth bezier curves
             </Text>
           </CardContent>
         </Card>
@@ -144,23 +135,23 @@ export default function ChartExamplesPage() {
             <View className="gap-2">
               <View className="flex-row items-center gap-2">
                 <Text className="text-green-600 dark:text-green-400 font-bold">✓</Text>
-                <Text className="text-sm">60fps animations on all platforms</Text>
+                <Text className="text-sm">100% React Native Web compatible</Text>
               </View>
               <View className="flex-row items-center gap-2">
                 <Text className="text-green-600 dark:text-green-400 font-bold">✓</Text>
-                <Text className="text-sm">Hardware-accelerated GPU rendering</Text>
+                <Text className="text-sm">SVG rendering for all platforms</Text>
               </View>
               <View className="flex-row items-center gap-2">
                 <Text className="text-green-600 dark:text-green-400 font-bold">✓</Text>
-                <Text className="text-sm">50% less memory usage vs ECharts</Text>
+                <Text className="text-sm">Beautiful bezier animations</Text>
               </View>
               <View className="flex-row items-center gap-2">
                 <Text className="text-green-600 dark:text-green-400 font-bold">✓</Text>
-                <Text className="text-sm">~1.7MB smaller bundle size</Text>
+                <Text className="text-sm">~50KB bundle impact</Text>
               </View>
               <View className="flex-row items-center gap-2">
                 <Text className="text-green-600 dark:text-green-400 font-bold">✓</Text>
-                <Text className="text-sm">&lt;100ms initial render time</Text>
+                <Text className="text-sm">Zero configuration needed</Text>
               </View>
             </View>
           </CardContent>
@@ -173,11 +164,10 @@ export default function ChartExamplesPage() {
           </CardHeader>
           <CardContent>
             <View className="gap-1">
-              <Text className="text-sm">• @shopify/react-native-skia (v2.2.12)</Text>
-              <Text className="text-sm">• react-native-reanimated (v4.1.2)</Text>
-              <Text className="text-sm">• d3-scale (v4.0.2)</Text>
-              <Text className="text-sm">• d3-shape (v3.2.0)</Text>
-              <Text className="text-sm">• d3-interpolate (v3.0.1)</Text>
+              <Text className="text-sm">• react-native-chart-kit (latest)</Text>
+              <Text className="text-sm">• react-native-svg (15.12.1)</Text>
+              <Text className="text-sm">• Pure JavaScript implementation</Text>
+              <Text className="text-sm">• Indonesian locale support</Text>
             </View>
           </CardContent>
         </Card>
