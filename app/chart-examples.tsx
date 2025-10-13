@@ -7,6 +7,7 @@ import {
   SkiaPrecipitationChart,
   SkiaWindChart,
   SkiaWaveChart,
+  SmartChartWrapper,
 } from '~/components/charts';
 
 // Sample data for demonstration
@@ -80,7 +81,9 @@ export default function ChartExamplesPage() {
             <CardTitle>Temperature & Humidity Chart</CardTitle>
           </CardHeader>
           <CardContent>
-            <SkiaTemperatureChart data={temperatureData} animated={true} />
+            <SmartChartWrapper height={220}>
+              <SkiaTemperatureChart data={temperatureData} animated={true} />
+            </SmartChartWrapper>
             <Text className="text-xs text-muted-foreground mt-2">
               Dual Y-axis line chart with gradient fill and animated data points
             </Text>
@@ -93,7 +96,9 @@ export default function ChartExamplesPage() {
             <CardTitle>Precipitation Bar Chart</CardTitle>
           </CardHeader>
           <CardContent>
-            <SkiaPrecipitationChart data={precipitationData} animated={true} />
+            <SmartChartWrapper height={220}>
+              <SkiaPrecipitationChart data={precipitationData} animated={true} />
+            </SmartChartWrapper>
             <Text className="text-xs text-muted-foreground mt-2">
               Animated bar chart showing rainfall intensity over time
             </Text>
@@ -106,7 +111,9 @@ export default function ChartExamplesPage() {
             <CardTitle>Wind Compass Chart</CardTitle>
           </CardHeader>
           <CardContent>
-            <SkiaWindChart data={windData} animated={true} />
+            <SmartChartWrapper height={220}>
+              <SkiaWindChart data={windData} animated={true} />
+            </SmartChartWrapper>
             <Text className="text-xs text-muted-foreground mt-2">
               Circular compass visualization with direction and speed indicators
             </Text>
@@ -119,7 +126,9 @@ export default function ChartExamplesPage() {
             <CardTitle>Maritime Wave Chart</CardTitle>
           </CardHeader>
           <CardContent>
-            <SkiaWaveChart data={waveData} animated={true} />
+            <SmartChartWrapper height={220}>
+              <SkiaWaveChart data={waveData} animated={true} />
+            </SmartChartWrapper>
             <Text className="text-xs text-muted-foreground mt-2">
               Wave height visualization with fluid animations for maritime data
             </Text>

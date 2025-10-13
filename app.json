@@ -23,7 +23,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": ["**/*", "public/**/*"],
     "ios": {
       "supportsTablet": true
     },

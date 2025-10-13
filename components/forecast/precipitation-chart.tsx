@@ -1,19 +1,5 @@
 import React from 'react';
-import { View, Platform } from 'react-native';
-import { Text } from '~/components/ui/text';
-import { SkiaPrecipitationChart } from '~/components/charts';
-
-// ECharts for cross-platform support (fallback)
-let EChartsComponent: any;
-if (Platform.OS !== 'web') {
-  try {
-    const EChartsModule = require('react-native-echarts-wrapper');
-    EChartsComponent = EChartsModule.default;
-  } catch (e) {
-    // ECharts not available
-    console.warn('ECharts not available:', e);
-  }
-}
+import { SkiaPrecipitationChart, SmartChartWrapper } from '~/components/charts';
 
 interface PrecipitationChartData {
   time: string;
@@ -25,6 +11,9 @@ interface PrecipitationChartProps {
 }
 
 export function PrecipitationChart({ data }: PrecipitationChartProps) {
-  // Use high-performance Skia chart implementation
-  return <SkiaPrecipitationChart data={data} />;
+  return (
+    <SmartChartWrapper height={220} loadingMessage="Memuat grafik curah hujan...">
+      <SkiaPrecipitationChart data={data} />
+    </SmartChartWrapper>
+  );
 }
