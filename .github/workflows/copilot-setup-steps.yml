@@ -1,7 +1,9 @@
-name: "Copilot Setup Steps - CMEWS App"
+name: "Copilot Setup Steps"
 
+# Automatically run the setup steps when they are changed to allow for easy validation, and
+# allow manual testing through the repository's "Actions" tab
 on:
-  workflow_dispatch: {}
+  workflow_dispatch:
   push:
     paths:
       - .github/workflows/copilot-setup-steps.yml
@@ -10,158 +12,30 @@ on:
       - .github/workflows/copilot-setup-steps.yml
 
 jobs:
+  # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
     runs-on: ubuntu-latest
-    timeout-minutes: 59
+
+    # Set the permissions to the lowest permissions possible needed for your steps.
+    # Copilot will be given its own token for its operations.
     permissions:
+      # If you want to clone the repository as part of your setup steps, for example to install dependencies, you'll need the `contents: read` permission. If you don't clone the repository in your setup steps, Copilot will do this for you automatically after the steps complete.
       contents: read
-      actions: write
-      checks: write
 
+    # You can define any steps you want, and they will run before the agent starts.
+    # If you do not check out your code, Copilot will do this for you.
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v5
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
-      - name: Install dependencies
+      - name: Install JavaScript dependencies
         run: npm ci
 
-      - name: Validate AGENTS.md compliance
-        run: |
-          echo "::group::AGENTS.md Validation"
-          if [ ! -f "AGENTS.md" ]; then
-            echo "::error::AGENTS.md file missing from repository root"
-            exit 1
-          fi
-          extra_docs=$(find . -maxdepth 2 -name "*.md" -type f \
-            ! -name "README.md" ! -name "CHANGES.md" ! -name "AGENTS.md" \
-            ! -path "./node_modules/*" ! -path "./.git/*")
-          if [ -n "$extra_docs" ]; then
-            echo "::warning::Extra documentation files found (per AGENTS.md #8): $extra_docs"
-          fi
-          echo "✓ AGENTS.md compliance validated"
-          echo "::endgroup::"
-
-      - name: Validate project structure
-        run: |
-          echo "::group::Project Structure Validation"
-          required_dirs=("app" "components" "lib" "store" "lib/data" "lib/services")
-          for dir in "${required_dirs[@]}"; do
-            if [ ! -d "$dir" ]; then
-              echo "::error::Missing required directory: $dir"
-              exit 1
-            fi
-          done
-          mock_files=("lib/data/weather-mock.ts" "lib/data/warning-mock.ts" "lib/data/maritime-mock.ts")
-          for file in "${mock_files[@]}"; do
-            if [ ! -f "$file" ]; then
-              echo "::warning::Missing mock data file: $file"
-            fi
-          done
-          service_files=("lib/services/MockBMKGService.ts" "lib/services/MockStorageService.ts" "lib/services/types.ts")
-          for file in "${service_files[@]}"; do
-            if [ ! -f "$file" ]; then
-              echo "::warning::Missing service file: $file"
-            fi
-          done
-          echo "✓ Project structure validated"
-          echo "::endgroup::"
-
-      - name: Verify Expo & React Native setup
-        run: |
-          echo "::group::Expo/React Native Verification"
-          node -e "const pkg=require('./package.json');const required={'expo':'Expo SDK 54+','react-native':'React Native 0.81','expo-router':'file-based routing','typescript':'Type safety','nativewind':'Tailwind for RN','zustand':'State management'};const missing=[];Object.entries(required).forEach(([d,desc])=>{if(!pkg.dependencies[d]&&!pkg.devDependencies[d])missing.push(\`${d} (${desc})\`)});if(missing.length){console.error('::error::Missing dependencies:',missing.join(', '));process.exit(1);}console.log('✓ Expo/React Native dependencies verified');"
-          echo "::endgroup::"
-
-      - name: Verify cross-platform libraries
-        run: |
-          echo "::group::Cross-Platform Libraries Check"
-          node -e "const pkg=require('./package.json');if(pkg.dependencies['react-native-chart-kit'])console.log('✓ React Native Chart Kit installed');else console.warn('::warning::react-native-chart-kit missing');['@maplibre/maplibre-react-native','react-map-gl'].forEach(lib=>{if(pkg.dependencies[lib])console.log(\`✓ ${lib} installed\`)});if(pkg.dependencies['lucide-react-native'])console.log('✓ Lucide React Native icons installed');"
-          echo "::endgroup::"
-
-      - name: TypeScript compilation check
-        run: |
-          echo "::group::TypeScript Compilation"
-          npx tsc --noEmit --skipLibCheck
-          echo "✓ TypeScript compilation successful"
-          echo "::endgroup::"
-
-      - name: Code quality checks
-        run: |
-          echo "::group::Code Quality"
-          npm run lint || echo "::warning::Linting issues found"
-          npm run format -- --check || echo "::warning::Formatting issues found"
-          echo "::endgroup::"
-
-      - name: Build verification
-        run: |
-          echo "::group::Build Verification"
-          npm run build
-          echo "✓ Production build successful"
-          echo "::endgroup::"
-
-      - name: Cross-platform compatibility scan
-        run: |
-          echo "::group::Cross-Platform Compatibility"
-          platform_files=$(grep -r "Platform.OS" app/ components/ lib/ 2>/dev/null||true)
-          if [ -n "$platform_files" ]; then
-            echo "::notice::Platform-specific code detected (ensure web fallbacks)"
-          else
-            echo "✓ No platform-specific code detected"
-          fi
-          reanimated_web=$(grep -r "useSharedValue\|withTiming\|useDerivedValue" app/ components/ lib/ 2>/dev/null|grep -v "Platform.OS !== 'web'"||true)
-          if [ -n "$reanimated_web" ]; then
-            echo "::warning::Reanimated usage detected - add Platform.OS guards for web"
-          fi
-          echo "::endgroup::"
-
-      - name: Mock data integrity check
-        run: |
-          echo "::group::Mock Data Validation"
-          node -e "const fs=require('fs');const mockFiles=[{file:'lib/data/weather-mock.ts',exports:['mockWeatherForecast','mockWeatherData']},{file:'lib/data/warning-mock.ts',exports:['mockEarlyWarning']},{file:'lib/data/maritime-mock.ts',exports:['mockMaritimeWeather']}];mockFiles.forEach(({file,exports})=>{if(fs.existsSync(file)){const c=fs.readFileSync(file,'utf8');exports.forEach(e=>{if(c.includes(`export const ${e}`)||c.includes(`export { ${e}`))console.log(`✓ ${e} export found in ${file}`);else console.warn(`::warning::Missing ${e} export in ${file}`)})}else console.warn(`::warning::Missing mock file: ${file}`)});"
-          echo "::endgroup::"
-
-      - name: Security scan
-        run: |
-          echo "::group::Security Scan"
-          grep -R "API_KEY\|SECRET\|PASSWORD" app/ lib/ --include="*.ts" --include="*.tsx" | grep -v "mock" | grep -v "example" && echo "::warning::Potential hardcoded secrets found"
-          echo "✓ .gitignore validation"  # assumes .gitignore present
-          echo "::endgroup::"
-
-      - name: Dependency audit
-        run: |
-          echo "::group::Dependency Audit"
-          npm audit --production || echo "::warning::Vulnerabilities found"
-          echo "::endgroup::"
-        continue-on-error: true
-
-      - name: Web platform validation
-        run: |
-          echo "::group::Web Platform Checks"
-          [ -f "metro.config.js" ] && echo "✓ Metro bundler configured"
-          [ -f "public/canvaskit.wasm" ] || echo "::warning::CanvasKit WASM missing (run npm run setup:web)"
-          npm list react-native-web >/dev/null 2>&1 && echo "✓ react-native-web installed"
-          echo "::endgroup::"
-
-      - name: Run tests
-        run: |
-          echo "::group::Test Execution"
-          if grep -q '"test"' package.json; then npm test && echo "✓ Tests passed"; else echo "::notice::No tests configured"; fi
-          echo "::endgroup::"
-        continue-on-error: true
-
-      - name: Generate context summary
-        run: |
-          echo "::group::Development Context Summary"
-          echo "📋 PROJECT STATUS: Frontend Development with Mock Data"
-          echo "🎯 CORE STACK: Expo SDK 54+, React Native 0.81, Expo Router, NativeWind, Zustand"
-          echo "📂 STRUCTURE: app/, components/, lib/data, lib/services, store/"
-          echo "🔧 COMMANDS: npm start, npm run web, npm run build, npm run lint, npm run format"
-          echo "📊 MOCK APIS: weather, warning, maritime"
-          echo "✅ Environment ready for Copilot development"
-          echo "::endgroup::"
+      - name: Run lint checks
+        run: npm run lint --if-present
