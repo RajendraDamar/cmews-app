@@ -10,7 +10,7 @@ These instructions guide all automated changes for the **cmews-app** repository 
 - React Native Reusables (`@rn-primitives/*`) for UI primitives
 - Lucide React Native for iconography
 - React Native Reanimated (web support available but performance-limited)
-- **Cross-platform libraries**: React Native ECharts, Lottie + Skia animations, MapLibre (platform-specific)
+- **Cross-platform libraries**: React Native Chart Kit (SVG charts), Lottie + Skia animations, MapLibre (platform-specific)
 - **Mock Data**: Local mock data for BMKG APIs (weather, early warning, maritime)
 - **Future Integration**: Firebase Auth + FCM (not implemented yet)
 
@@ -173,22 +173,34 @@ These instructions guide all automated changes for the **cmews-app** repository 
 - Do not introduce native-only modules that break Expo managed workflow without discussion.
 
 ## 8. Charts & Visualization
-- **Primary**: Use React Native ECharts for all chart implementations (true cross-platform compatibility).
+- **Primary**: Use React Native Chart Kit for all chart implementations (perfect cross-platform SVG rendering).
+- **Migration Note**: Previously used React Native ECharts/Skia. Migrated to Chart Kit in October 2025 for better web compatibility and zero-configuration setup.
 - **Weather data visualization**: Create charts using mock BMKG data that matches real API response structure.
 - **Implementation pattern**:
   ```javascript
-  import { BarChart, LineChart } from 'react-native-echarts-wrapper';
+  import { LineChart, BarChart } from 'react-native-chart-kit';
   import { mockWeatherForecast } from '../lib/data/bmkg-mock';
   
   const WeatherChart = () => {
-    const chartData = mockWeatherForecast.data.map(item => ({
-      name: item.local_datetime.split(' ')[1].substring(0,5), // HH:MM
-      temperature: item.t,
-      humidity: item.hu
-    }));
+    const chartData = {
+      labels: mockWeatherForecast.data.map(item => 
+        item.local_datetime.split(' ')[1].substring(0,5) // HH:MM
+      ),
+      datasets: [{
+        data: mockWeatherForecast.data.map(item => item.t)
+      }]
+    };
     
     return (
       <LineChart
+        data={chartData}
+        width={screenWidth - 32}
+        height={220}
+        chartConfig={chartConfig}
+      />
+    );
+  };
+  ```<LineChart
         data={chartData}
         xAxis={{ type: 'category', data: chartData.map(d => d.name) }}
         series={[
@@ -306,7 +318,7 @@ Create the following file structure for frontend-first development:
 
 ### UI Components
 - `components/weather/WeatherCard.tsx` - Weather forecast display component
-- `components/weather/WeatherChart.tsx` - Temperature/humidity charts using ECharts
+- `components/weather/WeatherChart.tsx` - Temperature/humidity charts using Chart Kit
 - `components/weather/WeatherList.tsx` - Multi-day weather forecast list
 - `components/warning/WarningAlert.tsx` - Weather warning display component
 - `components/warning/WarningBanner.tsx` - Alert banner for active warnings

@@ -200,3 +200,25 @@ export const getWeatherData = generateWeatherData;
 export const getWindData = generateWindData;
 export const getWaveData = generateWaveData;
 export const getCurrentData = generateCurrentData;
+
+// BMKG API-compatible export for service layer
+// This matches the structure expected by MockBMKGService
+export const mockMaritimeWeather = {
+  perairan: SEA_AREAS.map((seaArea, index) => {
+    const waveData = generateWaveData()[index];
+    const windData = generateWindData()[index];
+    const weatherData = generateWeatherData('24h')[index];
+
+    return {
+      code: `ID${String(index + 1).padStart(3, '0')}`,
+      wilayah: seaArea,
+      weather: weatherData?.condition || 'Cerah Berawan',
+      wave_cat: waveData.seaState,
+      wave_desc: `${waveData.heightMin} - ${waveData.heightMax} m`,
+      wind_speed_min: windData.speedMin,
+      wind_speed_max: windData.speedMax,
+      warning_desc: waveData.significantHeight > 2.5 ? 'Gelombang tinggi' : null,
+    };
+  }),
+};
+

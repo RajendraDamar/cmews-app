@@ -227,7 +227,7 @@ This document tracks all major changes, improvements, and fixes implemented in t
 
 **Date**: October 2025
 
-**Change**: Consolidated all documentation into README.md and CHANGES.md per `.github/copilot-instructions.md` guidelines.
+**Change**: Consolidated all documentation into README.md and CHANGES.md per `AGENTS.md` guidelines.
 
 **Removed Files**:
 - `FEATURES.md` - Content merged into README.md
