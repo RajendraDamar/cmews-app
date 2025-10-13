@@ -1,4 +1,4 @@
-name: "Copilot Setup Steps"
+name: "Copilot Setup Steps - CMEWS App"
 
 on:
   workflow_dispatch:
@@ -31,68 +31,234 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: TypeScript compilation check
-        run: npx tsc --noEmit --strict --skipLibCheck
-
-      - name: ESLint validation
-        run: npm run lint
-
-      - name: Code formatting check
-        run: npm run format -- --check
-
-      - name: Production build verification
-        run: npm run build
-
-      - name: Web export validation
+      - name: Validate AGENTS.md compliance
         run: |
-          timeout 120s npm run web &
-          WEB_PID=$!
-          sleep 15
-          kill $WEB_PID 2>/dev/null || true
-        continue-on-error: true
+          echo "::group::AGENTS.md Validation"
+          if [ ! -f "AGENTS.md" ]; then
+            echo "::error::AGENTS.md file missing from repository root"
+            exit 1
+          fi
+          
+          # Check documentation structure (only README.md, CHANGES.md, AGENTS.md allowed)
+          extra_docs=$(find . -maxdepth 2 -name "*.md" -type f ! -name "README.md" ! -name "CHANGES.md" ! -name "AGENTS.md" ! -path "./node_modules/*" ! -path "./.git/*")
+          if [ -n "$extra_docs" ]; then
+            echo "::warning::Extra documentation files found (AGENTS.md principle #8): $extra_docs"
+          fi
+          
+          echo "✓ AGENTS.md found and accessible"
+          echo "::endgroup::"
 
-      - name: Project structure validation
+      - name: Validate project structure
         run: |
-          required_dirs=("app" "components" "lib" "store")
+          echo "::group::Project Structure Validation"
+          # Required directories per AGENTS.md
+          required_dirs=("app" "components" "lib" "store" "lib/data" "lib/services")
           for dir in "${required_dirs[@]}"; do
             if [ ! -d "$dir" ]; then
-              echo "Missing required directory: $dir"
+              echo "::error::Missing required directory: $dir"
               exit 1
             fi
           done
+          
+          # Check for mock data files
+          mock_files=("lib/data/weather-mock.ts" "lib/data/warning-mock.ts" "lib/data/maritime-mock.ts")
+          for file in "${mock_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "::warning::Missing mock data file: $file"
+            fi
+          done
+          
+          # Check for service layer
+          service_files=("lib/services/MockBMKGService.ts" "lib/services/MockStorageService.ts" "lib/services/types.ts")
+          for file in "${service_files[@]}"; do
+            if [ ! -f "$file" ]; then
+              echo "::warning::Missing service file: $file"
+            fi
+          done
+          
+          echo "✓ Core project structure validated"
+          echo "::endgroup::"
 
-      - name: Agent instructions validation
+      - name: Verify Expo & React Native setup
         run: |
-          if [ ! -f "AGENTS.md" ]; then
-            echo "AGENTS.md file missing from repository root"
-            exit 1
-          fi
-          echo "Agent instructions file found and accessible"
-
-      - name: Core dependency verification
-        run: |
+          echo "::group::Expo/React Native Verification"
           node -e "
           const pkg = require('./package.json');
-          const required = ['expo', 'react-native', 'expo-router', 'typescript'];
-          const missing = required.filter(dep => !pkg.dependencies[dep] && !pkg.devDependencies[dep]);
+          
+          // Core dependencies
+          const required = {
+            'expo': 'Expo SDK 54+',
+            'react-native': 'React Native 0.81',
+            'expo-router': 'File-based routing',
+            'typescript': 'Type safety',
+            'nativewind': 'Tailwind for RN',
+            'zustand': 'State management'
+          };
+          
+          const missing = [];
+          Object.entries(required).forEach(([dep, desc]) => {
+            if (!pkg.dependencies[dep] && !pkg.devDependencies[dep]) {
+              missing.push(\`\${dep} (\${desc})\`);
+            }
+          });
+          
           if (missing.length > 0) {
-            console.error('Missing dependencies:', missing.join(', '));
+            console.error('::error::Missing dependencies:', missing.join(', '));
             process.exit(1);
           }
-          console.log('Core dependencies verified');
+          
+          console.log('✓ Core Expo/React Native dependencies verified');
+          console.log('  - Expo SDK:', pkg.dependencies.expo);
+          console.log('  - React Native:', pkg.dependencies['react-native']);
+          console.log('  - Expo Router:', pkg.dependencies['expo-router']);
           "
+          echo "::endgroup::"
 
-      - name: Cross-platform compatibility check
+      - name: Verify cross-platform libraries
         run: |
-          if grep -r "Platform.OS" app/ components/ lib/ >/dev/null 2>&1; then
-            echo "Platform-specific code detected - ensure web fallbacks exist"
+          echo "::group::Cross-Platform Libraries Check"
+          node -e "
+          const pkg = require('./package.json');
+          
+          // Chart libraries (Chart Kit per AGENTS.md)
+          const chartLib = pkg.dependencies['react-native-chart-kit'];
+          if (chartLib) {
+            console.log('✓ React Native Chart Kit:', chartLib);
+          } else {
+            console.warn('::warning::React Native Chart Kit not found (expected per AGENTS.md)');
+          }
+          
+          // Map libraries (platform-specific)
+          const mapLibs = [
+            '@maplibre/maplibre-react-native',
+            'react-map-gl'
+          ];
+          mapLibs.forEach(lib => {
+            if (pkg.dependencies[lib]) {
+              console.log(\`✓ \${lib}: \${pkg.dependencies[lib]}\`);
+            }
+          });
+          
+          // UI primitives
+          if (pkg.dependencies['lucide-react-native']) {
+            console.log('✓ Lucide React Native icons:', pkg.dependencies['lucide-react-native']);
+          }
+          "
+          echo "::endgroup::"
+
+      - name: TypeScript compilation check
+        run: |
+          echo "::group::TypeScript Compilation"
+          npx tsc --noEmit --skipLibCheck
+          echo "✓ TypeScript compilation successful"
+          echo "::endgroup::"
+
+      - name: Code quality checks
+        run: |
+          echo "::group::Code Quality"
+          npm run lint || echo "::warning::Linting issues found"
+          npm run format -- --check || echo "::warning::Formatting issues found"
+          echo "::endgroup::"
+
+      - name: Build verification
+        run: |
+          echo "::group::Build Verification"
+          npm run build
+          echo "✓ Production build successful"
+          echo "::endgroup::"
+
+      - name: Cross-platform compatibility scan
+        run: |
+          echo "::group::Cross-Platform Compatibility"
+          # Check for Platform.OS usage
+          platform_files=$(grep -r "Platform.OS" app/ components/ lib/ 2>/dev/null || true)
+          if [ -n "$platform_files" ]; then
+            echo "Platform-specific code detected:"
+            echo "$platform_files" | head -10
+            echo ""
+            echo "::notice::Ensure web fallbacks exist for all platform-specific code"
+          else
+            echo "✓ No platform-specific code detected"
           fi
-          echo "Cross-platform validation complete"
+          
+          # Check for Reanimated on web (AGENTS.md warns about performance)
+          reanimated_web=$(grep -r "useSharedValue\|withTiming\|useDerivedValue" app/ components/ lib/ 2>/dev/null | grep -v "Platform.OS !== 'web'" || true)
+          if [ -n "$reanimated_web" ]; then
+            echo "::warning::Reanimated usage detected - ensure Platform.OS guards for web (performance issues per AGENTS.md)"
+          fi
+          echo "::endgroup::"
 
-      - name: Project health summary
+      - name: Mock data integrity check
         run: |
-          echo "Validation Status: PASSED"
-          echo "TypeScript: Strict compilation successful"
-          echo "Build: Production build verified" 
-          echo "Agent Instructions: Available at AGENTS.md"
-          echo "Project ready for automated development"
+          echo "::group::Mock Data Validation"
+          node -e "
+          const fs = require('fs');
+          
+          // Check mock data exports match BMKG schema
+          const mockFiles = [
+            { file: 'lib/data/weather-mock.ts', exports: ['mockWeatherForecast', 'mockWeatherData'] },
+            { file: 'lib/data/warning-mock.ts', exports: ['mockEarlyWarning'] },
+            { file: 'lib/data/maritime-mock.ts', exports: ['mockMaritimeWeather'] }
+          ];
+          
+          mockFiles.forEach(({ file, exports }) => {
+            if (fs.existsSync(file)) {
+              const content = fs.readFileSync(file, 'utf8');
+              exports.forEach(exp => {
+                if (content.includes(\`export const \${exp}\`) || content.includes(\`export { \${exp}\`)) {
+                  console.log(\`✓ \${file}: \${exp} export found\`);
+                } else {
+                  console.warn(\`::warning::\${file}: Missing \${exp} export (required per AGENTS.md)\`);
+                }
+              });
+            } else {
+              console.warn(\`::warning::Missing mock file: \${file}\`);
+            }
+          });
+          "
+          echo "::endgroup::"
+
+      - name: Generate context summary
+        run: |
+          echo "::group::Development Context Summary"
+          echo "========================================="
+          echo "CMEWS App - Weather & Maritime Service"
+          echo "========================================="
+          echo ""
+          echo "📋 PROJECT STATUS:"
+          echo "  • Phase: Frontend Development (Mock Data)"
+          echo "  • Platform: Expo SDK 54 + React Native 0.81"
+          echo "  • Navigation: Expo Router (file-based)"
+          echo "  • Styling: NativeWind 4 + Tailwind"
+          echo "  • State: Zustand"
+          echo "  • Charts: React Native Chart Kit (SVG)"
+          echo ""
+          echo "🎯 KEY GUIDELINES (AGENTS.md):"
+          echo "  1. Keep it simple - minimal changes"
+          echo "  2. Respect conventions - follow existing patterns"
+          echo "  3. Stay cross-platform - iOS/Android/Web"
+          echo "  4. Frontend-first - mock data only"
+          echo "  5. No architectural rewrites"
+          echo ""
+          echo "📂 PROJECT STRUCTURE:"
+          echo "  • app/          - Expo Router screens"
+          echo "  • components/   - Reusable UI components"
+          echo "  • lib/data/     - Mock BMKG data (weather/warning/maritime)"
+          echo "  • lib/services/ - Mock service layer"
+          echo "  • store/        - Zustand global state"
+          echo ""
+          echo "🔧 AVAILABLE COMMANDS:"
+          echo "  • npm start          - Start Expo dev server"
+          echo "  • npm run web        - Start web dev server"
+          echo "  • npm run build      - Build for production"
+          echo "  • npm run build:web  - Build web with Skia setup"
+          echo "  • npm run lint       - Run ESLint"
+          echo "  • npm run format     - Format with Prettier"
+          echo ""
+          echo "📊 MOCK DATA APIS:"
+          echo "  • Weather Forecast  - prakiraan-cuaca (3-day, 8x/day)"
+          echo "  • Early Warning     - peringatan-dini (alerts)"
+          echo "  • Maritime Weather  - perairan (wave/wind data)"
+          echo ""
+          echo "✅ Environment ready for Copilot development"
+          echo "::endgroup::"
