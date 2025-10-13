@@ -161,6 +161,8 @@ await LoadSkiaWeb({
 
 ```bash
 npx setup-skia-web
+# or use npm script
+npm run setup:web
 ```
 
 This creates `/public/canvaskit.wasm` (7.7MB). The file is:
@@ -168,35 +170,86 @@ This creates `/public/canvaskit.wasm` (7.7MB). The file is:
 - Copied to `/dist/canvaskit.wasm` during build
 - Served as a static asset
 
+### Verification
+
+Verify your setup is correct:
+
+```bash
+npm run verify:web
+```
+
+This runs an automated check script that verifies:
+- ✅ CanvasKit WASM file exists and has correct size (~7.7MB)
+- ✅ Required dependencies installed (@shopify/react-native-skia, react-native-reanimated)
+- ✅ Required files present (SmartChartWrapper, canvaskit-loader)
+- ✅ Metro bundler configured correctly
+
+**Expected output:**
+```
+🔍 Verifying CMEWS Web Platform Setup...
+
+1. Checking CanvasKit WASM file...
+   ✓ Found: public/canvaskit.wasm (7.7M)
+
+2. Checking dependencies...
+   ✓ React Native Skia installed
+   ✓ React Native Reanimated installed
+
+3. Checking required files...
+   ✓ Found: components/charts/SmartChartWrapper.tsx
+   ✓ Found: lib/canvaskit-loader.ts
+   ✓ Found: app.json
+
+4. Checking configuration...
+   ✓ Metro bundler configured for web
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+✓ All checks passed!
+```
+
 ### Build Commands
 
 ```bash
-# Build for all platforms
-npm run build
+# Setup web platform (first time)
+npm run setup:web
 
-# Build for web only
-npx expo export --platform web
+# Verify setup
+npm run verify:web
 
 # Development server
 npm run web
+
+# Build for web only
+npm run build:web
+
+# Build for all platforms
+npm run build
 ```
 
 ## Troubleshooting
 
 ### Charts Don't Load on Web
 
-1. **Check CanvasKit WASM exists**:
+1. **Run verification script**:
+   ```bash
+   npm run verify:web
+   ```
+   This will identify any missing setup steps.
+
+2. **Check CanvasKit WASM exists**:
    ```bash
    ls -lh public/canvaskit.wasm
    ```
    Should show 7.7MB file
 
-2. **Regenerate if missing**:
+3. **Regenerate if missing**:
    ```bash
+   npm run setup:web
+   # or
    npx setup-skia-web
    ```
 
-3. **Check browser console** for loading errors
+4. **Check browser console** for loading errors
 
 ### Build Errors on Native
 

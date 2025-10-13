@@ -21,6 +21,14 @@ CMEWS (Community-based Marine and Environmental Weather Service) is a cross-plat
 # Install dependencies
 npm install
 
+# Setup CanvasKit for web (required for charts on web)
+npx setup-skia-web
+# or use the npm script
+npm run setup:web
+
+# Verify web setup (optional)
+npm run verify:web
+
 # Start development server
 npm start
 ```
@@ -28,14 +36,20 @@ npm start
 ### Platform-Specific Commands
 
 ```bash
-# Web
+# Web (requires CanvasKit WASM - run setup-skia-web first)
 npm run web
+
+# Verify web setup
+npm run verify:web
 
 # Android
 npm run android
 
 # iOS
 npm run ios
+
+# Build for web
+npm run build:web
 ```
 
 ## 📱 Platform Support
@@ -243,6 +257,8 @@ React Native Reanimated is used sparingly due to web performance concerns (200ms
 
 ### Chart Rendering
 All charts use React Native Skia for hardware-accelerated rendering. Charts render perfectly on all platforms (iOS, Android, Web) with consistent 60fps performance.
+
+**Web Platform**: Charts require CanvasKit WASM file. Run `npx setup-skia-web` to generate the required `/public/canvaskit.wasm` file (~7.7MB). This file is excluded from git and must be generated locally or during CI/CD builds. See [CHART-WEB-INVESTIGATION.md](CHART-WEB-INVESTIGATION.md) for details.
 
 ## 🚀 Future Enhancements
 
