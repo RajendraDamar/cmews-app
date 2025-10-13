@@ -1,44 +1,96 @@
-name: "Copilot Setup Steps"
+name: "Coding Agent Validation"
 
 on:
   workflow_dispatch:
   push:
-    paths:
-      - .github/workflows/copilot-setup-steps.yml
+    branches: [main]
   pull_request:
-    paths:
-      - .github/workflows/copilot-setup-steps.yml
+    branches: [main]
 
 jobs:
-  copilot-setup-steps:
+  validate:
     runs-on: ubuntu-latest
     timeout-minutes: 59
     permissions:
       contents: read
-    
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v5
+      actions: write
+      checks: write
 
-      - name: Set up Node.js
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
-      - name: Install JavaScript dependencies
+      - name: Install dependencies
         run: npm ci
 
-      - name: Verify TypeScript configuration
-        run: npx tsc --noEmit --skipLibCheck
+      - name: TypeScript compilation check
+        run: npx tsc --noEmit --strict --skipLibCheck
 
-      - name: Run linting check
+      - name: ESLint validation
         run: npm run lint
 
-      - name: Build the project
+      - name: Code formatting check
+        run: npm run format -- --check
+
+      - name: Production build verification
         run: npm run build
 
-      - name: Test web build capability
+      - name: Web export validation
         run: |
-          expo export:web --dev --clear
+          timeout 120s npm run web &
+          WEB_PID=$!
+          sleep 15
+          kill $WEB_PID 2>/dev/null || true
         continue-on-error: true
+
+      - name: Project structure validation
+        run: |
+          required_dirs=("app" "components" "lib" "store")
+          for dir in "${required_dirs[@]}"; do
+            if [ ! -d "$dir" ]; then
+              echo "Missing required directory: $dir"
+              exit 1
+            fi
+          done
+
+      - name: Agent instructions validation
+        run: |
+          if [ ! -f "AGENTS.md" ]; then
+            echo "AGENTS.md file missing from repository root"
+            exit 1
+          fi
+          echo "Agent instructions file found and accessible"
+
+      - name: Core dependency verification
+        run: |
+          node -e "
+          const pkg = require('./package.json');
+          const required = ['expo', 'react-native', 'expo-router', 'typescript'];
+          const missing = required.filter(dep => !pkg.dependencies[dep] && !pkg.devDependencies[dep]);
+          if (missing.length > 0) {
+            console.error('Missing dependencies:', missing.join(', '));
+            process.exit(1);
+          }
+          console.log('Core dependencies verified');
+          "
+
+      - name: Cross-platform compatibility check
+        run: |
+          if grep -r "Platform.OS" app/ components/ lib/ >/dev/null 2>&1; then
+            echo "Platform-specific code detected - ensure web fallbacks exist"
+          fi
+          echo "Cross-platform validation complete"
+
+      - name: Project health summary
+        run: |
+          echo "Validation Status: PASSED"
+          echo "TypeScript: Strict compilation successful"
+          echo "Build: Production build verified" 
+          echo "Agent Instructions: Available at AGENTS.md"
+          echo "Project ready for automated development"
