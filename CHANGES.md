@@ -429,6 +429,9 @@ npm install
 
 ### Development
 ```bash
+# Setup CanvasKit for web (required for charts on web)
+npx setup-skia-web
+
 # Web
 npm run web
 
@@ -441,8 +444,8 @@ npm run android
 
 ### Building
 ```bash
-# Web production build
-expo export --platform web
+# Web production build (ensure CanvasKit is set up first)
+npx setup-skia-web && expo export --platform web
 
 # Native builds
 expo prebuild
@@ -455,8 +458,10 @@ expo prebuild
 ### Charts on Web
 **✅ ENABLED**: Skia charts now work on web with automatic CanvasKit loading. The SmartChartWrapper component handles CanvasKit loading transparently, providing professional loading states and graceful error handling. CanvasKit (7.7MB) is loaded dynamically on first chart render and cached for subsequent visits.
 
+**Setup Required**: Run `npx setup-skia-web` to generate `/public/canvaskit.wasm` file. This file is excluded from git and must be generated locally or during CI/CD builds.
+
 ### Animations on Web
-React Native Reanimated is disabled on web to avoid worklets errors. Web uses standard CSS animations and transitions instead.
+React Native Reanimated 4.1.1 **works on web** but is used sparingly for performance optimization. Most UI animations use React Native's built-in Animated API for better cross-platform stability. Skia charts use Reanimated for smooth 60fps animations on all platforms including web.
 
 ### Maps on Web
 Web version uses react-map-gl with MapLibre GL JS. Native platforms use @maplibre/maplibre-react-native for better performance.
