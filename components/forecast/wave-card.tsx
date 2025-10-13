@@ -4,7 +4,7 @@ import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '~/components/ui/collapsible';
 import { ChevronDown, Waves } from 'lucide-react-native';
-import { SkiaWaveChart, SmartChartWrapper } from '~/components/charts';
+import { ChartKitWaveChart } from '~/components/charts';
 import type { WaveForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
@@ -20,7 +20,7 @@ export function WaveCard({
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
 
-  // Prepare chart data for SkiaWaveChart
+  // Prepare chart data for ChartKitWaveChart
   const waveChartData = hourly.map((h) => ({
     time: h.time,
     height: h.height,
@@ -87,9 +87,7 @@ export function WaveCard({
 
             {/* Wave Height Chart */}
             <Text className="mb-2 font-semibold">Tinggi Gelombang (m)</Text>
-            <SmartChartWrapper height={220} loadingMessage="Memuat grafik gelombang...">
-              <SkiaWaveChart data={waveChartData} animated={true} />
-            </SmartChartWrapper>
+            <ChartKitWaveChart data={waveChartData} animated={true} />
 
             <Separator className="my-4" />
 

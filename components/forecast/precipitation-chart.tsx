@@ -1,5 +1,5 @@
 import React from 'react';
-import { SkiaPrecipitationChart, SmartChartWrapper } from '~/components/charts';
+import { ChartKitPrecipitationChart } from '~/components/charts';
 
 interface PrecipitationChartData {
   time: string;
@@ -11,9 +11,5 @@ interface PrecipitationChartProps {
 }
 
 export function PrecipitationChart({ data }: PrecipitationChartProps) {
-  return (
-    <SmartChartWrapper height={220} loadingMessage="Memuat grafik curah hujan...">
-      <SkiaPrecipitationChart data={data} />
-    </SmartChartWrapper>
-  );
+  return <ChartKitPrecipitationChart data={data} />;
 }

@@ -1,4 +1,4 @@
-import { SkiaTemperatureChart, SmartChartWrapper } from '~/components/charts';
+import { ChartKitTemperatureChart } from '~/components/charts';
 
 interface ChartDataPoint {
   time: string;
@@ -11,9 +11,5 @@ interface WeatherChartProps {
 }
 
 export function WeatherChart({ data }: WeatherChartProps) {
-  return (
-    <SmartChartWrapper height={220} loadingMessage="Memuat grafik cuaca...">
-      <SkiaTemperatureChart data={data} />
-    </SmartChartWrapper>
-  );
+  return <ChartKitTemperatureChart data={data} />;
 }
