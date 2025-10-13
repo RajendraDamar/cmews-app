@@ -1,4 +1,4 @@
-name: "Coding Agent Validation"
+name: "Copilot Setup Steps"
 
 on:
   workflow_dispatch:
