@@ -75,6 +75,8 @@ export function ChartKitWindChart({
           marginVertical: 8,
           borderRadius: 16,
         }}
+        yAxisLabel=""
+        yAxisSuffix=""
         withInnerLines={true}
         withVerticalLabels={true}
         withHorizontalLabels={true}
@@ -91,7 +93,7 @@ export function ChartKitWindChart({
               className="h-2 w-8"
               style={{ backgroundColor: windColor }}
             />
-            <Text size="xs" variant="muted">
+            <Text size="sm" variant="muted">
               {d.direction}: {d.speed} km/h
             </Text>
           </View>
