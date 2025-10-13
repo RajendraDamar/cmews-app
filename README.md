@@ -21,14 +21,6 @@ CMEWS (Community-based Marine and Environmental Weather Service) is a cross-plat
 # Install dependencies
 npm install
 
-# Setup CanvasKit for web (required for charts on web)
-npx setup-skia-web
-# or use the npm script
-npm run setup:web
-
-# Verify web setup (optional)
-npm run verify:web
-
 # Start development server
 npm start
 ```
@@ -36,11 +28,8 @@ npm start
 ### Platform-Specific Commands
 
 ```bash
-# Web (requires CanvasKit WASM - run setup-skia-web first)
+# Web - works out of the box with React Native Chart Kit
 npm run web
-
-# Verify web setup
-npm run verify:web
 
 # Android
 npm run android
@@ -49,16 +38,16 @@ npm run android
 npm run ios
 
 # Build for web
-npm run build:web
+npm run build
 ```
 
 ## 📱 Platform Support
 
 | Platform | Status | Details |
 |----------|--------|---------|
-| Web | ✅ Working | Full feature support with React Native Skia charts |
-| Android | ✅ Working | Native performance with hardware-accelerated charts |
-| iOS | ✅ Working | Native performance with hardware-accelerated charts |
+| Web | ✅ Working | Full feature support with React Native Chart Kit |
+| Android | ✅ Working | Native performance with SVG-based charts |
+| iOS | ✅ Working | Native performance with SVG-based charts |
 
 ## ✨ Key Features
 
@@ -87,14 +76,14 @@ npm run build:web
 - **Cross-Platform**: MapLibre React Native (iOS/Android) and MapLibre GL JS (Web)
 
 ### Charts & Visualization
-- **React Native Skia Charts**: High-performance, 60fps hardware-accelerated charts
-- **CanvasKit Web Support**: Smart auto-loading for web platform (see [docs/CANVASKIT-WEB.md](docs/CANVASKIT-WEB.md))
-- **Temperature & Humidity**: Dual-axis line charts
-- **Precipitation**: Animated bar charts
-- **Wind Compass**: Circular wind direction visualization
-- **Wave Heights**: Maritime wave charts
-- **Performance**: <100ms render time, 50% less memory than ECharts
-- **Cross-Platform**: Identical charts on iOS, Android, and Web
+- **React Native Chart Kit**: Cross-platform SVG-based charts with perfect web compatibility
+- **Zero Configuration**: Works out of the box on all platforms - no build steps needed
+- **Temperature & Humidity**: Dual-line charts with bezier curves
+- **Precipitation**: Clean animated bar charts
+- **Wind Speed**: Direction-based bar charts
+- **Wave Heights**: Smooth maritime wave visualization
+- **Performance**: Instant loading, ~50KB bundle impact
+- **Beautiful Design**: Professional bezier animations and gradient fills
 
 ## 🏗️ Tech Stack
 
@@ -118,9 +107,10 @@ npm run build:web
 - **MapLibre** - Interactive maps
   - `@maplibre/maplibre-react-native` for iOS/Android
   - `react-map-gl` for web
-- **React Native Skia** - Hardware-accelerated chart rendering (60fps)
-- **d3-scale, d3-shape** - Chart calculations
-- **React Native Reanimated 4** - Native thread animations (iOS/Android only)
+- **React Native Chart Kit** - Cross-platform SVG charts (perfect web compatibility)
+  - Pure JavaScript implementation
+  - ~50KB bundle impact
+  - Zero configuration needed
 
 ### Animation
 - **React Native Animated API** - Cross-platform animations (60fps stable)
@@ -151,11 +141,11 @@ cmews-app/
 │   ├── ui/               # UI primitives (shadcn-style)
 │   ├── weather/          # Weather display components
 │   ├── forecast/         # Forecast-specific components
-│   ├── charts/           # High-performance Skia charts
-│   │   ├── SkiaTemperatureChart.tsx
-│   │   ├── SkiaPrecipitationChart.tsx
-│   │   ├── SkiaWindChart.tsx
-│   │   ├── SkiaWaveChart.tsx
+│   ├── charts/           # Cross-platform Chart Kit charts
+│   │   ├── ChartKitTemperatureChart.tsx
+│   │   ├── ChartKitPrecipitationChart.tsx
+│   │   ├── ChartKitWindChart.tsx
+│   │   ├── ChartKitWaveChart.tsx
 │   │   └── README.md     # Chart documentation
 │   └── maps/             # Map components (platform-specific)
 ├── lib/                  # Utilities and types
