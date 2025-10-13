@@ -1,7 +1,14 @@
 import React, { ReactNode } from 'react';
 import { View, Platform, ActivityIndicator } from 'react-native';
 import { Text } from '~/components/ui/text';
-import { useCanvasKitLoader } from '~/lib/canvaskit-loader';
+
+// Conditional import - only import canvaskit-loader on web to avoid bundler issues
+let useCanvasKitLoader: any;
+if (Platform.OS === 'web') {
+  // Dynamic import for web only
+  const loaderModule = require('~/lib/canvaskit-loader');
+  useCanvasKitLoader = loaderModule.useCanvasKitLoader;
+}
 
 interface SmartChartWrapperProps {
   /**
@@ -50,14 +57,14 @@ export function SmartChartWrapper({
   loadingMessage = 'Memuat grafik...',
   errorFallback,
 }: SmartChartWrapperProps) {
-  // On native platforms, CanvasKit loading is instant (not needed)
-  // On web, this hook will load CanvasKit asynchronously
-  const { isReady, isLoading, error } = useCanvasKitLoader();
-
-  // Native platforms: render immediately
+  // On native platforms, render immediately (no CanvasKit needed)
   if (Platform.OS !== 'web') {
     return <>{children}</>;
   }
+
+  // On web platform, use the canvaskit loader hook
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { isReady, isLoading, error } = useCanvasKitLoader();
 
   // Web platform with error
   if (error) {

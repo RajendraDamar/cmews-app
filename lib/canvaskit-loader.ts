@@ -48,8 +48,11 @@ export async function loadCanvasKit(): Promise<void> {
   // Start loading CanvasKit
   canvasKitLoadPromise = (async () => {
     try {
-      // Dynamic import of Skia's web loader
-      const { LoadSkiaWeb } = await import('@shopify/react-native-skia/lib/module/web');
+      // Dynamic import of Skia's web loader - only happens at runtime on web
+      const { LoadSkiaWeb } = await import(
+        /* webpackChunkName: "skia-web" */
+        '@shopify/react-native-skia/lib/module/web'
+      );
       
       // Load CanvasKit from public directory
       await LoadSkiaWeb({
