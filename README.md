@@ -23,6 +23,11 @@ npm install
 
 # Setup CanvasKit for web (required for charts on web)
 npx setup-skia-web
+# or use the npm script
+npm run setup:web
+
+# Verify web setup (optional)
+npm run verify:web
 
 # Start development server
 npm start
@@ -34,6 +39,9 @@ npm start
 # Web (requires CanvasKit WASM - run setup-skia-web first)
 npm run web
 
+# Verify web setup
+npm run verify:web
+
 # Android
 npm run android
 
@@ -41,7 +49,7 @@ npm run android
 npm run ios
 
 # Build for web
-npx setup-skia-web && npx expo export --platform web
+npm run build:web
 ```
 
 ## 📱 Platform Support

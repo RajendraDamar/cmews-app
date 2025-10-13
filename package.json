@@ -8,6 +8,9 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "build": "expo export",
+    "build:web": "npx setup-skia-web && expo export --platform web",
+    "setup:web": "npx setup-skia-web",
+    "verify:web": "bash scripts/verify-web-setup.sh",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write ."
   },
