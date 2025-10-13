@@ -154,15 +154,14 @@ cmews-app/
 │   ├── utils.ts          # Utility functions
 │   └── types/            # TypeScript type definitions
 ├── store/                # Zustand stores
-├── .github/
-│   └── copilot-instructions.md  # Development guidelines
+├── AGENTS.md             # Development guidelines
 ├── CHANGES.md            # Complete change history
 └── README.md            # This file
 ```
 
 ## 🎨 Development Guidelines
 
-This project follows the guidelines specified in `.github/copilot-instructions.md`:
+This project follows the guidelines specified in `AGENTS.md`:
 
 - **Frontend-First Approach**: Mock data development for rapid UI/UX iteration
 - **Mock BMKG Data**: Realistic mock data matching actual BMKG API response structures
@@ -223,9 +222,7 @@ const weatherData = await bmkgService.getWeatherForecast(locationCode);
 ## 📚 Documentation
 
 - **[CHANGES.md](./CHANGES.md)** - Complete change history and implementation details
-- **[docs/CANVASKIT-WEB.md](./docs/CANVASKIT-WEB.md)** - CanvasKit web integration guide
-- **[.github/copilot-instructions.md](./.github/copilot-instructions.md)** - Development guidelines
-- **[components/charts/README.md](./components/charts/README.md)** - Chart usage documentation
+- **[AGENTS.md](./AGENTS.md)** - Development guidelines and coding instructions
 
 ## 🎯 Performance Characteristics
 
@@ -248,7 +245,7 @@ React Native Reanimated is used sparingly due to web performance concerns (200ms
 ### Chart Rendering
 All charts use React Native Skia for hardware-accelerated rendering. Charts render perfectly on all platforms (iOS, Android, Web) with consistent 60fps performance.
 
-**Web Platform**: Charts require CanvasKit WASM file. Run `npx setup-skia-web` to generate the required `/public/canvaskit.wasm` file (~7.7MB). This file is excluded from git and must be generated locally or during CI/CD builds. See [CHART-WEB-INVESTIGATION.md](CHART-WEB-INVESTIGATION.md) for details.
+**Web Platform**: Charts require CanvasKit WASM file. Run `npx setup-skia-web` to generate the required `/public/canvaskit.wasm` file (~7.7MB). This file is excluded from git and must be generated locally or during CI/CD builds.
 
 ## 🚀 Future Enhancements
 
