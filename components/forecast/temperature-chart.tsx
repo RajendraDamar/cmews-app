@@ -1,5 +1,5 @@
 import React from 'react';
-import { SkiaTemperatureChart, SmartChartWrapper } from '~/components/charts';
+import { ChartKitTemperatureChart } from '~/components/charts';
 
 interface TemperatureChartData {
   time: string;
@@ -12,9 +12,5 @@ interface TemperatureChartProps {
 }
 
 export function TemperatureChart({ data }: TemperatureChartProps) {
-  return (
-    <SmartChartWrapper height={220} loadingMessage="Memuat grafik suhu...">
-      <SkiaTemperatureChart data={data} />
-    </SmartChartWrapper>
-  );
+  return <ChartKitTemperatureChart data={data} />;
 }

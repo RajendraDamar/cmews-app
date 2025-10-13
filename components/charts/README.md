@@ -1,17 +1,18 @@
-# High-Performance Skia Charts
+# Cross-Platform Chart Kit Charts
 
-This document describes the new high-performance chart system built with React Native Skia for cross-platform 60fps rendering.
+This document describes the cross-platform chart system built with React Native Chart Kit for perfect web compatibility and zero configuration.
 
 ## Overview
 
-The chart system replaces ECharts with custom Skia-based implementations that provide:
+The app uses **React Native Chart Kit** for all weather data visualization. This library provides:
+- ✅ **100% React Native Web compatible** - Works identically on native and web
+- ✅ **Zero configuration** - No build steps or WASM files needed
+- ✅ **SVG-based rendering** - Perfect for cross-platform consistency
+- ✅ **Lightweight** - Only ~50KB bundle impact
+- ✅ **Beautiful animations** - Smooth bezier curves and transitions
+- ✅ **Theme support** - Automatic light/dark mode adaptation
 
-- **True 60fps animations** on all platforms (iOS, Android, Web)
-- **Hardware-accelerated rendering** via GPU
-- **Consistent cross-platform behavior** - identical rendering on native and web
-- **Smaller bundle size** - ~2MB less than ECharts
-- **Better performance** - 3x faster rendering on web, 50% less memory usage
-- **Smooth animations** - Built-in animation support with Reanimated
+**Migration from Skia**: The previous Skia-based charts required CanvasKit WASM loading on web (7.7MB download). React Native Chart Kit eliminates this complexity while providing excellent cross-platform support.
 
 ## Architecture
 
@@ -19,38 +20,35 @@ The chart system replaces ECharts with custom Skia-based implementations that pr
 
 ```
 components/charts/
-├── utils.ts                    # Chart calculation utilities
-├── SkiaTemperatureChart.tsx    # Temperature & humidity line chart
-├── SkiaPrecipitationChart.tsx  # Rainfall bar chart
-├── SkiaWindChart.tsx           # Wind compass visualization
-├── SkiaWaveChart.tsx           # Maritime wave height chart
-└── index.ts                    # Public exports
+├── ChartKitTemperatureChart.tsx    # Temperature & humidity line chart
+├── ChartKitPrecipitationChart.tsx  # Rainfall bar chart
+├── ChartKitWindChart.tsx           # Wind speed bar chart
+├── ChartKitWaveChart.tsx           # Maritime wave height chart
+└── index.ts                        # Public exports
 ```
 
 ### Technology Stack
 
-- **@shopify/react-native-skia** (v2.2.12) - GPU-accelerated 2D graphics
-- **react-native-reanimated** (v4.1.2) - 60fps animations on native thread
-- **d3-scale** (v4.0.2) - Professional data scaling
-- **d3-shape** (v3.2.0) - SVG path generation
-- **d3-interpolate** (v3.0.1) - Smooth value transitions
+- **react-native-chart-kit** (latest) - Cross-platform SVG charts
+- **react-native-svg** (15.12.1) - SVG rendering engine
+- Pure JavaScript implementation - no native dependencies
 
 ## Chart Components
 
-### 1. SkiaTemperatureChart
+### 1. ChartKitTemperatureChart
 
-Displays temperature and humidity trends with smooth line charts.
+Displays temperature and humidity trends with smooth bezier line charts.
 
 **Features:**
-- Dual Y-axis (temperature in °C, humidity in %)
-- Gradient fill for humidity area
-- Animated data points
-- Smart label positioning
+- Dual-line chart (temperature and humidity)
+- Smooth bezier curve interpolation
+- Gradient fills for visual appeal
+- Theme-aware colors
 - Indonesian language labels
 
 **Usage:**
 ```tsx
-import { SkiaTemperatureChart } from '~/components/charts';
+import { ChartKitTemperatureChart } from '~/components/charts';
 
 const data = [
   { time: '00:00', temp: 27, humidity: 75 },
@@ -58,11 +56,10 @@ const data = [
   { time: '06:00', temp: 28, humidity: 70 },
 ];
 
-<SkiaTemperatureChart 
+<ChartKitTemperatureChart 
   data={data}
   width={350}
   height={220}
-  animated={true}
 />
 ```
 
@@ -70,22 +67,22 @@ const data = [
 - `data: { time: string; temp: number; humidity: number }[]` - Chart data
 - `width?: number` - Chart width (default: screen width - 32)
 - `height?: number` - Chart height (default: 220)
-- `animated?: boolean` - Enable animations (default: true)
+- `animated?: boolean` - Animation flag (for compatibility, animations always enabled)
 
-### 2. SkiaPrecipitationChart
+### 2. ChartKitPrecipitationChart
 
-Displays rainfall data as animated bar charts.
+Displays rainfall data as clean bar charts.
 
 **Features:**
 - Color-coded bars for precipitation intensity
-- Animated bar growth
+- Clean, minimal design
 - Automatic scale calculation
-- Grid lines for easy reading
+- Theme-aware styling
 - Indonesian labels (mm)
 
 **Usage:**
 ```tsx
-import { SkiaPrecipitationChart } from '~/components/charts';
+import { ChartKitPrecipitationChart } from '~/components/charts';
 
 const data = [
   { time: '00:00', precipitation: 2.5 },
@@ -93,10 +90,9 @@ const data = [
   { time: '06:00', precipitation: 0.8 },
 ];
 
-<SkiaPrecipitationChart 
+<ChartKitPrecipitationChart 
   data={data}
   height={200}
-  animated={true}
 />
 ```
 

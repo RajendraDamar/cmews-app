@@ -5,7 +5,7 @@ import { Separator } from '~/components/ui/separator';
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from '~/components/ui/collapsible';
 import { ChevronDown, Wind } from 'lucide-react-native';
 import { DirectionArrow } from '~/components/weather/direction-arrow';
-import { SkiaWindChart, SmartChartWrapper } from '~/components/charts';
+import { ChartKitWindChart } from '~/components/charts';
 import type { WindForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
@@ -14,7 +14,7 @@ export function WindCard({ seaArea, direction, speedMin, speedMax, hourly }: Win
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
 
-  // Prepare chart data for SkiaWindChart
+  // Prepare chart data for ChartKitWindChart
   const windChartData = hourly.map((h) => ({
     direction: h.direction,
     speed: h.speed,
@@ -104,9 +104,7 @@ export function WindCard({ seaArea, direction, speedMin, speedMax, hourly }: Win
 
             {/* Wind Speed Chart */}
             <Text className="mb-2 font-semibold">Kompas Arah Angin</Text>
-            <SmartChartWrapper height={220} loadingMessage="Memuat grafik angin...">
-              <SkiaWindChart data={windChartData} animated={true} />
-            </SmartChartWrapper>
+            <ChartKitWindChart data={windChartData} animated={true} />
 
             <Separator className="my-4" />
 
