@@ -1,18 +1,4 @@
-import { View, Platform } from 'react-native';
-import { Text } from '~/components/ui/text';
-import { SkiaTemperatureChart } from '~/components/charts';
-
-// ECharts for cross-platform support (fallback)
-let EChartsComponent: any;
-if (Platform.OS !== 'web') {
-  try {
-    const EChartsModule = require('react-native-echarts-wrapper');
-    EChartsComponent = EChartsModule.default;
-  } catch (e) {
-    // ECharts not available
-    console.warn('ECharts not available:', e);
-  }
-}
+import { SkiaTemperatureChart, SmartChartWrapper } from '~/components/charts';
 
 interface ChartDataPoint {
   time: string;
@@ -25,6 +11,9 @@ interface WeatherChartProps {
 }
 
 export function WeatherChart({ data }: WeatherChartProps) {
-  // Use high-performance Skia chart implementation
-  return <SkiaTemperatureChart data={data} />;
+  return (
+    <SmartChartWrapper height={220} loadingMessage="Memuat grafik cuaca...">
+      <SkiaTemperatureChart data={data} />
+    </SmartChartWrapper>
+  );
 }

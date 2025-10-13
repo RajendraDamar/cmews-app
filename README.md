@@ -74,11 +74,13 @@ npm run ios
 
 ### Charts & Visualization
 - **React Native Skia Charts**: High-performance, 60fps hardware-accelerated charts
+- **CanvasKit Web Support**: Smart auto-loading for web platform (see [docs/CANVASKIT-WEB.md](docs/CANVASKIT-WEB.md))
 - **Temperature & Humidity**: Dual-axis line charts
 - **Precipitation**: Animated bar charts
 - **Wind Compass**: Circular wind direction visualization
 - **Wave Heights**: Maritime wave charts
 - **Performance**: <100ms render time, 50% less memory than ECharts
+- **Cross-Platform**: Identical charts on iOS, Android, and Web
 
 ## 🏗️ Tech Stack
 
@@ -217,6 +219,7 @@ const weatherData = await bmkgService.getWeatherForecast(locationCode);
 ## 📚 Documentation
 
 - **[CHANGES.md](./CHANGES.md)** - Complete change history and implementation details
+- **[docs/CANVASKIT-WEB.md](./docs/CANVASKIT-WEB.md)** - CanvasKit web integration guide
 - **[.github/copilot-instructions.md](./.github/copilot-instructions.md)** - Development guidelines
 - **[components/charts/README.md](./components/charts/README.md)** - Chart usage documentation
 
@@ -229,8 +232,8 @@ const weatherData = await bmkgService.getWeatherForecast(locationCode);
 - **Bundle Impact**: -1.7MB net savings
 
 ### Cross-Platform Rendering
-- **iOS/Android**: Metal/Vulkan GPU acceleration
-- **Web**: WebGL with Canvas fallback
+- **iOS/Android**: Metal/Vulkan GPU acceleration (native)
+- **Web**: WebGL with CanvasKit WASM (auto-loaded)
 - **Animations**: Native thread (doesn't block JavaScript)
 
 ## 🐛 Known Issues
