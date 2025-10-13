@@ -74,6 +74,8 @@ export function ChartKitPrecipitationChart({
           marginVertical: 8,
           borderRadius: 16,
         }}
+        yAxisLabel=""
+        yAxisSuffix=""
         withInnerLines={true}
         withVerticalLabels={true}
         withHorizontalLabels={true}

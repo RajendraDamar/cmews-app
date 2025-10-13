@@ -316,10 +316,10 @@ export const mockWeatherForecast = {
     hu: h.humidity,
     weather_desc: h.weather.description,
     weather_desc_en: h.weather.description, // TODO: Add English translations
-    ws: h.wind.speed,
-    wd: h.wind.direction,
-    tcc: h.cloudCoverage,
-    vs_text: h.visibility,
+    ws: h.windSpeed,
+    wd: h.windDirection,
+    tcc: 50, // Cloud coverage - placeholder
+    vs_text: '10', // Visibility - placeholder
   })),
 };
 
