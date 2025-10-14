@@ -17,7 +17,8 @@ export interface WeatherForecastDay {
 }
 
 export interface WindForecastData {
-  seaArea: string;
+  day: string; // "Senin", "Selasa", etc.
+  date: string; // ISO date string
   direction: string; // "Timur Laut", etc.
   speedMin: number; // km/h
   speedMax: number; // km/h
@@ -29,7 +30,8 @@ export interface WindForecastData {
 }
 
 export interface WaveForecastData {
-  seaArea: string;
+  day: string; // "Senin", "Selasa", etc.
+  date: string; // ISO date string
   heightMin: number; // meters
   heightMax: number; // meters
   period: number; // seconds
@@ -41,7 +43,8 @@ export interface WaveForecastData {
 }
 
 export interface CurrentForecastData {
-  seaArea: string;
+  day: string; // "Senin", "Selasa", etc.
+  date: string; // ISO date string
   speed: number; // m/s
   direction: string;
   hourly: {
@@ -49,6 +52,14 @@ export interface CurrentForecastData {
     speed: number;
     direction: string;
   }[];
+}
+
+export interface LocationForecastData {
+  location: string; // "Menteng, Jakarta Pusat"
+  weather: WeatherForecastDay[];
+  wind: WindForecastData[];
+  wave: WaveForecastData[];
+  current: CurrentForecastData[];
 }
 
 export interface ForecastData {

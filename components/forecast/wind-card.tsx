@@ -10,7 +10,7 @@ import type { WindForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
 
-export function WindCard({ seaArea, direction, speedMin, speedMax, hourly }: WindForecastData) {
+export function WindCard({ day, date, direction, speedMin, speedMax, hourly }: WindForecastData) {
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
 
@@ -44,6 +44,9 @@ export function WindCard({ seaArea, direction, speedMin, speedMax, hourly }: Win
 
   const beaufortDesc = beaufortDescriptions[beaufortScale] || 'Sedang';
 
+  const dateObj = new Date(date);
+  const dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+
   // Helper function to convert direction string to degrees
   function getDirectionDegrees(dir: string): number {
     const directionMap: { [key: string]: number } = {
@@ -66,9 +69,9 @@ export function WindCard({ seaArea, direction, speedMin, speedMax, hourly }: Win
           <CardContent className="p-4">
             <View className="flex-row items-center justify-between">
               <View className="flex-1">
-                <Text className="text-base font-semibold">{seaArea}</Text>
+                <Text className="text-base font-semibold">{day}</Text>
                 <Text variant="muted" size="sm">
-                  {direction}
+                  {dateStr} - {direction}
                 </Text>
               </View>
 
