@@ -6,6 +6,65 @@ This document tracks all major changes, improvements, and fixes implemented in t
 
 ## 🔧 Latest Changes (October 2025)
 
+### ✅ **Design System Consolidation & shadcn New York Style**
+
+**Date**: October 14, 2025
+
+**Objective**: Ensure consistent design system following shadcn/ui New York style with proper theme management and cohesive component library.
+
+**What Changed**:
+
+1. **Theme Color Management**:
+   - Added `getThemeColors()` helper function to `lib/theme.ts`
+   - Centralized theme color access for consistent theming
+   - All colors use HSL format from CSS custom properties
+
+2. **Removed Hardcoded Colors**:
+   - Replaced all hardcoded HSL color values with theme variables
+   - Updated files: `app/(tabs)/_layout.tsx`, `app/_layout.tsx`, `components/profile-modal.tsx`, `components/navigation/sidebar.tsx`, `app/settings.tsx`, `components/ui/empty-state.tsx`, `components/ui/error-state.tsx`
+   - Web HTML background now uses proper HSL theme colors
+
+3. **Import Path Consolidation**:
+   - Unified all `cn()` utility imports to use `~/lib/utils`
+   - Removed duplicate `utils/cn.ts` file
+   - Updated 7 UI components to use consistent import path
+   - Aligns with `components.json` configuration
+
+4. **Documentation Updates**:
+   - Added shadcn New York style documentation to README
+   - Documented black & white color scheme with light/dark modes
+   - Explained HSL format usage for theming flexibility
+
+**Benefits**:
+- ✅ **Consistent Theming**: All components use centralized theme colors
+- ✅ **shadcn New York Style**: Clean, professional black & white aesthetic
+- ✅ **Better Maintainability**: Single source of truth for colors
+- ✅ **Proper Dark Mode**: Seamless light/dark theme switching
+- ✅ **Type Safety**: TypeScript-powered theme color access
+- ✅ **DRY Principle**: No duplicate utility functions
+
+**Files Changed**:
+- `lib/theme.ts` - Added `getThemeColors()` helper
+- `app/(tabs)/_layout.tsx` - Use theme color variables
+- `app/_layout.tsx` - Use theme color variables
+- `app/+html.tsx` - HSL background colors for web
+- `components/profile-modal.tsx` - Theme-aware icons
+- `components/navigation/sidebar.tsx` - Consistent theme colors
+- `app/settings.tsx` - Theme color integration
+- `components/ui/empty-state.tsx` - Dynamic icon colors
+- `components/ui/error-state.tsx` - Theme-aware destructive colors
+- `README.md` - Design system documentation
+- 7 UI components - Unified import paths
+
+**Verification**:
+- ✅ Expo SDK 54 compatible
+- ✅ All React Native Reusables primitives properly used
+- ✅ Lucide React Native icons throughout
+- ✅ No linting errors (only pre-existing warnings)
+- ✅ Design system cohesive and consistent
+
+---
+
 ### ✅ **BREAKING**: Migrated to React Native Chart Kit for Perfect Cross-Platform Compatibility
 
 **Date**: October 2025
