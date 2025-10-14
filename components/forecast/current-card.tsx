@@ -21,10 +21,13 @@ if (Platform.OS !== 'web') {
   }
 }
 
-export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForecastData) {
+export function CurrentCard({ day, date, speed, direction, hourly }: CurrentForecastData) {
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
   const screenWidth = Dimensions.get('window').width;
+
+  const dateObj = new Date(date);
+  const dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
 
   // Prepare chart data
   const times = hourly.map((h) => h.time);
@@ -111,9 +114,9 @@ export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForeca
           <CardContent className="p-4">
             <View className="flex-row items-center justify-between">
               <View className="flex-1">
-                <Text className="text-base font-semibold">{seaArea}</Text>
+                <Text className="text-base font-semibold">{day}</Text>
                 <Text variant="muted" size="sm">
-                  {direction}
+                  {dateStr} - {direction}
                 </Text>
               </View>
 
