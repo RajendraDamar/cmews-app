@@ -6,6 +6,37 @@ This document tracks all major changes, improvements, and fixes implemented in t
 
 ## 🔧 Latest Changes (October 2025)
 
+### ✅ **Forecast Page Redesign - Location-Based with Day Selection**
+
+**Date**: October 14, 2025
+
+**Objective**: Redesign forecast page to show location-specific data with day selection, replacing the previous multi-location expandable card layout.
+
+**What Changed**:
+- **Location Selection**: Added dropdown location selector at page top (10 maritime locations)
+- **Day-Based View**: Show forecast for selected day only (3 days: Hari Ini, Rabu, Kamis)
+- **Chart-First Layout**: Chart at top showing selected day's data trend
+- **Simplified Details**: Single detail card with hourly breakdown (3-hour intervals)
+- **All Forecast Types**: Unified layout for Weather, Wind, Wave, and Current tabs
+
+**New Components**:
+1. **`components/forecast/day-selector.tsx`** - Reusable day selection button group
+2. **`components/forecast/forecast-location-selector.tsx`** - Location dropdown with MapPin icon
+
+**Data Structure Updates**:
+- Changed from array-based to location-map structure (`locations: { [key: string]: LocationForecastData }`)
+- Each location has 3-day forecasts for all types (weather, wind, wave, current)
+- Added `selectedForecastLocation` to Zustand store (default: "Laut Jawa")
+- 8 hourly entries per day (3-hour intervals: 00:00, 03:00, ..., 21:00)
+
+**User Experience**:
+- Select location once, applies to all tabs
+- Select day to see detailed forecast for that day
+- Chart updates based on selected day
+- Clean, focused view without clutter
+
+---
+
 ### ✅ **BREAKING**: Migrated to React Native Chart Kit for Perfect Cross-Platform Compatibility
 
 **Date**: October 2025
