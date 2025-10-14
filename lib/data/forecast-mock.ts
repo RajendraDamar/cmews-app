@@ -21,6 +21,20 @@ const WEATHER_CONDITIONS = [
   'Hujan Lebat',
 ];
 
+// Indonesian sea areas
+const SEA_AREAS = [
+  'Laut Jawa',
+  'Selat Sunda',
+  'Laut Natuna',
+  'Selat Karimata',
+  'Laut Banda',
+  'Selat Makassar',
+  'Laut Flores',
+  'Teluk Bone',
+  'Laut Sawu',
+  'Laut Arafura',
+];
+
 // Directions
 const DIRECTIONS = [
   'Utara',
@@ -76,16 +90,11 @@ function generateWeatherForecast(): WeatherForecastDay[] {
   return forecast;
 }
 
-// Generate wind forecast for a single location (7 days)
+// Generate wind forecast for sea areas
 function generateWindForecast(): WindForecastData[] {
   const forecast: WindForecastData[] = [];
-  const today = new Date();
 
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    const dayIndex = date.getDay();
-
+  for (const seaArea of SEA_AREAS) {
     const speedMin = Math.round(10 + Math.random() * 20);
     const speedMax = speedMin + Math.round(5 + Math.random() * 15);
     const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
@@ -101,8 +110,7 @@ function generateWindForecast(): WindForecastData[] {
     }
 
     forecast.push({
-      day: INDONESIAN_DAYS[dayIndex],
-      date: date.toISOString(),
+      seaArea,
       direction,
       speedMin,
       speedMax,
@@ -113,16 +121,11 @@ function generateWindForecast(): WindForecastData[] {
   return forecast;
 }
 
-// Generate wave forecast for a single location (7 days)
+// Generate wave forecast for sea areas
 function generateWaveForecast(): WaveForecastData[] {
   const forecast: WaveForecastData[] = [];
-  const today = new Date();
 
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    const dayIndex = date.getDay();
-
+  for (const seaArea of SEA_AREAS) {
     const heightMin = Math.round((0.5 + Math.random() * 2) * 10) / 10;
     const heightMax = heightMin + Math.round((0.3 + Math.random() * 1.5) * 10) / 10;
     const avgHeight = (heightMin + heightMax) / 2;
@@ -145,8 +148,7 @@ function generateWaveForecast(): WaveForecastData[] {
     }
 
     forecast.push({
-      day: INDONESIAN_DAYS[dayIndex],
-      date: date.toISOString(),
+      seaArea,
       heightMin,
       heightMax,
       period: Math.round(4 + Math.random() * 6),
@@ -158,16 +160,11 @@ function generateWaveForecast(): WaveForecastData[] {
   return forecast;
 }
 
-// Generate current forecast for a single location (7 days)
+// Generate current forecast for sea areas
 function generateCurrentForecast(): CurrentForecastData[] {
   const forecast: CurrentForecastData[] = [];
-  const today = new Date();
 
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(today);
-    date.setDate(today.getDate() + i);
-    const dayIndex = date.getDay();
-
+  for (const seaArea of SEA_AREAS) {
     const speed = Math.round((0.2 + Math.random() * 0.8) * 100) / 100;
     const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
 
@@ -182,8 +179,7 @@ function generateCurrentForecast(): CurrentForecastData[] {
     }
 
     forecast.push({
-      day: INDONESIAN_DAYS[dayIndex],
-      date: date.toISOString(),
+      seaArea,
       speed,
       direction,
       hourly,

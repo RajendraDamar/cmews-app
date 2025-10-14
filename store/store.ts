@@ -1,12 +1,5 @@
 import { create } from 'zustand';
 
-// Location data structure
-export interface Location {
-  provinsi: string;
-  kota: string;
-  kecamatan: string;
-}
-
 // User preferences state
 export interface UserPreferences {
   theme: 'light' | 'dark' | 'system';
@@ -20,10 +13,6 @@ export interface AppState {
   // Selected location for weather display
   selectedLocation: string | null;
   setSelectedLocation: (location: string | null) => void;
-
-  // Selected location for forecast display
-  selectedForecastLocation: Location | null;
-  setSelectedForecastLocation: (location: Location | null) => void;
 
   // User preferences
   preferences: UserPreferences;
@@ -45,22 +34,12 @@ const DEFAULT_PREFERENCES: UserPreferences = {
   favoriteLocations: [],
 };
 
-// Default forecast location
-const DEFAULT_FORECAST_LOCATION: Location = {
-  provinsi: 'DKI Jakarta',
-  kota: 'Jakarta Pusat',
-  kecamatan: 'Menteng',
-};
-
 // Zustand store
 export const useStore = create<AppState>((set) => ({
   selectedLocation: null,
-  selectedForecastLocation: DEFAULT_FORECAST_LOCATION,
   preferences: DEFAULT_PREFERENCES,
 
   setSelectedLocation: (location) => set({ selectedLocation: location }),
-
-  setSelectedForecastLocation: (location) => set({ selectedForecastLocation: location }),
 
   updatePreferences: (newPreferences) =>
     set((state) => ({
@@ -86,7 +65,6 @@ export const useStore = create<AppState>((set) => ({
   reset: () =>
     set({
       selectedLocation: null,
-      selectedForecastLocation: DEFAULT_FORECAST_LOCATION,
       preferences: DEFAULT_PREFERENCES,
     }),
 }));

@@ -10,8 +10,7 @@ import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
 
 export function WaveCard({
-  day,
-  date,
+  seaArea,
   heightMin,
   heightMax,
   period,
@@ -43,9 +42,6 @@ export function WaveCard({
     severityBg = 'bg-yellow-500/20';
   }
 
-  const dateObj = new Date(date);
-  const dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <Card>
@@ -53,9 +49,9 @@ export function WaveCard({
           <CardContent className="p-4">
             <View className="flex-row items-center justify-between">
               <View className="flex-1">
-                <Text className="text-base font-semibold">{day}</Text>
+                <Text className="text-base font-semibold">{seaArea}</Text>
                 <Text variant="muted" size="sm">
-                  {dateStr} - {seaState}
+                  {seaState}
                 </Text>
               </View>
 
