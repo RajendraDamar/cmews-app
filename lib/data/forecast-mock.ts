@@ -1,9 +1,10 @@
 import type {
   ForecastData,
+  LocationForecastData,
   WeatherForecastDay,
-  WindForecastData,
-  WaveForecastData,
-  CurrentForecastData,
+  WindForecastDay,
+  WaveForecastDay,
+  CurrentForecastDay,
   HourlyWeatherData,
 } from '../types/forecast';
 
@@ -21,8 +22,8 @@ const WEATHER_CONDITIONS = [
   'Hujan Lebat',
 ];
 
-// Indonesian sea areas
-const SEA_AREAS = [
+// Indonesian sea areas and regions
+const LOCATIONS = [
   'Laut Jawa',
   'Selat Sunda',
   'Laut Natuna',
@@ -47,7 +48,7 @@ const DIRECTIONS = [
   'Barat Laut',
 ];
 
-// Generate hourly weather data (8 entries, 3-hour intervals)
+// Generate hourly weather data (8 entries, 3-hour intervals starting from 00:00)
 function generateHourlyWeather(): HourlyWeatherData[] {
   const hourly: HourlyWeatherData[] = [];
   const hours = ['00:00', '03:00', '06:00', '09:00', '12:00', '15:00', '18:00', '21:00'];
@@ -64,12 +65,12 @@ function generateHourlyWeather(): HourlyWeatherData[] {
   return hourly;
 }
 
-// Generate 7 days of weather forecast
+// Generate 3 days of weather forecast for a location
 function generateWeatherForecast(): WeatherForecastDay[] {
   const forecast: WeatherForecastDay[] = [];
   const today = new Date();
 
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 3; i++) {
     const date = new Date(today);
     date.setDate(today.getDate() + i);
 
@@ -78,7 +79,7 @@ function generateWeatherForecast(): WeatherForecastDay[] {
     const temps = hourlyData.map((h) => h.temp);
 
     forecast.push({
-      day: INDONESIAN_DAYS[dayIndex],
+      day: i === 0 ? 'Hari Ini' : INDONESIAN_DAYS[dayIndex],
       date: date.toISOString(),
       weather: WEATHER_CONDITIONS[Math.floor(Math.random() * WEATHER_CONDITIONS.length)],
       tempMin: Math.min(...temps),
@@ -90,11 +91,16 @@ function generateWeatherForecast(): WeatherForecastDay[] {
   return forecast;
 }
 
-// Generate wind forecast for sea areas
-function generateWindForecast(): WindForecastData[] {
-  const forecast: WindForecastData[] = [];
+// Generate 3 days of wind forecast for a location
+function generateWindForecast(): WindForecastDay[] {
+  const forecast: WindForecastDay[] = [];
+  const today = new Date();
 
-  for (const seaArea of SEA_AREAS) {
+  for (let i = 0; i < 3; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+
+    const dayIndex = date.getDay();
     const speedMin = Math.round(10 + Math.random() * 20);
     const speedMax = speedMin + Math.round(5 + Math.random() * 15);
     const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
@@ -110,7 +116,8 @@ function generateWindForecast(): WindForecastData[] {
     }
 
     forecast.push({
-      seaArea,
+      day: i === 0 ? 'Hari Ini' : INDONESIAN_DAYS[dayIndex],
+      date: date.toISOString(),
       direction,
       speedMin,
       speedMax,
@@ -121,11 +128,16 @@ function generateWindForecast(): WindForecastData[] {
   return forecast;
 }
 
-// Generate wave forecast for sea areas
-function generateWaveForecast(): WaveForecastData[] {
-  const forecast: WaveForecastData[] = [];
+// Generate 3 days of wave forecast for a location
+function generateWaveForecast(): WaveForecastDay[] {
+  const forecast: WaveForecastDay[] = [];
+  const today = new Date();
 
-  for (const seaArea of SEA_AREAS) {
+  for (let i = 0; i < 3; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+
+    const dayIndex = date.getDay();
     const heightMin = Math.round((0.5 + Math.random() * 2) * 10) / 10;
     const heightMax = heightMin + Math.round((0.3 + Math.random() * 1.5) * 10) / 10;
     const avgHeight = (heightMin + heightMax) / 2;
@@ -148,7 +160,8 @@ function generateWaveForecast(): WaveForecastData[] {
     }
 
     forecast.push({
-      seaArea,
+      day: i === 0 ? 'Hari Ini' : INDONESIAN_DAYS[dayIndex],
+      date: date.toISOString(),
       heightMin,
       heightMax,
       period: Math.round(4 + Math.random() * 6),
@@ -160,11 +173,16 @@ function generateWaveForecast(): WaveForecastData[] {
   return forecast;
 }
 
-// Generate current forecast for sea areas
-function generateCurrentForecast(): CurrentForecastData[] {
-  const forecast: CurrentForecastData[] = [];
+// Generate 3 days of current forecast for a location
+function generateCurrentForecast(): CurrentForecastDay[] {
+  const forecast: CurrentForecastDay[] = [];
+  const today = new Date();
 
-  for (const seaArea of SEA_AREAS) {
+  for (let i = 0; i < 3; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+
+    const dayIndex = date.getDay();
     const speed = Math.round((0.2 + Math.random() * 0.8) * 100) / 100;
     const direction = DIRECTIONS[Math.floor(Math.random() * DIRECTIONS.length)];
 
@@ -179,7 +197,8 @@ function generateCurrentForecast(): CurrentForecastData[] {
     }
 
     forecast.push({
-      seaArea,
+      day: i === 0 ? 'Hari Ini' : INDONESIAN_DAYS[dayIndex],
+      date: date.toISOString(),
       speed,
       direction,
       hourly,
@@ -189,10 +208,25 @@ function generateCurrentForecast(): CurrentForecastData[] {
   return forecast;
 }
 
-// Export mock forecast data
+// Generate forecast data for a specific location
+function generateLocationForecast(location: string): LocationForecastData {
+  return {
+    location,
+    weather: generateWeatherForecast(),
+    wind: generateWindForecast(),
+    wave: generateWaveForecast(),
+    current: generateCurrentForecast(),
+  };
+}
+
+// Export mock forecast data with location-based structure
 export const mockForecastData: ForecastData = {
-  weather: generateWeatherForecast(),
-  wind: generateWindForecast(),
-  wave: generateWaveForecast(),
-  current: generateCurrentForecast(),
+  locations: LOCATIONS.reduce(
+    (acc, location) => {
+      acc[location] = generateLocationForecast(location);
+      return acc;
+    },
+    {} as { [key: string]: LocationForecastData }
+  ),
+  availableLocations: LOCATIONS,
 };

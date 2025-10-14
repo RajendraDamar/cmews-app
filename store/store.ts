@@ -14,6 +14,10 @@ export interface AppState {
   selectedLocation: string | null;
   setSelectedLocation: (location: string | null) => void;
 
+  // Selected location for forecast display
+  selectedForecastLocation: string | null;
+  setSelectedForecastLocation: (location: string | null) => void;
+
   // User preferences
   preferences: UserPreferences;
   updatePreferences: (preferences: Partial<UserPreferences>) => void;
@@ -37,9 +41,12 @@ const DEFAULT_PREFERENCES: UserPreferences = {
 // Zustand store
 export const useStore = create<AppState>((set) => ({
   selectedLocation: null,
+  selectedForecastLocation: 'Laut Jawa', // Default to first location
   preferences: DEFAULT_PREFERENCES,
 
   setSelectedLocation: (location) => set({ selectedLocation: location }),
+
+  setSelectedForecastLocation: (location) => set({ selectedForecastLocation: location }),
 
   updatePreferences: (newPreferences) =>
     set((state) => ({
@@ -65,6 +72,7 @@ export const useStore = create<AppState>((set) => ({
   reset: () =>
     set({
       selectedLocation: null,
+      selectedForecastLocation: 'Laut Jawa',
       preferences: DEFAULT_PREFERENCES,
     }),
 }));
