@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Pressable, Text } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '~/utils/cn';
+import { cn } from '~/lib/utils';
 
 const buttonVariants = cva('items-center justify-center rounded-md flex-row gap-2', {
   variants: {

@@ -98,6 +98,10 @@ npm run build
 - **React Native Reusables** (`@rn-primitives/*`) - UI component library
 - **Lucide React Native** - Icon library
 - **Class Variance Authority** - Component variants
+- **shadcn/ui New York Style** - Design system following neutral color palette
+  - Black & white color scheme with proper light/dark mode
+  - Consistent theme variables via CSS custom properties
+  - All colors use HSL format for better theming flexibility
 
 ### Navigation & State
 - **Expo Router** - File-based routing

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View, Platform, Animated } from 'react-native';
-import { cn } from '~/utils/cn';
+import { cn } from '~/lib/utils';
 
 interface SkeletonProps extends React.ComponentPropsWithoutRef<typeof View> {
   className?: string;
