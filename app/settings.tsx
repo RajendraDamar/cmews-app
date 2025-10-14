@@ -17,6 +17,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '~/com
 import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { useBreakpoint } from '~/lib/breakpoints';
+import { getThemeColors } from '~/lib/theme';
 
 function SettingRow({ icon, label, value, trailing, onPress }: any) {
   return (
@@ -39,7 +40,8 @@ export default function SettingsScreen() {
   const [notifications, setNotifications] = useState(true);
   const [locationPermission, setLocationPermission] = useState(true);
 
-  const iconColor = colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)';
+  const colors = getThemeColors(colorScheme);
+  const iconColor = colors.mutedForeground;
 
   const handleThemeChange = (value: boolean) => {
     setTheme(value ? 'dark' : 'light');

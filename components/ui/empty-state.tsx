@@ -4,6 +4,7 @@ import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
 import { CloudOff, Map, AlertTriangle } from 'lucide-react-native';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColors } from '~/lib/theme';
 
 interface EmptyStateProps {
   icon?: 'weather' | 'map' | 'error';
@@ -21,7 +22,8 @@ export function EmptyState({
   onAction,
 }: EmptyStateProps) {
   const { colorScheme } = useTheme();
-  const iconColor = colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)';
+  const colors = getThemeColors(colorScheme);
+  const iconColor = colors.mutedForeground;
 
   const IconComponent = icon === 'weather' ? CloudOff : icon === 'map' ? Map : AlertTriangle;
 

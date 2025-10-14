@@ -8,6 +8,7 @@ import { Separator } from '~/components/ui/separator';
 import { Popover, PopoverTrigger, PopoverContent } from '~/components/ui/popover';
 import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
+import { getThemeColors } from '~/lib/theme';
 
 interface ProfileModalProps {
   visible: boolean;
@@ -19,6 +20,7 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
   const router = useRouter();
   const { colorScheme, setTheme } = useTheme();
   const { isDesktop } = useBreakpoint();
+  const colors = getThemeColors(colorScheme);
 
   const handleNavigation = (route: any) => {
     onClose();
@@ -76,9 +78,9 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
             onPress={toggleTheme}>
             <View className="flex-row items-center gap-3">
               {colorScheme === 'dark' ? (
-                <Moon size={20} color="hsl(215 20.2% 65.1%)" />
+                <Moon size={20} color={colors.mutedForeground} />
               ) : (
-                <Sun size={20} color="hsl(215.4 16.3% 46.9%)" />
+                <Sun size={20} color={colors.mutedForeground} />
               )}
               <Text className="text-sm">Tema</Text>
             </View>
@@ -101,13 +103,7 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
                   onPress={item.onPress}>
                   <Icon
                     size={20}
-                    color={
-                      item.danger
-                        ? 'hsl(0 84.2% 60.2%)'
-                        : colorScheme === 'dark'
-                          ? 'hsl(215 20.2% 65.1%)'
-                          : 'hsl(215.4 16.3% 46.9%)'
-                    }
+                    color={item.danger ? colors.destructive : colors.mutedForeground}
                   />
                   <Text
                     className={`flex-1 text-sm ${item.danger ? 'text-destructive' : 'text-foreground'}`}>

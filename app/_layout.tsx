@@ -5,6 +5,7 @@ import { PortalHost } from '@rn-primitives/portal';
 import { ThemeProvider, useTheme } from '~/lib/theme-provider';
 import { View, Platform } from 'react-native';
 import { useEffect } from 'react';
+import { getThemeColors } from '~/lib/theme';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -13,6 +14,7 @@ export const unstable_settings = {
 
 function ThemedApp() {
   const { colorScheme } = useTheme();
+  const colors = getThemeColors(colorScheme);
 
   useEffect(() => {
     if (Platform.OS === 'web') {
@@ -32,9 +34,9 @@ function ThemedApp() {
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#1a1a1a' : '#fff',
+            backgroundColor: colors.background,
           },
-          headerTintColor: colorScheme === 'dark' ? '#fff' : '#000',
+          headerTintColor: colors.foreground,
         }}>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />

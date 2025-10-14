@@ -65,3 +65,12 @@ export const THEME_COLORS = {
 };
 
 export type Colors = typeof THEME_COLORS.light;
+
+/**
+ * Hook to get theme colors based on the current color scheme
+ * Usage: const colors = useThemeColors()
+ * Returns the appropriate color palette for light/dark mode
+ */
+export function getThemeColors(colorScheme: 'light' | 'dark'): Colors {
+  return THEME_COLORS[colorScheme];
+}

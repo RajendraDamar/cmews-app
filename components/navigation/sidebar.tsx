@@ -17,6 +17,7 @@ import { useTheme } from '~/lib/theme-provider';
 import { useState } from 'react';
 import { ProfileModal } from '~/components/profile-modal';
 import { Separator } from '~/components/ui/separator';
+import { getThemeColors } from '~/lib/theme';
 
 const navItems = [
   { path: '/(tabs)', icon: Home, label: 'Home' },
@@ -30,6 +31,7 @@ export function Sidebar() {
   const { colorScheme, setTheme } = useTheme();
   const [modalVisible, setModalVisible] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const colors = getThemeColors(colorScheme);
 
   const isActive = (path: string) => {
     if (path === '/(tabs)') {
@@ -47,20 +49,19 @@ export function Sidebar() {
       <View
         className={`h-full border-r ${collapsed ? 'w-16' : 'w-64'}`}
         style={{
-          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
-          borderColor: colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+          backgroundColor: colors.background,
+          borderColor: colors.border,
         }}>
         {/* Logo & Collapse Button */}
         <View
           className={`h-14 flex-row items-center justify-between border-b px-4 ${collapsed ? 'px-2' : ''}`}
           style={{
-            borderColor:
-              colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+            borderColor: colors.border,
           }}>
           <View className="flex-row items-center gap-2">
             <Cloud
               size={24}
-              color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'}
+              color={colors.primary}
             />
             {!collapsed && <Text className="text-lg font-semibold">CMEWS</Text>}
           </View>
@@ -70,12 +71,12 @@ export function Sidebar() {
             {collapsed ? (
               <ChevronRight
                 size={18}
-                color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
+                color={colors.mutedForeground}
               />
             ) : (
               <ChevronLeft
                 size={18}
-                color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
+                color={colors.mutedForeground}
               />
             )}
           </Pressable>
@@ -96,27 +97,13 @@ export function Sidebar() {
                 } active:bg-accent`}>
                 <Icon
                   size={20}
-                  color={
-                    active
-                      ? colorScheme === 'dark'
-                        ? 'hsl(210 40% 98%)'
-                        : 'hsl(222.2 47.4% 11.2%)'
-                      : colorScheme === 'dark'
-                        ? 'hsl(215 20.2% 65.1%)'
-                        : 'hsl(215.4 16.3% 46.9%)'
-                  }
+                  color={active ? colors.primary : colors.mutedForeground}
                 />
                 {!collapsed && (
                   <Text
                     className={`text-sm ${active ? 'font-medium' : 'font-normal'}`}
                     style={{
-                      color: active
-                        ? colorScheme === 'dark'
-                          ? 'hsl(210 40% 98%)'
-                          : 'hsl(222.2 47.4% 11.2%)'
-                        : colorScheme === 'dark'
-                          ? 'hsl(215 20.2% 65.1%)'
-                          : 'hsl(215.4 16.3% 46.9%)',
+                      color: active ? colors.primary : colors.mutedForeground,
                     }}>
                     {item.label}
                   </Text>
@@ -130,23 +117,22 @@ export function Sidebar() {
         <View
           className="border-t px-3 py-2"
           style={{
-            borderColor:
-              colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+            borderColor: colors.border,
           }}>
           {/* Theme Toggle */}
           <Pressable
             onPress={toggleTheme}
             className="mb-1 flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-accent">
             {colorScheme === 'dark' ? (
-              <Moon size={20} color="hsl(215 20.2% 65.1%)" />
+              <Moon size={20} color={colors.mutedForeground} />
             ) : (
-              <Sun size={20} color="hsl(215.4 16.3% 46.9%)" />
+              <Sun size={20} color={colors.mutedForeground} />
             )}
             {!collapsed && (
               <Text
                 className="text-sm"
                 style={{
-                  color: colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)',
+                  color: colors.mutedForeground,
                 }}>
                 {colorScheme === 'dark' ? 'Dark' : 'Light'}
               </Text>
@@ -159,13 +145,13 @@ export function Sidebar() {
             className="mb-1 flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-accent">
             <Settings
               size={20}
-              color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
+              color={colors.mutedForeground}
             />
             {!collapsed && (
               <Text
                 className="text-sm"
                 style={{
-                  color: colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)',
+                  color: colors.mutedForeground,
                 }}>
                 Settings
               </Text>
@@ -180,13 +166,13 @@ export function Sidebar() {
             className="flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-accent">
             <User
               size={20}
-              color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
+              color={colors.mutedForeground}
             />
             {!collapsed && (
               <Text
                 className="text-sm"
                 style={{
-                  color: colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)',
+                  color: colors.mutedForeground,
                 }}>
                 Profile
               </Text>

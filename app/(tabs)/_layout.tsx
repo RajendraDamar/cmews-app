@@ -6,17 +6,19 @@ import { ProfileModal } from '~/components/profile-modal';
 import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { Sidebar } from '~/components/navigation/sidebar';
+import { getThemeColors } from '~/lib/theme';
 
 function ProfileButton() {
   const [modalVisible, setModalVisible] = useState(false);
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
+  const colors = getThemeColors(colorScheme);
 
   const trigger = (
     <Pressable onPress={() => setModalVisible(true)} className="mr-4">
       <User
         size={24}
-        color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(215.4 16.3% 46.9%)'}
+        color={colors.mutedForeground}
       />
     </Pressable>
   );
@@ -43,11 +45,12 @@ function ProfileButton() {
 
 function LogoHeader() {
   const { colorScheme } = useTheme();
+  const colors = getThemeColors(colorScheme);
   return (
     <View className="ml-4">
       <Cloud
         size={24}
-        color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'}
+        color={colors.primary}
       />
     </View>
   );
@@ -56,6 +59,7 @@ function LogoHeader() {
 export default function TabLayout() {
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
+  const colors = getThemeColors(colorScheme);
 
   if (isDesktop) {
     // Desktop: Use vertical sidebar layout
@@ -81,26 +85,23 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor:
-          colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)',
-        tabBarInactiveTintColor:
-          colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.mutedForeground,
         tabBarStyle: {
-          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
-          borderTopColor:
-            colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+          backgroundColor: colors.background,
+          borderTopColor: colors.border,
           borderTopWidth: 1,
           height: 60,
           paddingBottom: 8,
           paddingTop: 8,
         },
         headerStyle: {
-          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+          backgroundColor: colors.background,
           borderBottomWidth: 0,
           elevation: 0,
           shadowOpacity: 0,
         },
-        headerTintColor: colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)',
+        headerTintColor: colors.primary,
         headerLeft: () => <LogoHeader />,
         headerRight: () => <ProfileButton />,
       }}>
