@@ -1,4 +1,4 @@
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View, Alert } from 'react-native';
 import { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '~/components/ui/tabs';
 import { CloudSun, Wind, Waves, MoveHorizontal } from 'lucide-react-native';
@@ -15,6 +15,7 @@ import { useStore } from '~/store/store';
 import { Text } from '~/components/ui/text';
 import { Card, CardContent } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
+import * as Haptics from 'expo-haptics';
 
 export default function ForecastTab() {
   const [activeTab, setActiveTab] = useState('weather');
@@ -23,13 +24,34 @@ export default function ForecastTab() {
   const { weather, wind, wave, current } = mockForecastData;
 
   const handleRefresh = () => {
-    // TODO: Refresh forecast data
-    console.log('Refreshing forecast data...');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    console.log('✅ Refresh button pressed');
+    Alert.alert(
+      'Refresh Data',
+      'Forecast data will be refreshed from BMKG API',
+      [{ text: 'OK' }]
+    );
   };
 
   const handleLocationPress = () => {
-    // TODO: Navigate to location picker
-    console.log('Opening location picker...');
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    console.log('✅ Location button pressed');
+    Alert.alert(
+      'Change Location',
+      `Current: ${selectedForecastLocation?.kecamatan || 'Menteng'}\n\nLocation picker will open here`,
+      [{ text: 'OK' }]
+    );
+  };
+
+  const handleTabChange = (tab: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    console.log(`✅ Tab changed to: ${tab}`);
+    setActiveTab(tab);
+  };
+
+  const handleDaySelect = (index: number) => {
+    console.log(`✅ Day ${index + 1} selected: ${weather[index].day}`);
+    setSelectedDayIndex(index);
   };
 
   // Get current forecast based on selected day
@@ -51,7 +73,7 @@ export default function ForecastTab() {
       />
 
       <View className="pb-4">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           {/* Tab Navigation */}
           <TabsList className="mx-4 mb-4 grid grid-cols-4">
             <TabsTrigger value="weather">
@@ -84,7 +106,7 @@ export default function ForecastTab() {
           <DaySelector
             days={weather.map((d) => ({ day: d.day, date: d.date }))}
             selectedIndex={selectedDayIndex}
-            onSelect={setSelectedDayIndex}
+            onSelect={handleDaySelect}
           />
 
           {/* Weather Tab Content */}
