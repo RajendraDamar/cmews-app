@@ -1,9 +1,11 @@
-import React from 'react';
-import { View, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { View, Platform } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
 import { COLORS } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
+import { useBreakpoint } from '~/lib/breakpoints';
+import { Card, CardContent } from '~/components/ui/card';
 
 interface TemperatureChartData {
   time: string;
@@ -21,11 +23,23 @@ interface TemperatureChartProps {
 export function ChartKitTemperatureChart({
   data,
   width: propWidth,
-  height: propHeight = 280,
+  height: propHeight,
 }: TemperatureChartProps) {
   const { colorScheme } = useTheme();
-  const screenWidth = Dimensions.get('window').width;
-  const width = propWidth || Math.max(screenWidth - 64, 300);
+  const { width: screenWidth, isDesktop, isTablet } = useBreakpoint();
+  const [tooltip, setTooltip] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    temp: number;
+    humidity: number;
+    time: string;
+  } | null>(null);
+
+  // Responsive sizing
+  const chartPadding = isDesktop ? 80 : isTablet ? 64 : 48;
+  const chartHeight = propHeight || (isDesktop ? 320 : isTablet ? 300 : 280);
+  const width = propWidth || Math.max(screenWidth - chartPadding, 300);
 
   // Prepare chart data
   const labels = data.map((d) => d.time);
@@ -50,7 +64,7 @@ export function ChartKitTemperatureChart({
       borderRadius: 16,
     },
     propsForDots: {
-      r: '4',
+      r: '5',
       strokeWidth: '2',
       stroke: tempColor,
     },
@@ -78,12 +92,34 @@ export function ChartKitTemperatureChart({
     ],
   };
 
+  const handleDataPointClick = (dataPointData: any) => {
+    const { index, x, y } = dataPointData;
+    
+    const temp = temperatures[index];
+    const humidity = humidities[index];
+    const time = labels[index];
+
+    setTooltip({
+      visible: true,
+      x,
+      y,
+      temp,
+      humidity,
+      time,
+    });
+
+    // Auto-hide tooltip after 3 seconds
+    setTimeout(() => {
+      setTooltip(null);
+    }, 3000);
+  };
+
   return (
     <View>
       <LineChart
         data={chartData}
         width={width}
-        height={propHeight}
+        height={chartHeight}
         chartConfig={chartConfig}
         bezier
         style={{
@@ -98,7 +134,50 @@ export function ChartKitTemperatureChart({
         withDots={true}
         withShadow={false}
         fromZero={false}
+        onDataPointClick={handleDataPointClick}
       />
+
+      {/* Tooltip */}
+      {tooltip && Platform.OS === 'web' && (
+        <View
+          style={{
+            position: 'absolute',
+            left: tooltip.x - 60,
+            top: tooltip.y - 80,
+            zIndex: 1000,
+          }}>
+          <Card className="shadow-lg">
+            <CardContent className="p-3">
+              <Text className="mb-1 font-semibold">{tooltip.time}</Text>
+              <Text className="text-sm" style={{ color: tempColor }}>
+                🌡️ Suhu: {tooltip.temp}°C
+              </Text>
+              <Text className="text-sm" style={{ color: humidityColor }}>
+                💧 Kelembapan: {tooltip.humidity}%
+              </Text>
+            </CardContent>
+          </Card>
+        </View>
+      )}
+
+      {/* Mobile tooltip - shown below chart */}
+      {tooltip && Platform.OS !== 'web' && (
+        <View className="mt-2">
+          <Card>
+            <CardContent className="p-3">
+              <Text className="mb-1 font-semibold">{tooltip.time}</Text>
+              <View className="flex-row justify-between">
+                <Text className="text-sm" style={{ color: tempColor }}>
+                  🌡️ Suhu: {tooltip.temp}°C
+                </Text>
+                <Text className="text-sm" style={{ color: humidityColor }}>
+                  💧 Kelembapan: {tooltip.humidity}%
+                </Text>
+              </View>
+            </CardContent>
+          </Card>
+        </View>
+      )}
 
       {/* Legend */}
       <View className="mt-2 flex-row justify-center gap-6">

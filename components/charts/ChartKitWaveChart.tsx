@@ -1,9 +1,11 @@
-import React from 'react';
-import { View, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { View, Platform } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
 import { COLORS } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
+import { useBreakpoint } from '~/lib/breakpoints';
+import { Card, CardContent } from '~/components/ui/card';
 
 interface WaveChartData {
   time: string;
@@ -21,11 +23,22 @@ interface WaveChartProps {
 export function ChartKitWaveChart({
   data,
   width: propWidth,
-  height: propHeight = 260,
+  height: propHeight,
 }: WaveChartProps) {
   const { colorScheme } = useTheme();
-  const screenWidth = Dimensions.get('window').width;
-  const width = propWidth || Math.max(screenWidth - 64, 300);
+  const { width: screenWidth, isDesktop, isTablet } = useBreakpoint();
+  const [tooltip, setTooltip] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    time: string;
+    height: number;
+  } | null>(null);
+
+  // Responsive sizing
+  const chartPadding = isDesktop ? 80 : isTablet ? 64 : 48;
+  const chartHeight = propHeight || (isDesktop ? 300 : isTablet ? 280 : 260);
+  const width = propWidth || Math.max(screenWidth - chartPadding, 300);
 
   // Prepare chart data
   const labels = data.map((d) => d.time);
@@ -48,7 +61,7 @@ export function ChartKitWaveChart({
       borderRadius: 16,
     },
     propsForDots: {
-      r: '4',
+      r: '5',
       strokeWidth: '2',
       stroke: waveColor,
     },
@@ -71,12 +84,29 @@ export function ChartKitWaveChart({
     ],
   };
 
+  const handleDataPointClick = (dataPointData: any) => {
+    const { index, x, y } = dataPointData;
+    
+    setTooltip({
+      visible: true,
+      x,
+      y,
+      time: labels[index],
+      height: heights[index],
+    });
+
+    // Auto-hide tooltip after 3 seconds
+    setTimeout(() => {
+      setTooltip(null);
+    }, 3000);
+  };
+
   return (
     <View>
       <LineChart
         data={chartData}
         width={width}
-        height={propHeight}
+        height={chartHeight}
         chartConfig={chartConfig}
         bezier
         style={{
@@ -91,7 +121,42 @@ export function ChartKitWaveChart({
         withDots={true}
         withShadow={false}
         fromZero={true}
+        onDataPointClick={handleDataPointClick}
       />
+
+      {/* Tooltip */}
+      {tooltip && Platform.OS === 'web' && (
+        <View
+          style={{
+            position: 'absolute',
+            left: tooltip.x - 60,
+            top: tooltip.y - 70,
+            zIndex: 1000,
+          }}>
+          <Card className="shadow-lg">
+            <CardContent className="p-3">
+              <Text className="mb-1 font-semibold">{tooltip.time}</Text>
+              <Text className="text-sm" style={{ color: waveColor }}>
+                🌊 Tinggi: {tooltip.height} m
+              </Text>
+            </CardContent>
+          </Card>
+        </View>
+      )}
+
+      {/* Mobile tooltip */}
+      {tooltip && Platform.OS !== 'web' && (
+        <View className="mt-2">
+          <Card>
+            <CardContent className="p-3">
+              <Text className="mb-1 font-semibold">{tooltip.time}</Text>
+              <Text className="text-sm" style={{ color: waveColor }}>
+                🌊 Tinggi Gelombang: {tooltip.height} m
+              </Text>
+            </CardContent>
+          </Card>
+        </View>
+      )}
 
       {/* Legend */}
       <View className="mt-2 flex-row justify-center">

@@ -1,9 +1,11 @@
-import React from 'react';
-import { View, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { View, Platform } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
 import { COLORS } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
+import { useBreakpoint } from '~/lib/breakpoints';
+import { Card, CardContent } from '~/components/ui/card';
 
 interface WindChartData {
   direction: string;
@@ -21,11 +23,22 @@ interface WindChartProps {
 export function ChartKitWindChart({
   data,
   width: propWidth,
-  height: propHeight = 280,
+  height: propHeight,
 }: WindChartProps) {
   const { colorScheme } = useTheme();
-  const screenWidth = Dimensions.get('window').width;
-  const width = propWidth || Math.max(screenWidth - 64, 300);
+  const { width: screenWidth, isDesktop, isTablet } = useBreakpoint();
+  const [tooltip, setTooltip] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    direction: string;
+    speed: number;
+  } | null>(null);
+
+  // Responsive sizing
+  const chartPadding = isDesktop ? 80 : isTablet ? 64 : 48;
+  const chartHeight = propHeight || (isDesktop ? 320 : isTablet ? 300 : 280);
+  const width = propWidth || Math.max(screenWidth - chartPadding, 300);
 
   // Prepare chart data - display wind speed by direction
   const labels = data.map((d) => d.direction);
@@ -64,12 +77,29 @@ export function ChartKitWindChart({
     ],
   };
 
+  const handleDataPointClick = (dataPointData: any) => {
+    const { index, x, y } = dataPointData;
+    
+    setTooltip({
+      visible: true,
+      x,
+      y,
+      direction: labels[index],
+      speed: speeds[index],
+    });
+
+    // Auto-hide tooltip after 3 seconds
+    setTimeout(() => {
+      setTooltip(null);
+    }, 3000);
+  };
+
   return (
     <View>
       <BarChart
         data={chartData}
         width={width}
-        height={propHeight}
+        height={chartHeight}
         chartConfig={chartConfig}
         style={{
           marginVertical: 8,
@@ -77,29 +107,58 @@ export function ChartKitWindChart({
           paddingRight: 16,
         }}
         yAxisLabel=""
-        yAxisSuffix=""
+        yAxisSuffix=" km/h"
         withInnerLines={true}
         withVerticalLabels={true}
         withHorizontalLabels={true}
         fromZero={true}
         showBarTops={false}
         showValuesOnTopOfBars={false}
+        onDataPointClick={handleDataPointClick}
       />
 
-      {/* Legend */}
-      <View className="mt-2 flex-row justify-center gap-4 flex-wrap">
-        {data.map((d, i) => (
-          <View key={`legend-${i}`} className="flex-row items-center gap-1">
-            <View
-              className="h-2 w-8"
-              style={{ backgroundColor: windColor }}
-            />
-            <Text size="sm" variant="muted">
-              {d.direction}: {d.speed} km/h
-            </Text>
-          </View>
-        ))}
-      </View>
+      {/* Tooltip */}
+      {tooltip && Platform.OS === 'web' && (
+        <View
+          style={{
+            position: 'absolute',
+            left: tooltip.x - 60,
+            top: tooltip.y - 70,
+            zIndex: 1000,
+          }}>
+          <Card className="shadow-lg">
+            <CardContent className="p-3">
+              <Text className="mb-1 font-semibold">🌬️ {tooltip.direction}</Text>
+              <Text className="text-sm" style={{ color: windColor }}>
+                Kecepatan: {tooltip.speed} km/h
+              </Text>
+            </CardContent>
+          </Card>
+        </View>
+      )}
+
+      {/* Mobile tooltip */}
+      {tooltip && Platform.OS !== 'web' && (
+        <View className="mt-2">
+          <Card>
+            <CardContent className="p-3">
+              <Text className="mb-1 font-semibold">🌬️ {tooltip.direction}</Text>
+              <Text className="text-sm" style={{ color: windColor }}>
+                Kecepatan: {tooltip.speed} km/h
+              </Text>
+            </CardContent>
+          </Card>
+        </View>
+      )}
+
+      {/* Compact legend for desktop */}
+      {isDesktop && (
+        <View className="mt-2">
+          <Text size="sm" variant="muted" className="text-center">
+            Tap pada bar untuk melihat detail
+          </Text>
+        </View>
+      )}
     </View>
   );
 }

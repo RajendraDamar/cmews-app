@@ -5,6 +5,7 @@ import { CloudSun, Wind, Waves, MoveHorizontal } from 'lucide-react-native';
 import { mockForecastData } from '~/lib/data/forecast-mock';
 import { Text } from '~/components/ui/text';
 import { useStore } from '~/store/store';
+import { useBreakpoint } from '~/lib/breakpoints';
 import { ForecastLocationSelector } from '~/components/forecast/forecast-location-selector';
 import { DaySelector } from '~/components/forecast/day-selector';
 import { ChartKitTemperatureChart } from '~/components/charts/ChartKitTemperatureChart';
@@ -18,6 +19,7 @@ export default function ForecastTab() {
   const [activeTab, setActiveTab] = useState('weather');
   const [selectedDay, setSelectedDay] = useState(0);
   const { selectedForecastLocation, setSelectedForecastLocation } = useStore();
+  const { isDesktop } = useBreakpoint();
 
   // Get location data
   const locationData = mockForecastData.locations[selectedForecastLocation || 'Laut Jawa'];
@@ -36,7 +38,7 @@ export default function ForecastTab() {
 
   return (
     <ScrollView className="flex-1 bg-background">
-      <View className="pb-4">
+      <View className={isDesktop ? 'mx-auto max-w-6xl pb-4' : 'pb-4'}>
         {/* Location Selector */}
         <ForecastLocationSelector
           selectedLocation={selectedForecastLocation || 'Laut Jawa'}
