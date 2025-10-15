@@ -78,13 +78,17 @@ export default function ForecastTab() {
             <View className="gap-3">
               {/* Temperature Chart */}
               <View className="px-4">
-                <ChartKitTemperatureChart
-                  data={selectedWeather.hourly.map((h) => ({
-                    time: h.time,
-                    temp: h.temp,
-                    humidity: h.humidity,
-                  }))}
-                />
+                <Card>
+                  <CardContent className="pt-4">
+                    <ChartKitTemperatureChart
+                      data={selectedWeather.hourly.map((h) => ({
+                        time: h.time,
+                        temp: h.temp,
+                        humidity: h.humidity,
+                      }))}
+                    />
+                  </CardContent>
+                </Card>
               </View>
 
               {/* Day Selector */}
@@ -133,27 +137,31 @@ export default function ForecastTab() {
             <View className="gap-3">
               {/* Wind Chart */}
               <View className="px-4">
-                <ChartKitWindChart
-                  data={selectedWind.hourly.map((h) => {
-                    const directionDegrees = {
-                      Utara: 0,
-                      'Timur Laut': 45,
-                      Timur: 90,
-                      Tenggara: 135,
-                      Selatan: 180,
-                      'Barat Daya': 225,
-                      Barat: 270,
-                      'Barat Laut': 315,
-                    }[h.direction] || 0;
-                    
-                    return {
-                      direction: h.direction,
-                      speed: h.speed,
-                      directionDegrees,
-                    };
-                  })}
-                  animated={true}
-                />
+                <Card>
+                  <CardContent className="pt-4">
+                    <ChartKitWindChart
+                      data={selectedWind.hourly.map((h) => {
+                        const directionDegrees = {
+                          Utara: 0,
+                          'Timur Laut': 45,
+                          Timur: 90,
+                          Tenggara: 135,
+                          Selatan: 180,
+                          'Barat Daya': 225,
+                          Barat: 270,
+                          'Barat Laut': 315,
+                        }[h.direction] || 0;
+                        
+                        return {
+                          direction: h.direction,
+                          speed: h.speed,
+                          directionDegrees,
+                        };
+                      })}
+                      animated={true}
+                    />
+                  </CardContent>
+                </Card>
               </View>
 
               {/* Day Selector */}
@@ -206,13 +214,17 @@ export default function ForecastTab() {
             <View className="gap-3">
               {/* Wave Chart */}
               <View className="px-4">
-                <ChartKitWaveChart
-                  data={selectedWave.hourly.map((h) => ({
-                    time: h.time,
-                    height: h.height,
-                  }))}
-                  animated={true}
-                />
+                <Card>
+                  <CardContent className="pt-4">
+                    <ChartKitWaveChart
+                      data={selectedWave.hourly.map((h) => ({
+                        time: h.time,
+                        height: h.height,
+                      }))}
+                      animated={true}
+                    />
+                  </CardContent>
+                </Card>
               </View>
 
               {/* Day Selector */}

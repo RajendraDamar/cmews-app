@@ -21,11 +21,11 @@ interface WindChartProps {
 export function ChartKitWindChart({
   data,
   width: propWidth,
-  height: propHeight = 250,
+  height: propHeight = 280,
 }: WindChartProps) {
   const { colorScheme } = useTheme();
   const screenWidth = Dimensions.get('window').width;
-  const width = propWidth || screenWidth - 32;
+  const width = propWidth || Math.max(screenWidth - 64, 300);
 
   // Prepare chart data - display wind speed by direction
   const labels = data.map((d) => d.direction);
@@ -74,6 +74,7 @@ export function ChartKitWindChart({
         style={{
           marginVertical: 8,
           borderRadius: 16,
+          paddingRight: 16,
         }}
         yAxisLabel=""
         yAxisSuffix=""

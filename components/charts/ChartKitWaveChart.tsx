@@ -21,11 +21,11 @@ interface WaveChartProps {
 export function ChartKitWaveChart({
   data,
   width: propWidth,
-  height: propHeight = 200,
+  height: propHeight = 260,
 }: WaveChartProps) {
   const { colorScheme } = useTheme();
   const screenWidth = Dimensions.get('window').width;
-  const width = propWidth || screenWidth - 32;
+  const width = propWidth || Math.max(screenWidth - 64, 300);
 
   // Prepare chart data
   const labels = data.map((d) => d.time);
@@ -82,6 +82,7 @@ export function ChartKitWaveChart({
         style={{
           marginVertical: 8,
           borderRadius: 16,
+          paddingRight: 16,
         }}
         withInnerLines={true}
         withOuterLines={false}

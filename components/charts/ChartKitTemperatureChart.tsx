@@ -21,11 +21,11 @@ interface TemperatureChartProps {
 export function ChartKitTemperatureChart({
   data,
   width: propWidth,
-  height: propHeight = 220,
+  height: propHeight = 280,
 }: TemperatureChartProps) {
   const { colorScheme } = useTheme();
   const screenWidth = Dimensions.get('window').width;
-  const width = propWidth || screenWidth - 32;
+  const width = propWidth || Math.max(screenWidth - 64, 300);
 
   // Prepare chart data
   const labels = data.map((d) => d.time);
@@ -89,6 +89,7 @@ export function ChartKitTemperatureChart({
         style={{
           marginVertical: 8,
           borderRadius: 16,
+          paddingRight: 16,
         }}
         withInnerLines={true}
         withOuterLines={false}
