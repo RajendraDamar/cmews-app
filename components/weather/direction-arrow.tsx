@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Platform } from 'react-native';
 import { ArrowUp } from 'lucide-react-native';
 import { Text } from '~/components/ui/text';
-import { DIRECTION_MAP } from '~/lib/constants';
+import { DIRECTION_MAP, getThemeColor } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
 
 // Conditionally import Animated only for native platforms
@@ -32,7 +32,7 @@ export function DirectionArrow({
 }: DirectionArrowProps) {
   const { colorScheme } = useTheme();
   const rotation = degrees ?? DIRECTION_MAP[direction] ?? 0;
-  const iconColor = colorScheme === 'dark' ? '#e5e7eb' : '#1f2937';
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   // Use Platform.OS check to avoid worklets on web
   const AnimatedContainer = Platform.OS === 'web' ? View : Animated.View;
@@ -43,7 +43,7 @@ export function DirectionArrow({
         style={{
           transform: [{ rotate: `${rotation}deg` }],
         }}>
-        <ArrowUp size={size} color={iconColor} />
+        <ArrowUp size={size} color={themeColors.icon.foreground} />
       </AnimatedContainer>
       {showLabel && (
         <Text size="sm" variant="muted">

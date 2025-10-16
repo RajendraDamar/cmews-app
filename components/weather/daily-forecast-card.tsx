@@ -22,8 +22,6 @@ interface DailyForecastCardProps {
 }
 
 export function DailyForecastCard({ forecast }: DailyForecastCardProps) {
-  const { colorScheme } = useTheme();
-
   // Calculate temperature range for gradient bars
   const allTemps = forecast.flatMap((f) => [f.tempLow, f.tempHigh]);
   const minTemp = Math.min(...allTemps);

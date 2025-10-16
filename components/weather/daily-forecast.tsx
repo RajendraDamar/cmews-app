@@ -7,6 +7,7 @@ import { parseBMKGDateTime, getIndonesianDayName } from '~/lib/utils/indonesian-
 import type { BMKGDailyData } from '~/lib/types/weather';
 import { useTheme } from '~/lib/theme-provider';
 import { CloudRain } from 'lucide-react-native';
+import { getThemeColor } from '~/lib/constants';
 
 interface DailyForecastProps {
   dailyData: BMKGDailyData[];
@@ -14,6 +15,7 @@ interface DailyForecastProps {
 
 export function DailyForecast({ dailyData }: DailyForecastProps) {
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   return (
     <View className="px-4 pb-6">
@@ -39,7 +41,7 @@ export function DailyForecast({ dailyData }: DailyForecastProps) {
                 <View className="flex-row items-center gap-4">
                   {day.precipitation !== undefined && day.precipitation > 0 && (
                     <View className="flex-row items-center gap-1">
-                      <CloudRain size={14} color={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'} />
+                      <CloudRain size={14} color={themeColors.primary} />
                       <Text variant="muted" size="sm">
                         {day.precipitation}%
                       </Text>
