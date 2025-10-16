@@ -6,6 +6,7 @@ import { Separator } from '~/components/ui/separator';
 import { WeatherIcon } from './weather-icon';
 import { PrecipitationIcon } from './precipitation-icon';
 import { useTheme } from '~/lib/theme-provider';
+import { COLORS } from '~/lib/constants';
 
 interface DailyForecastItem {
   day: string;
@@ -79,7 +80,7 @@ export function DailyForecastCard({ forecast }: DailyForecastCardProps) {
                       style={{
                         left: `${gradient.start}%`,
                         width: `${gradient.width}%`,
-                        backgroundColor: colorScheme === 'dark' ? '#fb923c' : '#f97316',
+                        backgroundColor: COLORS.chart.temperature,
                       }}
                     />
                   </View>

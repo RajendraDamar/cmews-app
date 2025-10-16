@@ -7,6 +7,7 @@ import { AlertTriangle, X } from 'lucide-react-native';
 import { useTheme } from '~/lib/theme-provider';
 import type { WeatherAlert } from '~/lib/types/weather';
 import { parseBMKGDateTime, formatTime24 } from '~/lib/utils/indonesian-locale';
+import { COLORS, getThemeColor } from '~/lib/constants';
 
 interface WeatherAlertProps {
   alert: WeatherAlert;
@@ -15,11 +16,12 @@ interface WeatherAlertProps {
 
 export function WeatherAlertCard({ alert, onDismiss }: WeatherAlertProps) {
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   const alertColors = {
     warning: { bg: 'bg-orange-500/10', border: 'border-orange-500/50', text: 'text-orange-500' },
     watch: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/50', text: 'text-yellow-500' },
-    advisory: { bg: 'bg-blue-500/10', border: 'border-blue-500/50', text: 'text-blue-500' },
+    advisory: { bg: 'bg-primary/10', border: 'border-primary/50', text: 'text-primary' },
   };
 
   const colors = alertColors[alert.type];
@@ -33,7 +35,7 @@ export function WeatherAlertCard({ alert, onDismiss }: WeatherAlertProps) {
           <View className="flex-1 flex-row items-start gap-3">
             <AlertTriangle
               size={24}
-              color={colorScheme === 'dark' ? '#f97316' : '#ea580c'}
+              color={COLORS.severity.medium}
               className={colors.text}
             />
             <View className="flex-1">
@@ -61,7 +63,7 @@ export function WeatherAlertCard({ alert, onDismiss }: WeatherAlertProps) {
             onPress={onDismiss}
             className="rounded-full p-1"
             accessibilityLabel="Tutup peringatan">
-            <X size={20} color={colorScheme === 'dark' ? '#9ca3af' : '#6b7280'} />
+            <X size={20} color={themeColors.muted} />
           </Pressable>
         </View>
       </CardContent>

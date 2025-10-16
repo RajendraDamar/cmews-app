@@ -5,6 +5,7 @@ import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { Thermometer, Wind, Gauge, ChevronDown, ChevronUp } from 'lucide-react-native';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 interface DetailedMetricsProps {
   temperature: {
@@ -34,7 +35,7 @@ interface AccordionItemProps {
 function AccordionItem({ title, icon: Icon, children }: AccordionItemProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
-  const iconColor = colorScheme === 'dark' ? '#60a5fa' : '#3b82f6';
+  const themeColors = getThemeColor(colorScheme === 'dark');
   const ChevronIcon = isOpen ? ChevronUp : ChevronDown;
 
   return (
@@ -43,10 +44,10 @@ function AccordionItem({ title, icon: Icon, children }: AccordionItemProps) {
         onPress={() => setIsOpen(!isOpen)}
         className="flex-row items-center justify-between rounded-lg bg-muted p-4">
         <View className="flex-row items-center gap-3">
-          <Icon size={20} color={iconColor} />
+          <Icon size={20} color={themeColors.primary} />
           <Text className="font-semibold">{title}</Text>
         </View>
-        <ChevronIcon size={20} color={iconColor} />
+        <ChevronIcon size={20} color={themeColors.primary} />
       </Pressable>
       {isOpen && <View className="mt-2 rounded-lg bg-card p-4">{children}</View>}
     </View>
