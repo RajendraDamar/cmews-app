@@ -48,6 +48,7 @@ if (Platform.OS !== 'web') {
 }
 
 function WebMap() {
+  const { colorScheme } = useTheme();
   const [viewState, setViewState] = useState({
     longitude: 106.8272,
     latitude: -6.1754,
@@ -64,13 +65,19 @@ function WebMap() {
     );
   }
 
+  // Choose map style based on color scheme
+  // Using free OSM styles with dark/light variants
+  const mapStyle = colorScheme === 'dark' 
+    ? 'https://tiles.openfreemap.org/styles/dark' // Dark style
+    : 'https://tiles.openfreemap.org/styles/bright'; // Light style
+
   return (
     <View className="maplibregl-map" style={{ width: '100%', height: '100%' }}>
       <MapGL
         {...viewState}
         onMove={(evt: any) => setViewState(evt.viewState)}
         style={{ width: '100%', height: '100%' }}
-        mapStyle="https://demotiles.maplibre.org/style.json"
+        mapStyle={mapStyle}
         dragRotate={true}
         pitchWithRotate={true}
       />
@@ -192,6 +199,12 @@ export default function MapsScreen() {
       return <MapErrorState message={mapError} onRetry={handleRetry} />;
     }
 
+    // Choose map style based on color scheme
+    // Using free OSM styles with dark/light variants
+    const mapStyle = colorScheme === 'dark'
+      ? 'https://tiles.openfreemap.org/styles/dark' // Dark style
+      : 'https://tiles.openfreemap.org/styles/bright'; // Light style
+
     return (
       <View style={{ flex: 1, height: isDesktop ? '100%' : mapHeight }}>
         {Platform.OS === 'web' ? (
@@ -199,7 +212,7 @@ export default function MapsScreen() {
         ) : MapLibreGL ? (
           <MapLibreGL.MapView
             style={{ flex: 1 }}
-            styleURL="https://demotiles.maplibre.org/style.json"
+            styleURL={mapStyle}
             logoEnabled={false}
             attributionEnabled={false}
             compassEnabled={!isDesktop}
