@@ -12,6 +12,7 @@ import type { WeatherForecastDay } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
 import * as Haptics from 'expo-haptics';
+import { getThemeColor } from '~/lib/constants';
 
 export function ExpandableDayCard({
   day,
@@ -23,6 +24,7 @@ export function ExpandableDayCard({
 }: WeatherForecastDay) {
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   const handleToggle = (open: boolean) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -59,7 +61,7 @@ export function ExpandableDayCard({
 
                 <ChevronDown
                   size={20}
-                  color={colorScheme === 'dark' ? '#888' : '#666'}
+                  color={themeColors.muted}
                   style={{
                     transform: [{ rotate: isOpen ? '180deg' : '0deg' }],
                   }}

@@ -13,6 +13,7 @@ import { DailyForecastCard } from '~/components/weather/daily-forecast-card';
 import { WeatherAlertCard } from '~/components/weather/weather-alert';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 export default function Home() {
   const [loading, setLoading] = useState(true);
@@ -50,6 +51,7 @@ export default function Home() {
 
   const lastUpdatedDate = parseBMKGDateTime(weatherData.lastUpdated);
   const lastUpdatedText = getRelativeTimeIndonesian(lastUpdatedDate);
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   // Prepare data for new components
   const hourlyData = weatherData.hourlyForecast.slice(0, 8).map((h) => ({
@@ -69,8 +71,8 @@ export default function Home() {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={[colorScheme === 'dark' ? '#60a5fa' : '#3b82f6']}
-            tintColor={colorScheme === 'dark' ? '#60a5fa' : '#3b82f6'}
+            colors={[themeColors.primary]}
+            tintColor={themeColors.primary}
           />
         }>
         {loading ? (
@@ -81,7 +83,7 @@ export default function Home() {
               <Skeleton className="h-4 w-32" />
             </View>
 
-            <View className="mx-4 mt-2 overflow-hidden rounded-lg bg-blue-500 p-6">
+            <View className="mx-4 mt-2 overflow-hidden rounded-lg bg-primary/10 p-6">
               <View className="flex-row items-start justify-between">
                 <View className="flex-1">
                   <Skeleton className="mb-2 h-16 w-32" />

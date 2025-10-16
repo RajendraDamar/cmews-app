@@ -5,7 +5,7 @@ import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { WeatherIcon } from './weather-icon';
 import { PrecipitationIcon } from './precipitation-icon';
-import { useTheme } from '~/lib/theme-provider';
+import { COLORS } from '~/lib/constants';
 
 interface DailyForecastItem {
   day: string;
@@ -21,8 +21,6 @@ interface DailyForecastCardProps {
 }
 
 export function DailyForecastCard({ forecast }: DailyForecastCardProps) {
-  const { colorScheme } = useTheme();
-
   // Calculate temperature range for gradient bars
   const allTemps = forecast.flatMap((f) => [f.tempLow, f.tempHigh]);
   const minTemp = Math.min(...allTemps);
@@ -79,7 +77,7 @@ export function DailyForecastCard({ forecast }: DailyForecastCardProps) {
                       style={{
                         left: `${gradient.start}%`,
                         width: `${gradient.width}%`,
-                        backgroundColor: colorScheme === 'dark' ? '#fb923c' : '#f97316',
+                        backgroundColor: COLORS.chart.temperature,
                       }}
                     />
                   </View>

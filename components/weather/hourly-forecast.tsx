@@ -7,6 +7,7 @@ import { parseBMKGDateTime, formatTime24 } from '~/lib/utils/indonesian-locale';
 import type { BMKGHourlyData } from '~/lib/types/weather';
 import { useTheme } from '~/lib/theme-provider';
 import { Droplets } from 'lucide-react-native';
+import { getThemeColor } from '~/lib/constants';
 
 interface HourlyForecastProps {
   hourlyData: BMKGHourlyData[];
@@ -14,6 +15,7 @@ interface HourlyForecastProps {
 
 export function HourlyForecast({ hourlyData }: HourlyForecastProps) {
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   return (
     <View className="px-4">
@@ -38,7 +40,7 @@ export function HourlyForecast({ hourlyData }: HourlyForecastProps) {
                 <WeatherIcon size={32} color={iconColor} />
                 <Text className="mt-2 text-lg font-semibold">{hour.temperature}°</Text>
                 <View className="mt-1 flex-row items-center gap-1">
-                  <Droplets size={12} color={colorScheme === 'dark' ? '#999' : '#666'} />
+                  <Droplets size={12} color={themeColors.muted} />
                   <Text variant="muted" size="sm">
                     {hour.humidity}%
                   </Text>

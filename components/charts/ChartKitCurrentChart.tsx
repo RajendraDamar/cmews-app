@@ -4,6 +4,7 @@ import { LineChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
 import { useTheme } from '~/lib/theme-provider';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
+import { COLORS, getThemeColor } from '~/lib/constants';
 
 interface CurrentChartData {
   time: string;
@@ -28,23 +29,25 @@ export function ChartKitCurrentChart({
   const [selectedDataPoint, setSelectedDataPoint] = useState<{ index: number; value: number; dataset: number } | null>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
+  const themeColors = getThemeColor(colorScheme === 'dark');
+
   // Prepare chart data
   const labels = data.map((d) => d.time);
   const speeds = data.map((d) => d.speed);
 
   // Colors
-  const currentColor = '#6366f1'; // Indigo color for current/arus
-  const textColor = colorScheme === 'dark' ? '#9ca3af' : '#6b7280';
-  const backgroundColor = colorScheme === 'dark' ? '#1f2937' : '#ffffff';
-  const gridColor = colorScheme === 'dark' ? '#374151' : '#e5e7eb';
+  const currentColor = COLORS.chart.current;
+  
+  
+  
 
   const chartConfig = {
-    backgroundColor: backgroundColor,
-    backgroundGradientFrom: backgroundColor,
-    backgroundGradientTo: backgroundColor,
+    backgroundColor: themeColors.card,
+    backgroundGradientFrom: themeColors.card,
+    backgroundGradientTo: themeColors.card,
     decimalPlaces: 1,
     color: (opacity = 1) => currentColor,
-    labelColor: (opacity = 1) => textColor,
+    labelColor: (opacity = 1) => themeColors.muted,
     style: {
       borderRadius: 16,
     },
@@ -55,7 +58,7 @@ export function ChartKitCurrentChart({
     },
     propsForBackgroundLines: {
       strokeDasharray: '',
-      stroke: gridColor,
+      stroke: themeColors.border,
       strokeWidth: 1,
       strokeOpacity: 0.2,
     },

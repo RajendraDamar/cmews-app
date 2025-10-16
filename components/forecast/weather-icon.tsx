@@ -1,5 +1,6 @@
 import { View } from 'react-native';
 import { Sun, Cloud, CloudRain, CloudDrizzle, CloudSnow, CloudRainWind } from 'lucide-react-native';
+import { useTheme } from '~/lib/theme-provider';
 
 interface WeatherIconProps {
   weather: string;
@@ -7,10 +8,12 @@ interface WeatherIconProps {
 }
 
 export function WeatherIcon({ weather, size = 32 }: WeatherIconProps) {
+  const { colorScheme } = useTheme();
+  
   // Determine icon and background color based on weather condition
   let IconComponent = Cloud;
-  let bgColor = 'bg-gray-500';
-  let iconColor = '#fff';
+  let bgColor = 'bg-muted';
+  const iconColor = colorScheme === 'dark' ? '#fff' : '#fff';
 
   const weatherLower = weather.toLowerCase();
 
@@ -22,7 +25,7 @@ export function WeatherIcon({ weather, size = 32 }: WeatherIconProps) {
     bgColor = 'bg-yellow-400';
   } else if (weatherLower.includes('berawan')) {
     IconComponent = Cloud;
-    bgColor = 'bg-gray-400';
+    bgColor = 'bg-muted';
   } else if (weatherLower.includes('hujan lebat')) {
     IconComponent = CloudRainWind;
     bgColor = 'bg-blue-700';
@@ -31,7 +34,7 @@ export function WeatherIcon({ weather, size = 32 }: WeatherIconProps) {
     bgColor = 'bg-blue-600';
   } else if (weatherLower.includes('hujan ringan') || weatherLower.includes('gerimis')) {
     IconComponent = CloudDrizzle;
-    bgColor = 'bg-blue-500';
+    bgColor = 'bg-primary';
   } else if (weatherLower.includes('salju')) {
     IconComponent = CloudSnow;
     bgColor = 'bg-blue-300';

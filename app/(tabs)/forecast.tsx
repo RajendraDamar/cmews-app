@@ -8,14 +8,16 @@ import { WaveCard } from '~/components/forecast/wave-card';
 import { CurrentCard } from '~/components/forecast/current-card';
 import { mockForecastData } from '~/lib/data/forecast-mock';
 import { Text } from '~/components/ui/text';
+import { useBreakpoint } from '~/lib/breakpoints';
 
 export default function ForecastTab() {
   const [activeTab, setActiveTab] = useState('weather');
   const { weather, wind, wave, current } = mockForecastData;
+  const { isDesktop } = useBreakpoint();
 
   return (
     <ScrollView className="flex-1 bg-background">
-      <View className="p-4">
+      <View className={`p-4 ${isDesktop ? 'mx-auto w-full max-w-4xl' : ''}`}>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Tab Navigation */}
           <TabsList className="mb-4 grid grid-cols-4">

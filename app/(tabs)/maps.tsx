@@ -1,4 +1,3 @@
-// Maps Tab - Weather Observation Reporting Platform
 import { View, Platform, Pressable, useWindowDimensions } from 'react-native';
 import { useState, useRef, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -16,6 +15,7 @@ import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { mockWeatherReports } from '~/lib/data/weather-reports-mock';
 import { WeatherReport, WeatherReportFilters } from '~/lib/types/weather-report';
+import { getThemeColor } from '~/lib/constants';
 
 // Import MapLibre theme for web
 if (Platform.OS === 'web') {
@@ -93,7 +93,7 @@ export default function MapsScreen() {
   const [selectedReport, setSelectedReport] = useState<WeatherReport | null>(null);
   const [showReportForm, setShowReportForm] = useState(false);
   const [showWeatherLayer, setShowWeatherLayer] = useState(false);
-  const [filters, setFilters] = useState<WeatherReportFilters>({
+  const [filters] = useState<WeatherReportFilters>({
     all: true,
     low: true,
     medium: true,
@@ -103,6 +103,8 @@ export default function MapsScreen() {
   const [mapError, setMapError] = useState<string | null>(null);
   const [reports, setReports] = useState<WeatherReport[]>(mockWeatherReports);
   const cameraRef = useRef<any>(null);
+
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   // Calculate exact map height for full screen
   const mapHeight = height - insets.top - insets.bottom;
@@ -186,8 +188,6 @@ export default function MapsScreen() {
     return filters[report.severity];
   });
 
-  const iconColor = colorScheme === 'dark' ? '#9ca3af' : '#6b7280';
-
   // Map View with Markers
   const renderMap = () => {
     if (isLoading) {
@@ -254,7 +254,6 @@ export default function MapsScreen() {
       {isDesktop ? (
         <View className="relative flex-1">
           {renderMap()}
-          
           {/* Desktop Map Panel - Minimal sidebar overlay */}
           <DesktopMapPanel
             showWeatherLayer={showWeatherLayer}
@@ -268,7 +267,7 @@ export default function MapsScreen() {
               className="absolute right-8 top-1/3 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
               style={{
                 zIndex: 10,
-                shadowColor: '#000',
+                shadowColor: themeColors.shadow,
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.15,
                 shadowRadius: 8,
@@ -277,19 +276,19 @@ export default function MapsScreen() {
               <Pressable
                 onPress={handleZoomIn}
                 className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Plus size={20} color={iconColor} />
+                <Plus size={20} color={themeColors.muted} />
               </Pressable>
 
               <Pressable
                 onPress={handleZoomOut}
                 className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Minus size={20} color={iconColor} />
+                <Minus size={20} color={themeColors.muted} />
               </Pressable>
 
               <Pressable
                 onPress={handleLocationPress}
                 className="h-12 w-12 items-center justify-center active:bg-muted/50">
-                <MapPin size={18} color={iconColor} />
+                <MapPin size={18} color={themeColors.muted} />
               </Pressable>
             </View>
           )}
@@ -328,7 +327,7 @@ export default function MapsScreen() {
               className="absolute bottom-32 right-4 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
               style={{
                 zIndex: 10,
-                shadowColor: '#000',
+                shadowColor: themeColors.shadow,
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.15,
                 shadowRadius: 8,
@@ -337,19 +336,19 @@ export default function MapsScreen() {
               <Pressable
                 onPress={handleZoomIn}
                 className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Plus size={20} color={iconColor} />
+                <Plus size={20} color={themeColors.muted} />
               </Pressable>
 
               <Pressable
                 onPress={handleZoomOut}
                 className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Minus size={20} color={iconColor} />
+                <Minus size={20} color={themeColors.muted} />
               </Pressable>
 
               <Pressable
                 onPress={handleLocationPress}
                 className="h-12 w-12 items-center justify-center active:bg-muted/50">
-                <MapPin size={18} color={iconColor} />
+                <MapPin size={18} color={themeColors.muted} />
               </Pressable>
             </View>
           )}
@@ -360,7 +359,7 @@ export default function MapsScreen() {
             className="absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full bg-primary shadow-xl active:scale-95"
             style={{
               zIndex: 10,
-              shadowColor: '#000',
+              shadowColor: themeColors.shadow,
               shadowOffset: { width: 0, height: 6 },
               shadowOpacity: 0.25,
               shadowRadius: 12,

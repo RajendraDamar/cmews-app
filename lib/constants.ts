@@ -16,6 +16,7 @@ export const COLORS = {
     humidity: 'hsl(217 91% 60%)', // blue-500
     wind: 'hsl(173 80% 40%)', // teal-600
     precipitation: 'hsl(217 91% 60%)', // blue-500
+    current: 'hsl(239 84% 67%)', // indigo-400
   },
   precipitation: {
     light: 'hsl(199 89% 48%)', // sky-500 (<30%)
@@ -23,6 +24,23 @@ export const COLORS = {
     dark: 'hsl(221 83% 53%)', // blue-600 (>70%)
   },
 };
+
+// Theme-aware color utilities
+export const getThemeColor = (isDark: boolean) => ({
+  primary: isDark ? '#60a5fa' : '#3b82f6', // blue-400/blue-500
+  muted: isDark ? '#9ca3af' : '#6b7280', // gray-400/gray-500
+  mutedForeground: isDark ? '#9ca3af' : '#6b7280',
+  foreground: isDark ? '#f3f4f6' : '#1f2937', // gray-100/gray-800
+  card: isDark ? '#1f2937' : '#ffffff',
+  border: isDark ? '#374151' : '#e5e7eb',
+  shadow: '#000',
+  // Icon colors
+  icon: {
+    primary: isDark ? '#60a5fa' : '#3b82f6',
+    muted: isDark ? '#9ca3af' : '#6b7280',
+    foreground: isDark ? '#e5e7eb' : '#1f2937',
+  },
+});
 
 export const getPrecipitationColor = (percentage: number): string => {
   if (percentage < 30) return COLORS.precipitation.light;

@@ -5,6 +5,7 @@ import { Text } from '~/components/ui/text';
 import { Droplets, Thermometer } from 'lucide-react-native';
 import { DirectionArrow } from '~/components/weather/direction-arrow';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 interface QuickStatsProps {
   humidity: number;
@@ -22,13 +23,13 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, label, value, progress }: StatCardProps) {
   const { colorScheme } = useTheme();
-  const iconColor = colorScheme === 'dark' ? '#60a5fa' : '#3b82f6';
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   return (
     <Card className="min-w-[140px]">
       <CardContent className="p-4">
         <View className="flex-row items-center gap-3">
-          <Icon size={24} color={iconColor} />
+          <Icon size={24} color={themeColors.primary} />
           <View className="flex-1">
             <Text variant="muted" size="sm">
               {label}

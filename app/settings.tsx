@@ -17,6 +17,7 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '~/com
 import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { useBreakpoint } from '~/lib/breakpoints';
+import { getThemeColor } from '~/lib/constants';
 
 function SettingRow({ icon, label, value, trailing, onPress }: any) {
   return (
@@ -39,7 +40,7 @@ export default function SettingsScreen() {
   const [notifications, setNotifications] = useState(true);
   const [locationPermission, setLocationPermission] = useState(true);
 
-  const iconColor = colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)';
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   const handleThemeChange = (value: boolean) => {
     setTheme(value ? 'dark' : 'light');
@@ -50,14 +51,10 @@ export default function SettingsScreen() {
       <Stack.Screen 
         options={{ 
           title: 'Pengaturan',
-          headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
-          },
-          headerTintColor: colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)',
         }} 
       />
       <ScrollView className="flex-1 bg-background">
-        <View className={`px-4 py-6 ${isDesktop ? 'mx-auto max-w-4xl' : ''}`}>
+        <View className={`px-4 py-6 ${isDesktop ? 'mx-auto max-w-2xl' : ''}`}>
           <Text className="mb-6 text-3xl font-bold">Pengaturan</Text>
 
           {/* Tampilan */}
@@ -68,7 +65,7 @@ export default function SettingsScreen() {
             </CardHeader>
             <CardContent>
               <SettingRow
-                icon={<Moon size={20} color={iconColor} />}
+                icon={<Moon size={20} color={themeColors.muted} />}
                 label="Mode Gelap"
                 trailing={<Switch value={colorScheme === 'dark'} onValueChange={handleThemeChange} />}
               />
@@ -83,7 +80,7 @@ export default function SettingsScreen() {
             </CardHeader>
             <CardContent>
               <SettingRow
-                icon={<Bell size={20} color={iconColor} />}
+                icon={<Bell size={20} color={themeColors.muted} />}
                 label="Notifikasi Push"
                 trailing={<Switch value={notifications} onValueChange={setNotifications} />}
               />
@@ -98,7 +95,7 @@ export default function SettingsScreen() {
             </CardHeader>
             <CardContent>
               <SettingRow
-                icon={<MapPin size={20} color={iconColor} />}
+                icon={<MapPin size={20} color={themeColors.muted} />}
                 label="Izin Lokasi"
                 trailing={
                   <Switch value={locationPermission} onValueChange={setLocationPermission} />
@@ -115,10 +112,10 @@ export default function SettingsScreen() {
             </CardHeader>
             <CardContent>
               <SettingRow
-                icon={<Thermometer size={20} color={iconColor} />}
+                icon={<Thermometer size={20} color={themeColors.muted} />}
                 label="Suhu"
                 value="Celsius (°C)"
-                trailing={<ChevronRight size={20} color={iconColor} />}
+                trailing={<ChevronRight size={20} color={themeColors.muted} />}
                 onPress={() => {}}
               />
             </CardContent>
@@ -132,10 +129,10 @@ export default function SettingsScreen() {
             </CardHeader>
             <CardContent>
               <SettingRow
-                icon={<Globe size={20} color={iconColor} />}
+                icon={<Globe size={20} color={themeColors.muted} />}
                 label="Bahasa"
                 value="Indonesia"
-                trailing={<ChevronRight size={20} color={iconColor} />}
+                trailing={<ChevronRight size={20} color={themeColors.muted} />}
                 onPress={() => {}}
               />
             </CardContent>
@@ -148,19 +145,19 @@ export default function SettingsScreen() {
               <CardDescription>Informasi aplikasi</CardDescription>
             </CardHeader>
             <CardContent className="gap-0">
-              <SettingRow icon={<Info size={20} color={iconColor} />} label="Versi" value="1.0.0" />
+              <SettingRow icon={<Info size={20} color={themeColors.muted} />} label="Versi" value="1.0.0" />
               <Separator />
               <SettingRow
-                icon={<Lock size={20} color={iconColor} />}
+                icon={<Lock size={20} color={themeColors.muted} />}
                 label="Privasi"
-                trailing={<ChevronRight size={20} color={iconColor} />}
+                trailing={<ChevronRight size={20} color={themeColors.muted} />}
                 onPress={() => router.push('/privacy')}
               />
               <Separator />
               <SettingRow
-                icon={<LogOut size={20} color={iconColor} />}
+                icon={<LogOut size={20} color={themeColors.muted} />}
                 label="Keluar"
-                trailing={<ChevronRight size={20} color={iconColor} />}
+                trailing={<ChevronRight size={20} color={themeColors.muted} />}
                 onPress={() => router.replace('/(auth)/login')}
               />
             </CardContent>

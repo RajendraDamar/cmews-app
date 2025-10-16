@@ -9,10 +9,12 @@ import { ChartKitCurrentChart } from '~/components/charts/ChartKitCurrentChart';
 import type { CurrentForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForecastData) {
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   // Prepare chart data for ChartKitCurrentChart
   const currentChartData = hourly.map((h) => ({
@@ -44,7 +46,7 @@ export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForeca
 
                 <ChevronDown
                   size={20}
-                  color={colorScheme === 'dark' ? '#888' : '#666'}
+                  color={themeColors.muted}
                   style={{
                     transform: [{ rotate: isOpen ? '180deg' : '0deg' }],
                   }}
