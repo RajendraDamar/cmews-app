@@ -96,7 +96,9 @@ export function ChartKitWindChart({
       />
 
       {/* Popup for data point details */}
-      {selectedDataPoint !== null && selectedDataPoint.index < data.length && (
+      {selectedDataPoint !== null && 
+       selectedDataPoint.index >= 0 && 
+       selectedDataPoint.index < data.length && (
         <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
           <PopoverTrigger asChild>
             <View />
