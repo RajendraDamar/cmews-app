@@ -95,7 +95,7 @@ export function ChartKitPrecipitationChart({
       />
 
       {/* Popup for data point details */}
-      {selectedDataPoint !== null && (
+      {selectedDataPoint !== null && selectedDataPoint.index < data.length && (
         <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
           <PopoverTrigger asChild>
             <View />
