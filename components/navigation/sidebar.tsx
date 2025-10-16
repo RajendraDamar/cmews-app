@@ -175,26 +175,31 @@ export function Sidebar() {
           <Separator className="my-2" />
 
           {/* Profile */}
-          <Pressable
-            onPress={() => setModalVisible(true)}
-            className="flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-accent">
-            <User
-              size={20}
-              color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
-            />
-            {!collapsed && (
-              <Text
-                className="text-sm"
-                style={{
-                  color: colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)',
-                }}>
-                Profile
-              </Text>
-            )}
-          </Pressable>
+          <ProfileModal
+            visible={modalVisible}
+            onClose={() => setModalVisible(false)}
+            trigger={
+              <Pressable
+                onPress={() => setModalVisible(true)}
+                className="flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-accent">
+                <User
+                  size={20}
+                  color={colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)'}
+                />
+                {!collapsed && (
+                  <Text
+                    className="text-sm"
+                    style={{
+                      color: colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)',
+                    }}>
+                    Profile
+                  </Text>
+                )}
+              </Pressable>
+            }
+          />
         </View>
       </View>
-      <ProfileModal visible={modalVisible} onClose={() => setModalVisible(false)} />
     </>
   );
 }
