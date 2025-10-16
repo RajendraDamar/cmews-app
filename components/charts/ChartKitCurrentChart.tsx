@@ -4,7 +4,7 @@ import { LineChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
 import { useTheme } from '~/lib/theme-provider';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
-import { getThemeColor } from '~/lib/constants';
+import { COLORS, getThemeColor } from '~/lib/constants';
 
 interface CurrentChartData {
   time: string;
@@ -36,7 +36,7 @@ export function ChartKitCurrentChart({
   const speeds = data.map((d) => d.speed);
 
   // Colors
-  const currentColor = '#6366f1'; // Indigo color for current/arus
+  const currentColor = COLORS.chart.current;
   
   
   

@@ -16,6 +16,7 @@ export const COLORS = {
     humidity: 'hsl(217 91% 60%)', // blue-500
     wind: 'hsl(173 80% 40%)', // teal-600
     precipitation: 'hsl(217 91% 60%)', // blue-500
+    current: 'hsl(239 84% 67%)', // indigo-400
   },
   precipitation: {
     light: 'hsl(199 89% 48%)', // sky-500 (<30%)
