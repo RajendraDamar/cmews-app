@@ -59,7 +59,7 @@ export function Sidebar() {
           }}>
           <View className="flex-row items-center gap-2">
             <Cloud
-              size={24}
+              size={28}
               color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'}
             />
             {!collapsed && <Text className="text-lg font-semibold">CMEWS</Text>}
