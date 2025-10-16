@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Dimensions } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
 import { COLORS } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 
 interface PrecipitationChartData {
   time: string;
@@ -25,6 +26,8 @@ export function ChartKitPrecipitationChart({
   const { colorScheme } = useTheme();
   const screenWidth = Dimensions.get('window').width;
   const width = propWidth || screenWidth - 32;
+  const [selectedDataPoint, setSelectedDataPoint] = useState<{ index: number; value: number; dataset: number } | null>(null);
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   // Prepare chart data
   const labels = data.map((d) => d.time);
@@ -63,6 +66,12 @@ export function ChartKitPrecipitationChart({
     ],
   };
 
+  const handleDataPointClick = (dataPointClickData: any) => {
+    const { index, value, dataset } = dataPointClickData;
+    setSelectedDataPoint({ index, value, dataset });
+    setPopoverOpen(true);
+  };
+
   return (
     <View>
       <BarChart
@@ -82,7 +91,32 @@ export function ChartKitPrecipitationChart({
         fromZero={true}
         showBarTops={false}
         showValuesOnTopOfBars={false}
+        onDataPointClick={handleDataPointClick}
       />
+
+      {/* Popup for data point details */}
+      {selectedDataPoint !== null && 
+       selectedDataPoint.index >= 0 && 
+       selectedDataPoint.index < data.length && (
+        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+          <PopoverTrigger asChild>
+            <View />
+          </PopoverTrigger>
+          <PopoverContent className="w-48">
+            <View className="gap-2">
+              <Text className="font-semibold">Detail Curah Hujan</Text>
+              <View className="flex-row justify-between">
+                <Text variant="muted" size="sm">Waktu:</Text>
+                <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.time}</Text>
+              </View>
+              <View className="flex-row justify-between">
+                <Text variant="muted" size="sm">Curah Hujan:</Text>
+                <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.precipitation} mm</Text>
+              </View>
+            </View>
+          </PopoverContent>
+        </Popover>
+      )}
 
       {/* Legend */}
       <View className="mt-2 flex-row justify-center">

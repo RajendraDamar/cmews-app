@@ -3,6 +3,7 @@ export { ChartKitTemperatureChart } from './ChartKitTemperatureChart';
 export { ChartKitPrecipitationChart } from './ChartKitPrecipitationChart';
 export { ChartKitWindChart } from './ChartKitWindChart';
 export { ChartKitWaveChart } from './ChartKitWaveChart';
+export { ChartKitCurrentChart } from './ChartKitCurrentChart';
 
 // Legacy Skia-based charts (deprecated)
 export { SkiaTemperatureChart } from './SkiaTemperatureChart';
