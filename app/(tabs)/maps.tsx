@@ -186,8 +186,7 @@ export default function MapsScreen() {
     return filters[report.severity];
   });
 
-  const iconColor = colorScheme === 'dark' ? '#e5e7eb' : '#1f2937';
-  const primaryButtonColor = colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(0 0% 100%)';
+  const iconColor = colorScheme === 'dark' ? '#9ca3af' : '#6b7280';
 
   // Map View with Markers
   const renderMap = () => {
@@ -367,7 +366,7 @@ export default function MapsScreen() {
               shadowRadius: 12,
               elevation: 10,
             }}>
-            <Plus size={28} color={primaryButtonColor} />
+            <Plus size={28} className="text-primary-foreground" color={colorScheme === 'dark' ? '#09090b' : '#fafafa'} />
           </Pressable>
 
           {/* Bottom Sheet for Report Details (Mobile) */}

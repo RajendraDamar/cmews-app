@@ -2,28 +2,26 @@ import React, { useState } from 'react';
 import { View, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
-import { COLORS } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 
-interface WaveChartData {
+interface CurrentChartData {
   time: string;
-  height: number;
-  period?: number;
+  speed: number;
 }
 
-interface WaveChartProps {
-  data: WaveChartData[];
+interface CurrentChartProps {
+  data: CurrentChartData[];
   width?: number;
   height?: number;
   animated?: boolean;
 }
 
-export function ChartKitWaveChart({
+export function ChartKitCurrentChart({
   data,
   width: propWidth,
   height: propHeight = 200,
-}: WaveChartProps) {
+}: CurrentChartProps) {
   const { colorScheme } = useTheme();
   const screenWidth = Dimensions.get('window').width;
   const width = propWidth || screenWidth - 32;
@@ -32,10 +30,10 @@ export function ChartKitWaveChart({
 
   // Prepare chart data
   const labels = data.map((d) => d.time);
-  const heights = data.map((d) => d.height);
+  const speeds = data.map((d) => d.speed);
 
   // Colors
-  const waveColor = COLORS.chart.wind; // Using teal color for waves
+  const currentColor = '#6366f1'; // Indigo color for current/arus
   const textColor = colorScheme === 'dark' ? '#9ca3af' : '#6b7280';
   const backgroundColor = colorScheme === 'dark' ? '#1f2937' : '#ffffff';
   const gridColor = colorScheme === 'dark' ? '#374151' : '#e5e7eb';
@@ -45,7 +43,7 @@ export function ChartKitWaveChart({
     backgroundGradientFrom: backgroundColor,
     backgroundGradientTo: backgroundColor,
     decimalPlaces: 1,
-    color: (opacity = 1) => waveColor,
+    color: (opacity = 1) => currentColor,
     labelColor: (opacity = 1) => textColor,
     style: {
       borderRadius: 16,
@@ -53,7 +51,7 @@ export function ChartKitWaveChart({
     propsForDots: {
       r: '4',
       strokeWidth: '2',
-      stroke: waveColor,
+      stroke: currentColor,
     },
     propsForBackgroundLines: {
       strokeDasharray: '',
@@ -67,8 +65,8 @@ export function ChartKitWaveChart({
     labels: labels,
     datasets: [
       {
-        data: heights.length > 0 ? heights : [0],
-        color: (opacity = 1) => waveColor,
+        data: speeds.length > 0 ? speeds : [0],
+        color: (opacity = 1) => currentColor,
         strokeWidth: 3,
       },
     ],
@@ -110,14 +108,14 @@ export function ChartKitWaveChart({
           </PopoverTrigger>
           <PopoverContent className="w-48">
             <View className="gap-2">
-              <Text className="font-semibold">Detail Gelombang</Text>
+              <Text className="font-semibold">Detail Arus</Text>
               <View className="flex-row justify-between">
                 <Text variant="muted" size="sm">Waktu:</Text>
                 <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.time}</Text>
               </View>
               <View className="flex-row justify-between">
-                <Text variant="muted" size="sm">Tinggi:</Text>
-                <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.height} m</Text>
+                <Text variant="muted" size="sm">Kecepatan:</Text>
+                <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.speed} m/s</Text>
               </View>
             </View>
           </PopoverContent>
@@ -129,10 +127,10 @@ export function ChartKitWaveChart({
         <View className="flex-row items-center gap-2">
           <View
             className="h-3 w-3 rounded-full"
-            style={{ backgroundColor: waveColor }}
+            style={{ backgroundColor: currentColor }}
           />
           <Text size="sm" variant="muted">
-            Tinggi Gelombang (m)
+            Kecepatan Arus (m/s)
           </Text>
         </View>
       </View>

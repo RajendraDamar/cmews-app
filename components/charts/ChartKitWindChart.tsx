@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Dimensions } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
 import { COLORS } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
+import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 
 interface WindChartData {
   direction: string;
@@ -26,6 +27,8 @@ export function ChartKitWindChart({
   const { colorScheme } = useTheme();
   const screenWidth = Dimensions.get('window').width;
   const width = propWidth || screenWidth - 32;
+  const [selectedDataPoint, setSelectedDataPoint] = useState<{ index: number; value: number; dataset: number } | null>(null);
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   // Prepare chart data - display wind speed by direction
   const labels = data.map((d) => d.direction);
@@ -64,6 +67,12 @@ export function ChartKitWindChart({
     ],
   };
 
+  const handleDataPointClick = (dataPointClickData: any) => {
+    const { index, value, dataset } = dataPointClickData;
+    setSelectedDataPoint({ index, value, dataset });
+    setPopoverOpen(true);
+  };
+
   return (
     <View>
       <BarChart
@@ -83,22 +92,30 @@ export function ChartKitWindChart({
         fromZero={true}
         showBarTops={false}
         showValuesOnTopOfBars={false}
+        onDataPointClick={handleDataPointClick}
       />
 
-      {/* Legend */}
-      <View className="mt-2 flex-row justify-center gap-4 flex-wrap">
-        {data.map((d, i) => (
-          <View key={`legend-${i}`} className="flex-row items-center gap-1">
-            <View
-              className="h-2 w-8"
-              style={{ backgroundColor: windColor }}
-            />
-            <Text size="sm" variant="muted">
-              {d.direction}: {d.speed} km/h
-            </Text>
-          </View>
-        ))}
-      </View>
+      {/* Popup for data point details */}
+      {selectedDataPoint !== null && (
+        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+          <PopoverTrigger asChild>
+            <View />
+          </PopoverTrigger>
+          <PopoverContent className="w-48">
+            <View className="gap-2">
+              <Text className="font-semibold">Detail Angin</Text>
+              <View className="flex-row justify-between">
+                <Text variant="muted" size="sm">Arah:</Text>
+                <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.direction}</Text>
+              </View>
+              <View className="flex-row justify-between">
+                <Text variant="muted" size="sm">Kecepatan:</Text>
+                <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.speed} km/h</Text>
+              </View>
+            </View>
+          </PopoverContent>
+        </Popover>
+      )}
     </View>
   );
 }
