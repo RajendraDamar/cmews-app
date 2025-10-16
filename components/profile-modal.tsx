@@ -128,7 +128,7 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
     return (
       <Popover>
         <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-        <PopoverContent align="end" className="p-0">
+        <PopoverContent side="right" align="start" className="p-0">
           <ProfileContent />
         </PopoverContent>
       </Popover>
