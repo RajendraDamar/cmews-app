@@ -5,7 +5,6 @@ import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { WeatherIcon } from './weather-icon';
 import { PrecipitationIcon } from './precipitation-icon';
-import { useTheme } from '~/lib/theme-provider';
 import { COLORS } from '~/lib/constants';
 
 interface DailyForecastItem {

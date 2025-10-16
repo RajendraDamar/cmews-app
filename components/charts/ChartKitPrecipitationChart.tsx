@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Dimensions } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
-import { COLORS } from '~/lib/constants';
+import { COLORS, getThemeColor } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 
@@ -29,29 +29,28 @@ export function ChartKitPrecipitationChart({
   const [selectedDataPoint, setSelectedDataPoint] = useState<{ index: number; value: number; dataset: number } | null>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
+  const themeColors = getThemeColor(colorScheme === 'dark');
+
   // Prepare chart data
   const labels = data.map((d) => d.time);
   const precipitations = data.map((d) => d.precipitation);
 
   // Colors
   const precipColor = COLORS.chart.precipitation;
-  const textColor = colorScheme === 'dark' ? '#9ca3af' : '#6b7280';
-  const backgroundColor = colorScheme === 'dark' ? '#1f2937' : '#ffffff';
-  const gridColor = colorScheme === 'dark' ? '#374151' : '#e5e7eb';
 
   const chartConfig = {
-    backgroundColor: backgroundColor,
-    backgroundGradientFrom: backgroundColor,
-    backgroundGradientTo: backgroundColor,
+    backgroundColor: themeColors.card,
+    backgroundGradientFrom: themeColors.card,
+    backgroundGradientTo: themeColors.card,
     decimalPlaces: 0,
     color: (opacity = 1) => precipColor,
-    labelColor: (opacity = 1) => textColor,
+    labelColor: (opacity = 1) => themeColors.muted,
     style: {
       borderRadius: 16,
     },
     propsForBackgroundLines: {
       strokeDasharray: '',
-      stroke: gridColor,
+      stroke: themeColors.border,
       strokeWidth: 1,
       strokeOpacity: 0.2,
     },
