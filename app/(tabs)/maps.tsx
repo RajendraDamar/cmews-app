@@ -66,9 +66,10 @@ function WebMap() {
   }
 
   // Choose map style based on color scheme
+  // Using free OSM styles with dark/light variants
   const mapStyle = colorScheme === 'dark' 
-    ? 'https://demotiles.maplibre.org/style.json' // Dark style
-    : 'https://demotiles.maplibre.org/style.json'; // Light style (same for now, MapLibre demo tiles)
+    ? 'https://tiles.openfreemap.org/styles/dark' // Dark style
+    : 'https://tiles.openfreemap.org/styles/bright'; // Light style
 
   return (
     <View className="maplibregl-map" style={{ width: '100%', height: '100%' }}>
@@ -199,9 +200,10 @@ export default function MapsScreen() {
     }
 
     // Choose map style based on color scheme
+    // Using free OSM styles with dark/light variants
     const mapStyle = colorScheme === 'dark'
-      ? 'https://demotiles.maplibre.org/style.json' // Dark style
-      : 'https://demotiles.maplibre.org/style.json'; // Light style (same for now, MapLibre demo tiles)
+      ? 'https://tiles.openfreemap.org/styles/dark' // Dark style
+      : 'https://tiles.openfreemap.org/styles/bright'; // Light style
 
     return (
       <View style={{ flex: 1, height: isDesktop ? '100%' : mapHeight }}>
