@@ -75,68 +75,91 @@ export default function Home() {
             tintColor={themeColors.primary}
           />
         }>
-        {loading ? (
-          // Skeleton Loading State
-          <>
-            <View className="px-4 pb-3 pt-4">
-              <Skeleton className="mb-2 h-6 w-48" />
-              <Skeleton className="h-4 w-32" />
-            </View>
+        <View className={isDesktop ? 'mx-auto w-full max-w-6xl' : ''}>
+          {loading ? (
+            // Skeleton Loading State
+            <>
+              <View className="px-4 pb-3 pt-4">
+                <Skeleton className="mb-2 h-6 w-48" />
+                <Skeleton className="h-4 w-32" />
+              </View>
 
-            <View className="mx-4 mt-2 overflow-hidden rounded-lg bg-primary/10 p-6">
-              <View className="flex-row items-start justify-between">
-                <View className="flex-1">
-                  <Skeleton className="mb-2 h-16 w-32" />
-                  <Skeleton className="mb-2 h-6 w-40" />
-                  <Skeleton className="h-4 w-32" />
+              <View className="mx-4 mt-2 overflow-hidden rounded-lg bg-primary/10 p-6">
+                <View className="flex-row items-start justify-between">
+                  <View className="flex-1">
+                    <Skeleton className="mb-2 h-16 w-32" />
+                    <Skeleton className="mb-2 h-6 w-40" />
+                    <Skeleton className="h-4 w-32" />
+                  </View>
+                  <Skeleton className="h-20 w-20 rounded-full" />
                 </View>
-                <Skeleton className="h-20 w-20 rounded-full" />
               </View>
-            </View>
 
-            <View className="px-4 pt-4">
-              <Skeleton className="mb-3 h-6 w-32" />
-              <View className="flex-row gap-3">
-                {[1, 2, 3].map((_, index) => (
-                  <Skeleton key={index} className="h-24 w-[140px] rounded-lg" />
-                ))}
+              <View className="px-4 pt-4">
+                <Skeleton className="mb-3 h-6 w-32" />
+                <View className="flex-row gap-3">
+                  {[1, 2, 3].map((_, index) => (
+                    <Skeleton key={index} className="h-24 w-[140px] rounded-lg" />
+                  ))}
+                </View>
               </View>
-            </View>
 
-            <View className="px-4 pt-4">
-              <Skeleton className="mb-3 h-6 w-40" />
-              <Skeleton className="h-32 w-full rounded-lg" />
-            </View>
-          </>
-        ) : (
-          <>
-            {/* Location Selector */}
-            <LocationSelector
-              provinsi={weatherData.location.provinsi}
-              kota={weatherData.location.kota}
-              kecamatan={weatherData.location.kecamatan}
-              lastUpdated={lastUpdatedText}
-              onRefresh={handleRefresh}
-              onLocationPress={handleLocationPress}
-            />
-
-            {/* Weather Alerts */}
-            {alerts.length > 0 && (
-              <View className="mt-2">
-                {alerts.map((alert) => (
-                  <WeatherAlertCard
-                    key={alert.id}
-                    alert={alert}
-                    onDismiss={() => handleDismissAlert(alert.id)}
-                  />
-                ))}
+              <View className="px-4 pt-4">
+                <Skeleton className="mb-3 h-6 w-40" />
+                <Skeleton className="h-32 w-full rounded-lg" />
               </View>
-            )}
+            </>
+          ) : (
+            <>
+              {/* Location Selector */}
+              <LocationSelector
+                provinsi={weatherData.location.provinsi}
+                kota={weatherData.location.kota}
+                kecamatan={weatherData.location.kecamatan}
+                lastUpdated={lastUpdatedText}
+                onRefresh={handleRefresh}
+                onLocationPress={handleLocationPress}
+              />
 
-            {/* Hero Card and Quick Stats - Responsive Layout */}
-            {isDesktop ? (
-              <View className="flex-row gap-4 px-4">
-                <View className="w-[40%]">
+              {/* Weather Alerts */}
+              {alerts.length > 0 && (
+                <View className="mt-2">
+                  {alerts.map((alert) => (
+                    <WeatherAlertCard
+                      key={alert.id}
+                      alert={alert}
+                      onDismiss={() => handleDismissAlert(alert.id)}
+                    />
+                  ))}
+                </View>
+              )}
+
+              {/* Hero Card and Quick Stats - Responsive Layout */}
+              {isDesktop ? (
+                <View className="flex-row gap-4 px-4">
+                  <View className="flex-1">
+                    <HeroCard
+                      temperature={weatherData.currentWeather.temperature}
+                      weather={weatherData.currentWeather.weather.description}
+                      location={{
+                        kecamatan: weatherData.location.kecamatan,
+                        kota: weatherData.location.kota,
+                        provinsi: weatherData.location.provinsi,
+                      }}
+                      lastUpdate={lastUpdatedText}
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <QuickStats
+                      humidity={weatherData.currentWeather.humidity}
+                      windSpeed={weatherData.currentWeather.windSpeed}
+                      feelsLike={weatherData.currentWeather.feelsLike}
+                      windDirection={weatherData.currentWeather.windDirection}
+                    />
+                  </View>
+                </View>
+              ) : (
+                <>
                   <HeroCard
                     temperature={weatherData.currentWeather.temperature}
                     weather={weatherData.currentWeather.weather.description}
@@ -147,86 +170,65 @@ export default function Home() {
                     }}
                     lastUpdate={lastUpdatedText}
                   />
-                </View>
-                <View className="flex-1">
+
                   <QuickStats
                     humidity={weatherData.currentWeather.humidity}
                     windSpeed={weatherData.currentWeather.windSpeed}
                     feelsLike={weatherData.currentWeather.feelsLike}
                     windDirection={weatherData.currentWeather.windDirection}
                   />
-                </View>
-              </View>
-            ) : (
-              <>
-                <HeroCard
-                  temperature={weatherData.currentWeather.temperature}
-                  weather={weatherData.currentWeather.weather.description}
-                  location={{
-                    kecamatan: weatherData.location.kecamatan,
-                    kota: weatherData.location.kota,
-                    provinsi: weatherData.location.provinsi,
-                  }}
-                  lastUpdate={lastUpdatedText}
-                />
+                </>
+              )}
 
-                <QuickStats
-                  humidity={weatherData.currentWeather.humidity}
-                  windSpeed={weatherData.currentWeather.windSpeed}
-                  feelsLike={weatherData.currentWeather.feelsLike}
-                  windDirection={weatherData.currentWeather.windDirection}
-                />
-              </>
-            )}
+              {/* Hourly Forecast */}
+              <HourlyForecastCard hourlyData={hourlyData} />
 
-            {/* Hourly Forecast */}
-            <HourlyForecastCard hourlyData={hourlyData} />
-
-            {/* Detailed Metrics */}
-            <DetailedMetrics
-              temperature={{
-                current: weatherData.currentWeather.temperature,
-                feelsLike: weatherData.currentWeather.feelsLike,
-                min: dailyForecast.tempMin,
-                max: dailyForecast.tempMax,
-              }}
-              wind={{
-                speed: weatherData.currentWeather.windSpeed,
-                direction: weatherData.currentWeather.windDirection,
-                gust: weatherData.currentWeather.windSpeed + 5,
-              }}
-              atmospheric={{
-                pressure: 1013,
-                humidity: weatherData.currentWeather.humidity,
-                visibility: 10,
-              }}
-            />
-
-            {/* Daily Forecast */}
-            <View className="px-4 pb-4">
-              <DailyForecastCard
-                forecast={weatherData.dailyForecast.map((d, index) => {
-                  const dateObj = new Date(
-                    d.date.substring(0, 4) +
-                      '-' +
-                      d.date.substring(4, 6) +
-                      '-' +
-                      d.date.substring(6, 8)
-                  );
-                  const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-                  return {
-                    day: index === 0 ? 'Hari Ini' : dayNames[dateObj.getDay()],
-                    date: dateObj.toISOString(),
-                    weather: d.weather.description,
-                    tempHigh: d.tempMax,
-                    tempLow: d.tempMin,
-                    precipitation: d.precipitation || d.humidity || 50,
-                  };
-                })}
+              {/* Detailed Metrics */}
+              <DetailedMetrics
+                temperature={{
+                  current: weatherData.currentWeather.temperature,
+                  feelsLike: weatherData.currentWeather.feelsLike,
+                  min: dailyForecast.tempMin,
+                  max: dailyForecast.tempMax,
+                }}
+                wind={{
+                  speed: weatherData.currentWeather.windSpeed,
+                  direction: weatherData.currentWeather.windDirection,
+                  gust: weatherData.currentWeather.windSpeed + 5,
+                }}
+                atmospheric={{
+                  pressure: 1013,
+                  humidity: weatherData.currentWeather.humidity,
+                  visibility: 10,
+                }}
               />
-            </View>
-          </>
-        )}
+
+              {/* Daily Forecast */}
+              <View className="px-4 pb-4">
+                <DailyForecastCard
+                  forecast={weatherData.dailyForecast.map((d, index) => {
+                    const dateObj = new Date(
+                      d.date.substring(0, 4) +
+                        '-' +
+                        d.date.substring(4, 6) +
+                        '-' +
+                        d.date.substring(6, 8)
+                    );
+                    const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                    return {
+                      day: index === 0 ? 'Hari Ini' : dayNames[dateObj.getDay()],
+                      date: dateObj.toISOString(),
+                      weather: d.weather.description,
+                      tempHigh: d.tempMax,
+                      tempLow: d.tempMin,
+                      precipitation: d.precipitation || d.humidity || 50,
+                    };
+                  })}
+                />
+              </View>
+            </>
+          )}
+        </View>
       </ScrollView>
     </>
   );

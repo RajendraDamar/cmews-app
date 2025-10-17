@@ -250,22 +250,23 @@ export default function MapsScreen() {
   };
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-background">
       {isDesktop ? (
         <View className="relative flex-1">
           {renderMap()}
-          {/* Desktop Map Panel - Minimal sidebar overlay */}
+          {/* Desktop Map Panel - Sidebar only on md+ */}
           <DesktopMapPanel
             showWeatherLayer={showWeatherLayer}
             onToggleLayer={() => setShowWeatherLayer(!showWeatherLayer)}
             onAddReport={() => setShowReportForm(true)}
           />
 
-          {/* Map Controls (Desktop - Right Side) */}
+          {/* Map Controls (Desktop - Right Side, respecting safe areas) */}
           {Platform.OS !== 'web' && MapLibreGL && (
             <View
-              className="absolute right-8 top-1/3 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+              className="absolute right-8 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
               style={{
+                top: insets.top + 80,
                 zIndex: 10,
                 shadowColor: themeColors.shadow,
                 shadowOffset: { width: 0, height: 4 },
@@ -321,11 +322,12 @@ export default function MapsScreen() {
             onToggle={() => setShowWeatherLayer(!showWeatherLayer)}
           />
 
-          {/* Map Controls (Mobile - Right Side) */}
+          {/* Map Controls (Mobile - Right Side, respecting safe areas) */}
           {Platform.OS !== 'web' && MapLibreGL && (
             <View
-              className="absolute bottom-32 right-4 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+              className="absolute right-4 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
               style={{
+                bottom: insets.bottom + 140,
                 zIndex: 10,
                 shadowColor: themeColors.shadow,
                 shadowOffset: { width: 0, height: 4 },
@@ -353,11 +355,12 @@ export default function MapsScreen() {
             </View>
           )}
 
-          {/* Floating Action Button (Mobile) */}
+          {/* Floating Action Button (Mobile - respecting safe areas) */}
           <Pressable
             onPress={() => setShowReportForm(true)}
-            className="absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full bg-primary shadow-xl active:scale-95"
+            className="absolute right-6 h-16 w-16 items-center justify-center rounded-full bg-primary shadow-xl active:scale-95"
             style={{
+              bottom: insets.bottom + 24,
               zIndex: 10,
               shadowColor: themeColors.shadow,
               shadowOffset: { width: 0, height: 6 },

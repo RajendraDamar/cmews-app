@@ -20,7 +20,7 @@ export default function ForecastTab() {
       <View className={`p-4 ${isDesktop ? 'mx-auto w-full max-w-4xl' : ''}`}>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Tab Navigation */}
-          <TabsList className="mb-4 grid grid-cols-4">
+          <TabsList className={`mb-4 grid grid-cols-4 ${isDesktop ? 'gap-2' : ''}`}>
             <TabsTrigger value="weather">
               <View className="flex-row items-center gap-1.5">
                 <CloudSun size={16} />
@@ -49,7 +49,7 @@ export default function ForecastTab() {
 
           {/* Weather Tab Content */}
           <TabsContent value="weather">
-            <View className="gap-3">
+            <View className={`gap-3 ${isDesktop ? 'gap-4' : ''}`}>
               {weather.map((day, index) => (
                 <ExpandableDayCard key={index} {...day} />
               ))}
@@ -58,7 +58,7 @@ export default function ForecastTab() {
 
           {/* Wind Tab Content */}
           <TabsContent value="wind">
-            <View className="gap-3">
+            <View className={`gap-3 ${isDesktop ? 'gap-4' : ''}`}>
               {wind.map((data, index) => (
                 <WindCard key={index} {...data} />
               ))}
@@ -67,7 +67,7 @@ export default function ForecastTab() {
 
           {/* Wave Tab Content */}
           <TabsContent value="wave">
-            <View className="gap-3">
+            <View className={`gap-3 ${isDesktop ? 'gap-4' : ''}`}>
               {wave.map((data, index) => (
                 <WaveCard key={index} {...data} />
               ))}
@@ -76,7 +76,7 @@ export default function ForecastTab() {
 
           {/* Current Tab Content */}
           <TabsContent value="current">
-            <View className="gap-3">
+            <View className={`gap-3 ${isDesktop ? 'gap-4' : ''}`}>
               {current.map((data, index) => (
                 <CurrentCard key={index} {...data} />
               ))}

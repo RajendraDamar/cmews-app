@@ -8,6 +8,7 @@ import { ChartKitWaveChart } from '~/components/charts';
 import type { WaveForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
+import { COLORS, getThemeColor } from '~/lib/constants';
 
 export function WaveCard({
   seaArea,
@@ -19,6 +20,7 @@ export function WaveCard({
 }: WaveForecastData) {
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   // Prepare chart data for ChartKitWaveChart
   const waveChartData = hourly.map((h) => ({
@@ -26,20 +28,20 @@ export function WaveCard({
     height: h.height,
   }));
 
-  // Determine severity color based on average height
+  // Determine severity color based on average height using COLORS.severity
   const avgHeight = (heightMin + heightMax) / 2;
-  let severityColor = '#10b981'; // green
-  let severityBg = 'bg-green-500/20';
+  let severityColor = COLORS.severity.low; // green
+  let severityBg = 'bg-[hsl(142_76%_36%)]/20';
 
   if (avgHeight >= 2.5) {
-    severityColor = '#ef4444'; // red
-    severityBg = 'bg-red-500/20';
+    severityColor = COLORS.severity.high; // red
+    severityBg = 'bg-[hsl(0_84%_60%)]/20';
   } else if (avgHeight >= 1.25) {
-    severityColor = '#f97316'; // orange
-    severityBg = 'bg-orange-500/20';
+    severityColor = COLORS.severity.medium; // orange
+    severityBg = 'bg-[hsl(33_100%_50%)]/20';
   } else if (avgHeight >= 0.5) {
-    severityColor = '#eab308'; // yellow
-    severityBg = 'bg-yellow-500/20';
+    severityColor = COLORS.severity.medium; // yellow/orange for medium-low
+    severityBg = 'bg-[hsl(33_100%_50%)]/20';
   }
 
   return (
@@ -71,7 +73,7 @@ export function WaveCard({
 
                 <ChevronDown
                   size={20}
-                  color={colorScheme === 'dark' ? '#888' : '#666'}
+                  color={themeColors.muted}
                   style={{
                     transform: [{ rotate: isOpen ? '180deg' : '0deg' }],
                   }}
