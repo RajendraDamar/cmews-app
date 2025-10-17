@@ -6,17 +6,19 @@ import { ProfileModal } from '~/components/profile-modal';
 import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { Sidebar } from '~/components/navigation/sidebar';
+import { getThemeColor } from '~/lib/constants';
 
 function ProfileButton() {
   const [modalVisible, setModalVisible] = useState(false);
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   const trigger = (
     <Pressable onPress={() => setModalVisible(true)} className="mr-4">
       <User
         size={24}
-        color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(215.4 16.3% 46.9%)'}
+        color={themeColors.foreground}
       />
     </Pressable>
   );
@@ -43,11 +45,12 @@ function ProfileButton() {
 
 function LogoHeader() {
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
   return (
     <View className="ml-4">
       <Cloud
         size={24}
-        color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)'}
+        color={themeColors.foreground}
       />
     </View>
   );
@@ -56,11 +59,12 @@ function LogoHeader() {
 export default function TabLayout() {
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   if (isDesktop) {
     // Desktop: Use vertical sidebar layout
     return (
-      <View className="flex-1 flex-row">
+      <View className="flex-1 flex-row bg-background">
         <Sidebar />
         <View className="flex-1">
           <Tabs
@@ -81,26 +85,23 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor:
-          colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)',
-        tabBarInactiveTintColor:
-          colorScheme === 'dark' ? 'hsl(215 20.2% 65.1%)' : 'hsl(215.4 16.3% 46.9%)',
+        tabBarActiveTintColor: themeColors.foreground,
+        tabBarInactiveTintColor: themeColors.mutedForeground,
         tabBarStyle: {
-          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
-          borderTopColor:
-            colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+          backgroundColor: themeColors.card,
+          borderTopColor: themeColors.border,
           borderTopWidth: 1,
           height: 60,
           paddingBottom: 8,
           paddingTop: 8,
         },
         headerStyle: {
-          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+          backgroundColor: themeColors.card,
           borderBottomWidth: 0,
           elevation: 0,
           shadowOpacity: 0,
         },
-        headerTintColor: colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)',
+        headerTintColor: themeColors.foreground,
         headerLeft: () => <LogoHeader />,
         headerRight: () => <ProfileButton />,
       }}>
