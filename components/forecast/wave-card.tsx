@@ -8,7 +8,7 @@ import { ChartKitWaveChart } from '~/components/charts';
 import type { WaveForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
-import { getThemeColor } from '~/lib/constants';
+import { getThemeColor, COLORS } from '~/lib/constants';
 
 export function WaveCard({
   seaArea,
@@ -30,17 +30,17 @@ export function WaveCard({
 
   // Determine severity based on average height
   const avgHeight = (heightMin + heightMax) / 2;
-  let severityClass = 'text-green-600'; // low severity
+  let severityColor = COLORS.severity.low; // green-600
   let severityBg = 'bg-green-500/20';
 
   if (avgHeight >= 2.5) {
-    severityClass = 'text-destructive'; // high severity
+    severityColor = COLORS.severity.high; // red-500 for high severity
     severityBg = 'bg-red-500/20';
   } else if (avgHeight >= 1.25) {
-    severityClass = 'text-orange-500'; // medium severity
+    severityColor = COLORS.severity.medium; // orange-500 for medium severity
     severityBg = 'bg-orange-500/20';
   } else if (avgHeight >= 0.5) {
-    severityClass = 'text-yellow-500'; // warning
+    severityColor = '#eab308'; // yellow-500 for warning
     severityBg = 'bg-yellow-500/20';
   }
 
@@ -59,7 +59,7 @@ export function WaveCard({
 
               <View className="flex-row items-center gap-4">
                 <View className={`${severityBg} rounded-full p-2`}>
-                  <Waves size={24} className={severityClass} />
+                  <Waves size={24} color={severityColor} />
                 </View>
 
                 <View className="items-end">

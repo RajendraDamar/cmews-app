@@ -37,7 +37,7 @@ export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForeca
 
               <View className="flex-row items-center gap-4">
                 <View className="rounded-full bg-indigo-500/20 p-2">
-                  <MoveHorizontal size={24} className="text-indigo-500" />
+                  <MoveHorizontal size={24} color="#6366f1" />
                 </View>
 
                 <View className="items-end">
