@@ -136,8 +136,8 @@ export default function Home() {
             {/* Hero Card and Quick Stats - Responsive Layout */}
             {isDesktop ? (
               <View className="mx-auto w-full max-w-6xl px-4">
-                <View className="flex-row gap-4">
-                  <View className="w-[45%]">
+                <View className="flex-row gap-4 pt-2">
+                  <View className="w-[40%]">
                     <HeroCard
                       temperature={weatherData.currentWeather.temperature}
                       weather={weatherData.currentWeather.weather.description}
@@ -182,12 +182,12 @@ export default function Home() {
             )}
 
             {/* Hourly Forecast */}
-            <View className={isDesktop ? 'mx-auto w-full max-w-6xl' : ''}>
+            <View className={isDesktop ? 'mx-auto w-full max-w-6xl px-4' : ''}>
               <HourlyForecastCard hourlyData={hourlyData} />
             </View>
 
             {/* Detailed Metrics */}
-            <View className={isDesktop ? 'mx-auto w-full max-w-6xl' : ''}>
+            <View className={isDesktop ? 'mx-auto w-full max-w-6xl px-4' : ''}>
               <DetailedMetrics
                 temperature={{
                   current: weatherData.currentWeather.temperature,
@@ -209,7 +209,7 @@ export default function Home() {
             </View>
 
             {/* Daily Forecast */}
-            <View className={isDesktop ? 'mx-auto w-full max-w-6xl px-4 pb-4' : 'px-4 pb-4'}>
+            <View className={isDesktop ? 'mx-auto w-full max-w-6xl px-4 pb-6' : 'px-4 pb-4'}>
               <DailyForecastCard
                 forecast={weatherData.dailyForecast.map((d, index) => {
                   const dateObj = new Date(

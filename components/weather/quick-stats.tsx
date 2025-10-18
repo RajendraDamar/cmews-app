@@ -79,7 +79,7 @@ export function QuickStats({
   ];
   
   return (
-    <View className="px-4 pt-4">
+    <View className={isDesktop ? 'pt-2' : 'px-4 pt-4'}>
       <Text className="mb-3 text-lg font-semibold">Ringkasan Cepat</Text>
       {isDesktop ? (
         // Desktop: Display in a flex row with equal spacing

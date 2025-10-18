@@ -258,7 +258,7 @@ export default function MapsScreen() {
           {/* Map Controls (Desktop - Right Side) */}
           {Platform.OS !== 'web' && MapLibreGL && (
             <View
-              className="absolute right-8 top-1/3 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+              className="absolute right-6 top-24 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
               style={{
                 zIndex: 10,
                 shadowColor: themeColors.shadow,
@@ -269,19 +269,19 @@ export default function MapsScreen() {
               }}>
               <Pressable
                 onPress={handleZoomIn}
-                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+                className="h-11 w-11 items-center justify-center border-b border-border active:bg-muted/50">
                 <Plus size={20} color={themeColors.icon.foreground} />
               </Pressable>
 
               <Pressable
                 onPress={handleZoomOut}
-                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+                className="h-11 w-11 items-center justify-center border-b border-border active:bg-muted/50">
                 <Minus size={20} color={themeColors.icon.foreground} />
               </Pressable>
 
               <Pressable
                 onPress={handleLocationPress}
-                className="h-12 w-12 items-center justify-center active:bg-muted/50">
+                className="h-11 w-11 items-center justify-center active:bg-muted/50">
                 <MapPin size={18} color={themeColors.icon.foreground} />
               </Pressable>
             </View>

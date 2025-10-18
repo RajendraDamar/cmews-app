@@ -65,7 +65,7 @@ function MetricRow({ label, value }: { label: string; value: string }) {
 
 export function DetailedMetrics({ temperature, wind, atmospheric }: DetailedMetricsProps) {
   return (
-    <Card className="mx-4 mt-4">
+    <Card className="mx-4 mt-4 md:mx-0">
       <CardContent className="p-4">
         <Text className="mb-3 text-lg font-semibold">Detail Cuaca</Text>
 
