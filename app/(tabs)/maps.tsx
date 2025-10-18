@@ -15,7 +15,7 @@ import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { mockWeatherReports } from '~/lib/data/weather-reports-mock';
 import { WeatherReport, WeatherReportFilters } from '~/lib/types/weather-report';
-import { getThemeColor, COLORS } from '~/lib/constants';
+import { getThemeColor, MAP_STYLES } from '~/lib/constants';
 
 // Import MapLibre theme for web
 if (Platform.OS === 'web') {
@@ -66,10 +66,7 @@ function WebMap() {
   }
 
   // Choose map style based on color scheme
-  // Using free OSM styles with dark/light variants
-  const mapStyle = colorScheme === 'dark' 
-    ? 'https://tiles.openfreemap.org/styles/dark' // Dark style
-    : 'https://tiles.openfreemap.org/styles/bright'; // Light style
+  const mapStyle = colorScheme === 'dark' ? MAP_STYLES.dark : MAP_STYLES.light;
 
   return (
     <View className="maplibregl-map" style={{ width: '100%', height: '100%' }}>
@@ -199,10 +196,7 @@ export default function MapsScreen() {
     }
 
     // Choose map style based on color scheme
-    // Using free OSM styles with dark/light variants
-    const mapStyle = colorScheme === 'dark'
-      ? 'https://tiles.openfreemap.org/styles/dark' // Dark style
-      : 'https://tiles.openfreemap.org/styles/bright'; // Light style
+    const mapStyle = colorScheme === 'dark' ? MAP_STYLES.dark : MAP_STYLES.light;
 
     return (
       <View style={{ flex: 1, height: isDesktop ? '100%' : mapHeight }}>
@@ -276,19 +270,19 @@ export default function MapsScreen() {
               <Pressable
                 onPress={handleZoomIn}
                 className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Plus size={20} color={themeColors.muted} />
+                <Plus size={20} color={themeColors.icon.foreground} />
               </Pressable>
 
               <Pressable
                 onPress={handleZoomOut}
                 className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Minus size={20} color={themeColors.muted} />
+                <Minus size={20} color={themeColors.icon.foreground} />
               </Pressable>
 
               <Pressable
                 onPress={handleLocationPress}
                 className="h-12 w-12 items-center justify-center active:bg-muted/50">
-                <MapPin size={18} color={themeColors.muted} />
+                <MapPin size={18} color={themeColors.icon.foreground} />
               </Pressable>
             </View>
           )}
@@ -336,19 +330,19 @@ export default function MapsScreen() {
               <Pressable
                 onPress={handleZoomIn}
                 className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Plus size={20} color={themeColors.muted} />
+                <Plus size={20} color={themeColors.icon.foreground} />
               </Pressable>
 
               <Pressable
                 onPress={handleZoomOut}
                 className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Minus size={20} color={themeColors.muted} />
+                <Minus size={20} color={themeColors.icon.foreground} />
               </Pressable>
 
               <Pressable
                 onPress={handleLocationPress}
                 className="h-12 w-12 items-center justify-center active:bg-muted/50">
-                <MapPin size={18} color={themeColors.muted} />
+                <MapPin size={18} color={themeColors.icon.foreground} />
               </Pressable>
             </View>
           )}
@@ -357,7 +351,7 @@ export default function MapsScreen() {
           <Pressable
             onPress={() => setShowReportForm(true)}
             className={`absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full shadow-xl active:scale-95 ${
-              colorScheme === 'dark' ? 'bg-primary' : 'bg-white'
+              colorScheme === 'dark' ? 'bg-primary' : 'bg-background'
             }`}
             style={{
               zIndex: 10,
@@ -367,7 +361,7 @@ export default function MapsScreen() {
               shadowRadius: 12,
               elevation: 10,
             }}>
-            <Plus size={28} color={colorScheme === 'dark' ? COLORS.fabIcon.dark : themeColors.primary} />
+            <Plus size={28} color={themeColors.primaryForeground} />
           </Pressable>
 
           {/* Bottom Sheet for Report Details (Mobile) */}

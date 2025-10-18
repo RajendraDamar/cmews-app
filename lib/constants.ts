@@ -70,3 +70,9 @@ export const DIRECTION_MAP: Record<string, number> = {
   Barat: 270,
   'Barat Laut': 315,
 };
+
+// Map style URLs for MapLibre
+export const MAP_STYLES = {
+  dark: 'https://tiles.openfreemap.org/styles/dark',
+  light: 'https://tiles.openfreemap.org/styles/bright',
+};

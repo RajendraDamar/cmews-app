@@ -8,6 +8,7 @@ import { ChartKitWaveChart } from '~/components/charts';
 import type { WaveForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 export function WaveCard({
   seaArea,
@@ -19,6 +20,7 @@ export function WaveCard({
 }: WaveForecastData) {
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   // Prepare chart data for ChartKitWaveChart
   const waveChartData = hourly.map((h) => ({
@@ -26,19 +28,19 @@ export function WaveCard({
     height: h.height,
   }));
 
-  // Determine severity color based on average height
+  // Determine severity based on average height
   const avgHeight = (heightMin + heightMax) / 2;
-  let severityColor = '#10b981'; // green
+  let severityClass = 'text-green-600'; // low severity
   let severityBg = 'bg-green-500/20';
 
   if (avgHeight >= 2.5) {
-    severityColor = '#ef4444'; // red
+    severityClass = 'text-destructive'; // high severity
     severityBg = 'bg-red-500/20';
   } else if (avgHeight >= 1.25) {
-    severityColor = '#f97316'; // orange
+    severityClass = 'text-orange-500'; // medium severity
     severityBg = 'bg-orange-500/20';
   } else if (avgHeight >= 0.5) {
-    severityColor = '#eab308'; // yellow
+    severityClass = 'text-yellow-500'; // warning
     severityBg = 'bg-yellow-500/20';
   }
 
@@ -57,7 +59,7 @@ export function WaveCard({
 
               <View className="flex-row items-center gap-4">
                 <View className={`${severityBg} rounded-full p-2`}>
-                  <Waves size={24} color={severityColor} />
+                  <Waves size={24} className={severityClass} />
                 </View>
 
                 <View className="items-end">
@@ -71,7 +73,7 @@ export function WaveCard({
 
                 <ChevronDown
                   size={20}
-                  color={colorScheme === 'dark' ? '#888' : '#666'}
+                  color={themeColors.muted}
                   style={{
                     transform: [{ rotate: isOpen ? '180deg' : '0deg' }],
                   }}
