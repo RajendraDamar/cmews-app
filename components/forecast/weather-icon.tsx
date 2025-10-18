@@ -19,25 +19,25 @@ export function WeatherIcon({ weather, size = 32 }: WeatherIconProps) {
 
   if (weatherLower.includes('cerah') && !weatherLower.includes('berawan')) {
     IconComponent = Sun;
-    bgColor = 'bg-yellow-500';
+    bgColor = 'bg-[hsl(45_93%_47%)]'; // COLORS.weather.sunny
   } else if (weatherLower.includes('cerah berawan')) {
     IconComponent = Cloud;
-    bgColor = 'bg-yellow-400';
+    bgColor = 'bg-[hsl(215_20%_65%)]'; // COLORS.weather.cloudy
   } else if (weatherLower.includes('berawan')) {
     IconComponent = Cloud;
     bgColor = 'bg-muted';
   } else if (weatherLower.includes('hujan lebat')) {
     IconComponent = CloudRainWind;
-    bgColor = 'bg-blue-700';
+    bgColor = 'bg-[hsl(271_76%_53%)]'; // COLORS.weather.stormy
   } else if (weatherLower.includes('hujan sedang')) {
     IconComponent = CloudRain;
-    bgColor = 'bg-blue-600';
+    bgColor = 'bg-[hsl(217_91%_60%)]'; // COLORS.weather.rainy
   } else if (weatherLower.includes('hujan ringan') || weatherLower.includes('gerimis')) {
     IconComponent = CloudDrizzle;
     bgColor = 'bg-primary';
   } else if (weatherLower.includes('salju')) {
     IconComponent = CloudSnow;
-    bgColor = 'bg-blue-300';
+    bgColor = 'bg-[hsl(217_91%_60%)]'; // COLORS.weather.rainy
   }
 
   return (

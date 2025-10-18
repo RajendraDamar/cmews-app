@@ -2,6 +2,7 @@
 import { View, Pressable } from 'react-native';
 import { CloudRain, Cloud, Sun, CloudDrizzle, Wind } from 'lucide-react-native';
 import { WeatherReport } from '~/lib/types/weather-report';
+import { COLORS } from '~/lib/constants';
 
 interface SeverityMarkerProps {
   report: WeatherReport;
@@ -12,13 +13,13 @@ interface SeverityMarkerProps {
 const getSeverityColor = (severity: 'low' | 'medium' | 'high') => {
   switch (severity) {
     case 'low':
-      return '#10B981';
+      return COLORS.severity.low;
     case 'medium':
-      return '#F59E0B';
+      return COLORS.severity.medium;
     case 'high':
-      return '#EF4444';
+      return COLORS.severity.high;
     default:
-      return '#10B981';
+      return COLORS.severity.low;
   }
 };
 

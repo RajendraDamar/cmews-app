@@ -54,8 +54,8 @@ export default function SettingsScreen() {
         }} 
       />
       <ScrollView className="flex-1 bg-background">
-        <View className={`px-4 py-6 ${isDesktop ? 'mx-auto max-w-2xl' : ''}`}>
-          <Text className="mb-6 text-3xl font-bold">Pengaturan</Text>
+        <View className={`px-4 py-6 ${isDesktop ? 'mx-auto w-full max-w-2xl' : ''}`}>
+          <Text className="mb-6 text-3xl font-bold text-foreground">Pengaturan</Text>
 
           {/* Tampilan */}
           <Card className="mb-4">

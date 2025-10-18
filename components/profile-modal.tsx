@@ -8,6 +8,7 @@ import { Separator } from '~/components/ui/separator';
 import { Popover, PopoverTrigger, PopoverContent } from '~/components/ui/popover';
 import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
+import { getThemeColor } from '~/lib/constants';
 
 interface ProfileModalProps {
   visible: boolean;
@@ -19,6 +20,7 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
   const router = useRouter();
   const { colorScheme, setTheme } = useTheme();
   const { isDesktop } = useBreakpoint();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   const handleNavigation = (route: any) => {
     onClose();
@@ -54,14 +56,14 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
   ];
 
   const ProfileContent = () => (
-    <Card className="w-72">
+    <Card className="w-72 bg-card">
       <CardContent className="p-0">
         {/* Profile Header */}
-        <View className="items-center gap-2 p-6">
+        <View className="items-center gap-2 bg-card p-6">
           <View className="h-16 w-16 items-center justify-center rounded-full bg-primary">
             <Text className="text-2xl font-bold text-primary-foreground">JD</Text>
           </View>
-          <Text className="text-lg font-semibold">John Doe</Text>
+          <Text className="text-lg font-semibold text-foreground">John Doe</Text>
           <Text variant="muted" size="sm">
             john.doe@example.com
           </Text>
@@ -70,17 +72,17 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
         <Separator />
 
         {/* Theme Toggle */}
-        <View className="px-6 py-3">
+        <View className="bg-card px-6 py-3">
           <Pressable
             className="flex-row items-center justify-between active:opacity-70"
             onPress={toggleTheme}>
             <View className="flex-row items-center gap-3">
               {colorScheme === 'dark' ? (
-                <Moon size={20} color="hsl(215 20.2% 65.1%)" />
+                <Moon size={20} color={themeColors.mutedForeground} />
               ) : (
-                <Sun size={20} color="hsl(215.4 16.3% 46.9%)" />
+                <Sun size={20} color={themeColors.mutedForeground} />
               )}
-              <Text className="text-sm">Tema</Text>
+              <Text className="text-sm text-foreground">Tema</Text>
             </View>
             <Text variant="muted" size="sm">
               {colorScheme === 'dark' ? 'Dark' : 'Light'}
@@ -91,7 +93,7 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
         <Separator />
 
         {/* Menu Items */}
-        <View className="py-2">
+        <View className="bg-card py-2">
           {menuItems.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -103,10 +105,8 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
                     size={20}
                     color={
                       item.danger
-                        ? 'hsl(0 84.2% 60.2%)'
-                        : colorScheme === 'dark'
-                          ? 'hsl(215 20.2% 65.1%)'
-                          : 'hsl(215.4 16.3% 46.9%)'
+                        ? themeColors.foreground
+                        : themeColors.mutedForeground
                     }
                   />
                   <Text
@@ -123,28 +123,28 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
     </Card>
   );
 
-  // Desktop: Use Popover
+  // Desktop: Use Popover anchored to trigger
   if (isDesktop && trigger) {
     return (
       <Popover>
         <PopoverTrigger asChild>{trigger}</PopoverTrigger>
-        <PopoverContent side="right" align="start" className="p-0">
+        <PopoverContent side="bottom" align="end" className="p-0 bg-card border-border">
           <ProfileContent />
         </PopoverContent>
       </Popover>
     );
   }
 
-  // Mobile: Use Modal
+  // Mobile: Use bottom sheet style Modal
   return (
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType="slide"
       onRequestClose={onClose}
       statusBarTranslucent>
       <Pressable className="flex-1 bg-black/50" onPress={onClose}>
-        <View className="flex-1 items-end justify-start pr-4 pt-16">
+        <View className="flex-1 justify-end">
           <Pressable onPress={(e) => e.stopPropagation()}>
             <ProfileContent />
           </Pressable>

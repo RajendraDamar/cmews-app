@@ -18,10 +18,26 @@ export function WeatherAlertCard({ alert, onDismiss }: WeatherAlertProps) {
   const { colorScheme } = useTheme();
   const themeColors = getThemeColor(colorScheme === 'dark');
 
+  // Use severity colors from constants
   const alertColors = {
-    warning: { bg: 'bg-orange-500/10', border: 'border-orange-500/50', text: 'text-orange-500' },
-    watch: { bg: 'bg-yellow-500/10', border: 'border-yellow-500/50', text: 'text-yellow-500' },
-    advisory: { bg: 'bg-primary/10', border: 'border-primary/50', text: 'text-primary' },
+    warning: { 
+      bg: 'bg-destructive/10', 
+      border: 'border-destructive/50', 
+      text: 'text-destructive',
+      iconColor: COLORS.severity.high
+    },
+    watch: { 
+      bg: 'bg-accent/10', 
+      border: 'border-accent/50', 
+      text: 'text-foreground',
+      iconColor: COLORS.severity.medium
+    },
+    advisory: { 
+      bg: 'bg-primary/10', 
+      border: 'border-primary/50', 
+      text: 'text-primary',
+      iconColor: COLORS.severity.low
+    },
   };
 
   const colors = alertColors[alert.type];
@@ -35,7 +51,7 @@ export function WeatherAlertCard({ alert, onDismiss }: WeatherAlertProps) {
           <View className="flex-1 flex-row items-start gap-3">
             <AlertTriangle
               size={24}
-              color={COLORS.severity.medium}
+              color={colors.iconColor}
               className={colors.text}
             />
             <View className="flex-1">
@@ -53,7 +69,7 @@ export function WeatherAlertCard({ alert, onDismiss }: WeatherAlertProps) {
                   }
                 />
               </View>
-              <Text className="mb-2">{alert.description}</Text>
+              <Text className="mb-2 text-foreground">{alert.description}</Text>
               <Text variant="muted" size="sm">
                 Berlaku: {formatTime24(validFrom)} - {formatTime24(validTo)}
               </Text>

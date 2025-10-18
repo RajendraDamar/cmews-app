@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Separator } from '~/components/ui/separator';
 import { Card, CardContent } from '~/components/ui/card';
 import { WeatherReport } from '~/lib/types/weather-report';
+import { COLORS } from '~/lib/constants';
 
 interface ReportBottomSheetProps {
   report: WeatherReport | null;
@@ -83,8 +84,8 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
-                    <View className="rounded-lg bg-orange-500/10 p-2">
-                      <Thermometer size={22} color="#f97316" />
+                    <View className="rounded-lg bg-[hsl(33_100%_50%)]/10 p-2">
+                      <Thermometer size={22} color={COLORS.chart.temperature} />
                     </View>
                     <View className="flex-1">
                       <Text className="text-xs text-muted-foreground">Suhu</Text>
@@ -99,8 +100,8 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
-                    <View className="rounded-lg bg-blue-500/10 p-2">
-                      <Droplets size={22} color="#3b82f6" />
+                    <View className="rounded-lg bg-[hsl(217_91%_60%)]/10 p-2">
+                      <Droplets size={22} color={COLORS.chart.humidity} />
                     </View>
                     <View className="flex-1">
                       <Text className="text-xs text-muted-foreground">Kelembaban</Text>
@@ -115,8 +116,8 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
-                    <View className="rounded-lg bg-teal-500/10 p-2">
-                      <Wind size={22} color="#14b8a6" />
+                    <View className="rounded-lg bg-[hsl(173_80%_40%)]/10 p-2">
+                      <Wind size={22} color={COLORS.chart.wind} />
                     </View>
                     <View className="flex-1">
                       <Text className="text-xs text-muted-foreground">Kec. Angin</Text>
@@ -131,8 +132,8 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
               <Card className="shadow-sm">
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
-                    <View className="rounded-lg bg-indigo-500/10 p-2">
-                      <CloudRain size={22} color="#6366f1" />
+                    <View className="rounded-lg bg-[hsl(217_91%_60%)]/10 p-2">
+                      <CloudRain size={22} color={COLORS.weather.rainy} />
                     </View>
                     <View className="flex-1">
                       <Text className="text-xs text-muted-foreground">Kondisi</Text>
