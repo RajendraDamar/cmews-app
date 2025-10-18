@@ -111,18 +111,20 @@ export default function Home() {
         ) : (
           <>
             {/* Location Selector */}
-            <LocationSelector
-              provinsi={weatherData.location.provinsi}
-              kota={weatherData.location.kota}
-              kecamatan={weatherData.location.kecamatan}
-              lastUpdated={lastUpdatedText}
-              onRefresh={handleRefresh}
-              onLocationPress={handleLocationPress}
-            />
+            <View className={isDesktop ? 'mx-auto w-full max-w-6xl' : ''}>
+              <LocationSelector
+                provinsi={weatherData.location.provinsi}
+                kota={weatherData.location.kota}
+                kecamatan={weatherData.location.kecamatan}
+                lastUpdated={lastUpdatedText}
+                onRefresh={handleRefresh}
+                onLocationPress={handleLocationPress}
+              />
+            </View>
 
             {/* Weather Alerts */}
             {alerts.length > 0 && (
-              <View className="mt-2">
+              <View className={`mt-2 ${isDesktop ? 'mx-auto w-full max-w-6xl px-4' : ''}`}>
                 {alerts.map((alert) => (
                   <WeatherAlertCard
                     key={alert.id}

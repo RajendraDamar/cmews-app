@@ -18,7 +18,7 @@ export default function LoginScreen() {
 
   return (
     <View className="flex-1 justify-center bg-background px-6">
-      <Card className="w-full">
+      <Card className="mx-auto w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-3xl">Welcome Back</CardTitle>
           <CardDescription>Sign in to your account to continue</CardDescription>
