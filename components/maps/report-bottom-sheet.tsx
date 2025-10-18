@@ -161,11 +161,13 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
               <Separator className="mb-4" />
               <View className="mb-4">
                 <Text className="mb-2 font-semibold">Foto</Text>
-                <Image
-                  source={{ uri: report.photo }}
-                  className="h-48 w-full rounded-lg"
-                  resizeMode="cover"
-                />
+                <View className="w-full overflow-hidden rounded-lg" style={{ aspectRatio: 16 / 9 }}>
+                  <Image
+                    source={{ uri: report.photo }}
+                    className="h-full w-full"
+                    resizeMode="cover"
+                  />
+                </View>
               </View>
             </>
           )}
