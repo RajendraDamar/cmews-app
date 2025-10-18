@@ -9,7 +9,7 @@ import { ChartKitCurrentChart } from '~/components/charts/ChartKitCurrentChart';
 import type { CurrentForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
-import { getThemeColor } from '~/lib/constants';
+import { getThemeColor, COLORS } from '~/lib/constants';
 
 export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForecastData) {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,7 +37,7 @@ export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForeca
 
               <View className="flex-row items-center gap-4">
                 <View className="rounded-full bg-indigo-500/20 p-2">
-                  <MoveHorizontal size={24} color="#6366f1" />
+                  <MoveHorizontal size={24} color={COLORS.chart.current} />
                 </View>
 
                 <View className="items-end">

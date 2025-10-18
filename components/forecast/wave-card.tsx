@@ -40,7 +40,7 @@ export function WaveCard({
     severityColor = COLORS.severity.medium; // orange-500 for medium severity
     severityBg = 'bg-orange-500/20';
   } else if (avgHeight >= 0.5) {
-    severityColor = '#eab308'; // yellow-500 for warning
+    severityColor = COLORS.severity.warning; // yellow-500 for warning
     severityBg = 'bg-yellow-500/20';
   }
 

@@ -8,6 +8,7 @@ export const COLORS = {
   },
   severity: {
     low: 'hsl(142 76% 36%)', // green-600
+    warning: 'hsl(48 96% 53%)', // yellow-500
     medium: 'hsl(33 100% 50%)', // orange-500
     high: 'hsl(0 84% 60%)', // red-500
   },
