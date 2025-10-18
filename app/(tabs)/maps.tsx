@@ -356,7 +356,9 @@ export default function MapsScreen() {
           {/* Floating Action Button (Mobile) */}
           <Pressable
             onPress={() => setShowReportForm(true)}
-            className="absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full bg-primary shadow-xl active:scale-95"
+            className={`absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full shadow-xl active:scale-95 ${
+              colorScheme === 'dark' ? 'bg-primary' : 'bg-white'
+            }`}
             style={{
               zIndex: 10,
               shadowColor: themeColors.shadow,
@@ -365,7 +367,7 @@ export default function MapsScreen() {
               shadowRadius: 12,
               elevation: 10,
             }}>
-            <Plus size={28} color={colorScheme === 'dark' ? COLORS.fabIcon.dark : COLORS.fabIcon.light} />
+            <Plus size={28} color={colorScheme === 'dark' ? COLORS.fabIcon.dark : themeColors.primary} />
           </Pressable>
 
           {/* Bottom Sheet for Report Details (Mobile) */}
