@@ -17,10 +17,10 @@ export default function ForecastTab() {
 
   return (
     <ScrollView className="flex-1 bg-background">
-      <View className={`p-4 ${isDesktop ? 'mx-auto w-full max-w-4xl' : ''}`}>
+      <View className={`p-4 ${isDesktop ? 'mx-auto w-full max-w-5xl' : ''}`}>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Tab Navigation */}
-          <TabsList className="mb-4 grid grid-cols-4">
+          <TabsList className="mb-4 grid grid-cols-4 gap-2">
             <TabsTrigger value="weather">
               <View className="flex-row items-center gap-1.5">
                 <CloudSun size={16} />

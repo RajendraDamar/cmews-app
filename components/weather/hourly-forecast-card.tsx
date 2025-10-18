@@ -15,7 +15,7 @@ interface HourlyForecastProps {
 
 export function HourlyForecastCard({ hourlyData }: HourlyForecastProps) {
   return (
-    <Card className="mx-4 mt-4">
+    <Card className="mx-4 mt-4 md:mx-0">
       <CardHeader className="pb-3">
         <Text className="text-lg font-semibold">Prakiraan Per Jam</Text>
       </CardHeader>

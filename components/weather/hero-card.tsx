@@ -23,7 +23,7 @@ export function HeroCard({ temperature, weather, location, lastUpdate }: HeroCar
   return (
     <Card
       className={cn(
-        'mx-4 mt-2 overflow-hidden border-0 shadow-lg',
+        'mx-4 mt-2 overflow-hidden border-0 shadow-lg md:mx-0',
         colorScheme === 'dark' ? 'bg-blue-900/80' : 'bg-primary'
       )}>
       <CardContent className="p-6">

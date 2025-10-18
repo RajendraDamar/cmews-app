@@ -65,7 +65,7 @@ const waveData = [
 export default function ChartExamplesPage() {
   return (
     <ScrollView className="flex-1 bg-background">
-      <View className="p-4 gap-4">
+      <View className="mx-auto w-full max-w-5xl gap-4 p-4">
         {/* Header */}
         <View className="mb-2">
           <Text className="text-2xl font-bold">Chart Kit Demo</Text>

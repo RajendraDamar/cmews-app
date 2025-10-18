@@ -29,7 +29,7 @@ export function WeatherAlertCard({ alert, onDismiss }: WeatherAlertProps) {
   const validTo = parseBMKGDateTime(alert.validTo);
 
   return (
-    <Card className={`mx-4 mb-4 border-2 ${colors.border}`}>
+    <Card className={`mx-4 mb-4 border-2 md:mx-0 ${colors.border}`}>
       <CardContent className={`p-4 ${colors.bg}`}>
         <View className="flex-row items-start justify-between">
           <View className="flex-1 flex-row items-start gap-3">
