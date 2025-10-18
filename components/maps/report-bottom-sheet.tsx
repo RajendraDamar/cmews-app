@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Separator } from '~/components/ui/separator';
 import { Card, CardContent } from '~/components/ui/card';
 import { WeatherReport } from '~/lib/types/weather-report';
+import { UI_CONSTANTS } from '~/lib/constants';
 
 interface ReportBottomSheetProps {
   report: WeatherReport | null;
@@ -161,7 +162,7 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
               <Separator className="mb-4" />
               <View className="mb-4">
                 <Text className="mb-2 font-semibold">Foto</Text>
-                <View className="w-full overflow-hidden rounded-lg" style={{ aspectRatio: 16 / 9 }}>
+                <View className="w-full overflow-hidden rounded-lg" style={{ aspectRatio: UI_CONSTANTS.imageAspectRatio }}>
                   <Image
                     source={{ uri: report.photo }}
                     className="h-full w-full"

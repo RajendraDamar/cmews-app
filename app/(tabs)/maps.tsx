@@ -15,7 +15,7 @@ import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { mockWeatherReports } from '~/lib/data/weather-reports-mock';
 import { WeatherReport, WeatherReportFilters } from '~/lib/types/weather-report';
-import { getThemeColor } from '~/lib/constants';
+import { getThemeColor, COLORS } from '~/lib/constants';
 
 // Import MapLibre theme for web
 if (Platform.OS === 'web') {
@@ -365,7 +365,7 @@ export default function MapsScreen() {
               shadowRadius: 12,
               elevation: 10,
             }}>
-            <Plus size={28} color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(0 0% 100%)'} />
+            <Plus size={28} color={colorScheme === 'dark' ? COLORS.fabIcon.dark : COLORS.fabIcon.light} />
           </Pressable>
 
           {/* Bottom Sheet for Report Details (Mobile) */}
