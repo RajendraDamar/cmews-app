@@ -23,6 +23,16 @@ export const COLORS = {
     medium: 'hsl(217 91% 60%)', // blue-500 (30-70%)
     dark: 'hsl(221 83% 53%)', // blue-600 (>70%)
   },
+  // FAB button icon colors (light colors for contrast against primary background)
+  fabIcon: {
+    dark: 'hsl(210 40% 98%)', // Very light for dark mode
+    light: 'hsl(0 0% 100%)', // Pure white for light mode
+  },
+};
+
+// UI Constants
+export const UI_CONSTANTS = {
+  imageAspectRatio: 16 / 9, // Standard widescreen aspect ratio for images
 };
 
 // Theme-aware color utilities
