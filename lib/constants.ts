@@ -28,6 +28,7 @@ export const COLORS = {
 // Theme-aware color utilities
 export const getThemeColor = (isDark: boolean) => ({
   primary: isDark ? '#60a5fa' : '#3b82f6', // blue-400/blue-500
+  primaryForeground: isDark ? '#09090b' : '#fafafa', // zinc-950/zinc-50
   muted: isDark ? '#9ca3af' : '#6b7280', // gray-400/gray-500
   mutedForeground: isDark ? '#9ca3af' : '#6b7280',
   foreground: isDark ? '#f3f4f6' : '#1f2937', // gray-100/gray-800

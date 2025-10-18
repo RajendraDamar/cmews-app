@@ -365,7 +365,7 @@ export default function MapsScreen() {
               shadowRadius: 12,
               elevation: 10,
             }}>
-            <Plus size={28} className="text-primary-foreground" color={colorScheme === 'dark' ? '#fafafa' : '#09090b'} />
+            <Plus size={28} className="text-primary-foreground" color={themeColors.primaryForeground} />
           </Pressable>
 
           {/* Bottom Sheet for Report Details (Mobile) */}
