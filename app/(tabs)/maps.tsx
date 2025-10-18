@@ -73,6 +73,8 @@ function WebMap() {
       <MapGL
         {...viewState}
         onMove={(evt: any) => setViewState(evt.viewState)}
+        // disable built-in attribution control on web
+        attributionControl={false}
         style={{ width: '100%', height: '100%' }}
         mapStyle={mapStyle}
         dragRotate={true}
@@ -102,6 +104,7 @@ export default function MapsScreen() {
   const cameraRef = useRef<any>(null);
 
   const themeColors = getThemeColor(colorScheme === 'dark');
+  // Use JS theme colors for FAB so narrow and wide screens follow the same theme state
 
   // Calculate exact map height for full screen
   const mapHeight = height - insets.top - insets.bottom;
@@ -350,9 +353,7 @@ export default function MapsScreen() {
           {/* Floating Action Button (Mobile) */}
           <Pressable
             onPress={() => setShowReportForm(true)}
-            className={`absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full shadow-xl active:scale-95 ${
-              colorScheme === 'dark' ? 'bg-primary' : 'bg-background'
-            }`}
+            className={`absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full shadow-xl active:scale-95 border bg-card border-border`}
             style={{
               zIndex: 10,
               shadowColor: themeColors.shadow,
@@ -360,8 +361,10 @@ export default function MapsScreen() {
               shadowOpacity: 0.25,
               shadowRadius: 12,
               elevation: 10,
-            }}>
-            <Plus size={28} color={themeColors.primaryForeground} />
+            }}
+            accessibilityLabel="Laporkan Cuaca"
+            accessibilityRole="button">
+            <Plus size={28} color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : themeColors.icon.foreground} />
           </Pressable>
 
           {/* Bottom Sheet for Report Details (Mobile) */}

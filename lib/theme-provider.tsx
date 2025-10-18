@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -36,6 +36,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const colorScheme: 'light' | 'dark' = theme === 'system' ? (systemColorScheme ?? 'light') : theme;
+  // Sync the document root `.dark` class on web so Tailwind CSS variables match JS theme
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      const root = document.documentElement;
+      if (colorScheme === 'dark') {
+        root.classList.add('dark');
+      } else {
+        root.classList.remove('dark');
+      }
+    }
+  }, [colorScheme]);
 
   return (
     <ThemeContext.Provider value={{ theme, colorScheme, setTheme }}>

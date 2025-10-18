@@ -72,6 +72,8 @@
     --ml-font-icons: maplibregl-icons-lucide;
   }
 
+/* Attribution styling removed while attribution is turned off */
+
   .dark .maplibregl-map {
     --ml-c-bg-1: oklch(14.5% 0 0);
     --ml-c-bg-2: oklch(37.1% 0 0);

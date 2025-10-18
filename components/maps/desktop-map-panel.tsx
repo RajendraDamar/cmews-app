@@ -1,9 +1,11 @@
 // Desktop Map Panel Component - Minimal sidebar for map screen
+import React from 'react';
 import { View, Pressable } from 'react-native';
 import { Plus } from 'lucide-react-native';
 import { Input } from '~/components/ui/input';
 import { Button } from '~/components/ui/button';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 interface DesktopMapPanelProps {
   showWeatherLayer: boolean;
@@ -17,8 +19,9 @@ export function DesktopMapPanel({
   onAddReport,
 }: DesktopMapPanelProps) {
   const { colorScheme } = useTheme();
-  
-  const primaryButtonColor = colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(0 0% 100%)';
+  const themeColors = getThemeColor(colorScheme === 'dark');
+
+  // Use JS theme colors to ensure FAB matches theme state
 
   return (
     <View
@@ -64,7 +67,7 @@ export function DesktopMapPanel({
       {/* Floating Action Button - Add Report */}
       <Pressable
         onPress={onAddReport}
-        className="mt-2 h-12 w-12 items-center justify-center self-start rounded-full bg-primary shadow-xl active:scale-95"
+        className="mt-2 h-12 w-12 items-center justify-center self-start rounded-full shadow-xl active:scale-95 border bg-card border-border"
         style={{
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 4 },
@@ -72,7 +75,7 @@ export function DesktopMapPanel({
           shadowRadius: 8,
           elevation: 8,
         }}>
-        <Plus size={22} color={primaryButtonColor} />
+        <Plus size={22} color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : themeColors.icon.foreground} />
       </Pressable>
     </View>
   );
