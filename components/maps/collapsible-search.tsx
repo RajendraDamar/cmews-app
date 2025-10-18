@@ -4,6 +4,7 @@ import { Card } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Search, X } from 'lucide-react-native';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 import * as Haptics from 'expo-haptics';
 
 interface CollapsibleSearchProps {
@@ -18,9 +19,10 @@ export function CollapsibleSearch({
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchText, setSearchText] = useState('');
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
-  const iconColor = colorScheme === 'dark' ? '#e5e7eb' : '#1f2937';
-  const placeholderColor = colorScheme === 'dark' ? '#888' : '#999';
+  const iconColor = themeColors.foreground;
+  const placeholderColor = themeColors.mutedForeground;
 
   const handleExpand = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

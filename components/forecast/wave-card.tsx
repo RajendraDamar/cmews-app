@@ -8,6 +8,7 @@ import { ChartKitWaveChart } from '~/components/charts';
 import type { WaveForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor, COLORS } from '~/lib/constants';
 
 export function WaveCard({
   seaArea,
@@ -19,6 +20,7 @@ export function WaveCard({
 }: WaveForecastData) {
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   // Prepare chart data for ChartKitWaveChart
   const waveChartData = hourly.map((h) => ({
@@ -26,19 +28,19 @@ export function WaveCard({
     height: h.height,
   }));
 
-  // Determine severity color based on average height
+  // Determine severity based on average height
   const avgHeight = (heightMin + heightMax) / 2;
-  let severityColor = '#10b981'; // green
+  let severityColor = COLORS.severity.low; // green-600
   let severityBg = 'bg-green-500/20';
 
   if (avgHeight >= 2.5) {
-    severityColor = '#ef4444'; // red
+    severityColor = COLORS.severity.high; // red-500 for high severity
     severityBg = 'bg-red-500/20';
   } else if (avgHeight >= 1.25) {
-    severityColor = '#f97316'; // orange
+    severityColor = COLORS.severity.medium; // orange-500 for medium severity
     severityBg = 'bg-orange-500/20';
   } else if (avgHeight >= 0.5) {
-    severityColor = '#eab308'; // yellow
+    severityColor = COLORS.severity.warning; // yellow-500 for warning
     severityBg = 'bg-yellow-500/20';
   }
 
@@ -71,7 +73,7 @@ export function WaveCard({
 
                 <ChevronDown
                   size={20}
-                  color={colorScheme === 'dark' ? '#888' : '#666'}
+                  color={themeColors.muted}
                   style={{
                     transform: [{ rotate: isOpen ? '180deg' : '0deg' }],
                   }}
