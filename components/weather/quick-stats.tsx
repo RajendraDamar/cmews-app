@@ -5,6 +5,7 @@ import { Text } from '~/components/ui/text';
 import { Droplets, Thermometer } from 'lucide-react-native';
 import { DirectionArrow } from '~/components/weather/direction-arrow';
 import { useTheme } from '~/lib/theme-provider';
+import { useBreakpoint } from '~/lib/breakpoints';
 import { getThemeColor } from '~/lib/constants';
 
 interface QuickStatsProps {
@@ -55,29 +56,53 @@ export function QuickStats({
   feelsLike,
   windDirection = 'Utara',
 }: QuickStatsProps) {
+  const { isDesktop } = useBreakpoint();
+  
   return (
     <View className="px-4 pt-4">
       <Text className="mb-3 text-lg font-semibold">Ringkasan Cepat</Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 12 }}>
-        <StatCard icon={Droplets} label="Kelembapan" value={`${humidity}%`} progress={humidity} />
-        <Card className="min-w-[140px]">
-          <CardContent className="p-4">
-            <View className="flex-row items-center gap-3">
-              <DirectionArrow direction={windDirection} size={24} />
-              <View className="flex-1">
-                <Text variant="muted" size="sm">
-                  Kecepatan Angin
-                </Text>
-                <Text className="text-xl font-semibold">{windSpeed} km/h</Text>
+      {isDesktop ? (
+        // Desktop: Display in a grid instead of horizontal scroll
+        <View className="grid grid-cols-3 gap-3">
+          <StatCard icon={Droplets} label="Kelembapan" value={`${humidity}%`} progress={humidity} />
+          <Card className="min-w-[140px]">
+            <CardContent className="p-4">
+              <View className="flex-row items-center gap-3">
+                <DirectionArrow direction={windDirection} size={24} />
+                <View className="flex-1">
+                  <Text variant="muted" size="sm">
+                    Kecepatan Angin
+                  </Text>
+                  <Text className="text-xl font-semibold">{windSpeed} km/h</Text>
+                </View>
               </View>
-            </View>
-          </CardContent>
-        </Card>
-        <StatCard icon={Thermometer} label="Terasa Seperti" value={`${feelsLike}°`} />
-      </ScrollView>
+            </CardContent>
+          </Card>
+          <StatCard icon={Thermometer} label="Terasa Seperti" value={`${feelsLike}°`} />
+        </View>
+      ) : (
+        // Mobile: Keep horizontal scroll
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 12 }}>
+          <StatCard icon={Droplets} label="Kelembapan" value={`${humidity}%`} progress={humidity} />
+          <Card className="min-w-[140px]">
+            <CardContent className="p-4">
+              <View className="flex-row items-center gap-3">
+                <DirectionArrow direction={windDirection} size={24} />
+                <View className="flex-1">
+                  <Text variant="muted" size="sm">
+                    Kecepatan Angin
+                  </Text>
+                  <Text className="text-xl font-semibold">{windSpeed} km/h</Text>
+                </View>
+              </View>
+            </CardContent>
+          </Card>
+          <StatCard icon={Thermometer} label="Terasa Seperti" value={`${feelsLike}°`} />
+        </ScrollView>
+      )}
     </View>
   );
 }

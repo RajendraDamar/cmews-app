@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, Dimensions } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
 import { useTheme } from '~/lib/theme-provider';
+import { useBreakpoint } from '~/lib/breakpoints';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { COLORS, getThemeColor } from '~/lib/constants';
 
@@ -24,8 +25,13 @@ export function ChartKitCurrentChart({
   height: propHeight = 200,
 }: CurrentChartProps) {
   const { colorScheme } = useTheme();
-  const screenWidth = Dimensions.get('window').width;
-  const width = propWidth || screenWidth - 32;
+  const { isDesktop } = useBreakpoint();
+  const { width: windowWidth } = useWindowDimensions();
+  
+  // Calculate responsive width
+  const responsiveWidth = propWidth || (isDesktop ? Math.min(windowWidth, 896) - 64 : windowWidth - 32);
+  const width = responsiveWidth;
+  
   const [selectedDataPoint, setSelectedDataPoint] = useState<{ index: number; value: number; dataset: number } | null>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
 

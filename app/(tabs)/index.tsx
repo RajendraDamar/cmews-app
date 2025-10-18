@@ -135,26 +135,28 @@ export default function Home() {
 
             {/* Hero Card and Quick Stats - Responsive Layout */}
             {isDesktop ? (
-              <View className="flex-row gap-4 px-4">
-                <View className="w-[40%]">
-                  <HeroCard
-                    temperature={weatherData.currentWeather.temperature}
-                    weather={weatherData.currentWeather.weather.description}
-                    location={{
-                      kecamatan: weatherData.location.kecamatan,
-                      kota: weatherData.location.kota,
-                      provinsi: weatherData.location.provinsi,
-                    }}
-                    lastUpdate={lastUpdatedText}
-                  />
-                </View>
-                <View className="flex-1">
-                  <QuickStats
-                    humidity={weatherData.currentWeather.humidity}
-                    windSpeed={weatherData.currentWeather.windSpeed}
-                    feelsLike={weatherData.currentWeather.feelsLike}
-                    windDirection={weatherData.currentWeather.windDirection}
-                  />
+              <View className="mx-auto w-full max-w-6xl px-4">
+                <View className="flex-row gap-4">
+                  <View className="w-[45%]">
+                    <HeroCard
+                      temperature={weatherData.currentWeather.temperature}
+                      weather={weatherData.currentWeather.weather.description}
+                      location={{
+                        kecamatan: weatherData.location.kecamatan,
+                        kota: weatherData.location.kota,
+                        provinsi: weatherData.location.provinsi,
+                      }}
+                      lastUpdate={lastUpdatedText}
+                    />
+                  </View>
+                  <View className="flex-1">
+                    <QuickStats
+                      humidity={weatherData.currentWeather.humidity}
+                      windSpeed={weatherData.currentWeather.windSpeed}
+                      feelsLike={weatherData.currentWeather.feelsLike}
+                      windDirection={weatherData.currentWeather.windDirection}
+                    />
+                  </View>
                 </View>
               </View>
             ) : (
@@ -180,30 +182,34 @@ export default function Home() {
             )}
 
             {/* Hourly Forecast */}
-            <HourlyForecastCard hourlyData={hourlyData} />
+            <View className={isDesktop ? 'mx-auto w-full max-w-6xl' : ''}>
+              <HourlyForecastCard hourlyData={hourlyData} />
+            </View>
 
             {/* Detailed Metrics */}
-            <DetailedMetrics
-              temperature={{
-                current: weatherData.currentWeather.temperature,
-                feelsLike: weatherData.currentWeather.feelsLike,
-                min: dailyForecast.tempMin,
-                max: dailyForecast.tempMax,
-              }}
-              wind={{
-                speed: weatherData.currentWeather.windSpeed,
-                direction: weatherData.currentWeather.windDirection,
-                gust: weatherData.currentWeather.windSpeed + 5,
-              }}
-              atmospheric={{
-                pressure: 1013,
-                humidity: weatherData.currentWeather.humidity,
-                visibility: 10,
-              }}
-            />
+            <View className={isDesktop ? 'mx-auto w-full max-w-6xl' : ''}>
+              <DetailedMetrics
+                temperature={{
+                  current: weatherData.currentWeather.temperature,
+                  feelsLike: weatherData.currentWeather.feelsLike,
+                  min: dailyForecast.tempMin,
+                  max: dailyForecast.tempMax,
+                }}
+                wind={{
+                  speed: weatherData.currentWeather.windSpeed,
+                  direction: weatherData.currentWeather.windDirection,
+                  gust: weatherData.currentWeather.windSpeed + 5,
+                }}
+                atmospheric={{
+                  pressure: 1013,
+                  humidity: weatherData.currentWeather.humidity,
+                  visibility: 10,
+                }}
+              />
+            </View>
 
             {/* Daily Forecast */}
-            <View className="px-4 pb-4">
+            <View className={isDesktop ? 'mx-auto w-full max-w-6xl px-4 pb-4' : 'px-4 pb-4'}>
               <DailyForecastCard
                 forecast={weatherData.dailyForecast.map((d, index) => {
                   const dateObj = new Date(
