@@ -32,9 +32,9 @@ function ThemedApp() {
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: colorScheme === 'dark' ? '#1a1a1a' : '#fff',
+            backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
           },
-          headerTintColor: colorScheme === 'dark' ? '#fff' : '#000',
+          headerTintColor: colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)',
         }}>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
