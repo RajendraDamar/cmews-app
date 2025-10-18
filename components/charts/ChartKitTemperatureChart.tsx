@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Dimensions } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
 import { COLORS, getThemeColor } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
+import { useBreakpoint } from '~/lib/breakpoints';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 
 interface TemperatureChartData {
@@ -25,8 +26,13 @@ export function ChartKitTemperatureChart({
   height: propHeight = 220,
 }: TemperatureChartProps) {
   const { colorScheme } = useTheme();
-  const screenWidth = Dimensions.get('window').width;
-  const width = propWidth || screenWidth - 32;
+  const { width: windowWidth } = useWindowDimensions();
+  const { isMobile } = useBreakpoint();
+  
+  // Responsive width: mobile uses window width - 32px padding, desktop uses max 960px
+  const calculatedWidth = isMobile ? windowWidth - 32 : Math.min(windowWidth - 64, 960);
+  const width = propWidth || calculatedWidth;
+  
   const [selectedDataPoint, setSelectedDataPoint] = useState<{ index: number; value: number; dataset: number } | null>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -46,8 +52,15 @@ export function ChartKitTemperatureChart({
     backgroundGradientFrom: themeColors.card,
     backgroundGradientTo: themeColors.card,
     decimalPlaces: 1,
-    color: (opacity = 1) => `rgba(239, 68, 68, ${opacity})`, // Temperature color
-    labelColor: (opacity = 1) => themeColors.muted,
+    color: (opacity = 1) => {
+      // Parse HSL color to RGB for opacity
+      const rgb = colorScheme === 'dark' ? '251, 146, 60' : '249, 115, 22'; // orange-400/orange-500
+      return `rgba(${rgb}, ${opacity})`;
+    },
+    labelColor: (opacity = 1) => {
+      const rgb = colorScheme === 'dark' ? '156, 163, 175' : '107, 114, 128'; // gray-400/gray-500
+      return `rgba(${rgb}, ${opacity})`;
+    },
     style: {
       borderRadius: 16,
     },
@@ -87,7 +100,7 @@ export function ChartKitTemperatureChart({
   };
 
   return (
-    <View>
+    <View className={!isMobile ? 'mx-auto' : ''}>
       <LineChart
         data={chartData}
         width={width}
@@ -97,6 +110,7 @@ export function ChartKitTemperatureChart({
         style={{
           marginVertical: 8,
           borderRadius: 16,
+          backgroundColor: themeColors.card,
         }}
         withInnerLines={true}
         withOuterLines={false}

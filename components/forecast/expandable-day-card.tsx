@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, ScrollView, useWindowDimensions } from 'react-native';
 import { Card, CardContent } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
@@ -24,7 +24,11 @@ export function ExpandableDayCard({
 }: WeatherForecastDay) {
   const [isOpen, setIsOpen] = useState(false);
   const { colorScheme } = useTheme();
+  const { width } = useWindowDimensions();
   const themeColors = getThemeColor(colorScheme === 'dark');
+  
+  // Add horizontal scroll for very narrow screens
+  const needsScroll = width < 360;
 
   const handleToggle = (open: boolean) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
@@ -76,16 +80,38 @@ export function ExpandableDayCard({
             <Separator className="mb-3" />
 
             {/* Temperature & Humidity Chart */}
-            <Text className="mb-2 font-semibold">Grafik Suhu & Kelembapan</Text>
-            <TemperatureChart data={hourly} />
+            <View className="mb-4">
+              <Text className="mb-2 font-semibold">Grafik Suhu & Kelembapan</Text>
+              {needsScroll ? (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <TemperatureChart data={hourly} />
+                </ScrollView>
+              ) : (
+                <View className="md:px-4">
+                  <TemperatureChart data={hourly} />
+                </View>
+              )}
+            </View>
 
             <Separator className="my-4" />
 
             {/* Precipitation Chart */}
-            <Text className="mb-2 font-semibold">Curah Hujan</Text>
-            <PrecipitationChart
-              data={hourly.map((h) => ({ time: h.time, precipitation: h.humidity }))}
-            />
+            <View className="mb-4">
+              <Text className="mb-2 font-semibold">Curah Hujan</Text>
+              {needsScroll ? (
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <PrecipitationChart
+                    data={hourly.map((h) => ({ time: h.time, precipitation: h.humidity }))}
+                  />
+                </ScrollView>
+              ) : (
+                <View className="md:px-4">
+                  <PrecipitationChart
+                    data={hourly.map((h) => ({ time: h.time, precipitation: h.humidity }))}
+                  />
+                </View>
+              )}
+            </View>
 
             <Separator className="my-4" />
 

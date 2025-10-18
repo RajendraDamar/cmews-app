@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Dimensions } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
 import { COLORS, getThemeColor } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
+import { useBreakpoint } from '~/lib/breakpoints';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 
 interface PrecipitationChartData {
@@ -24,8 +25,13 @@ export function ChartKitPrecipitationChart({
   height: propHeight = 200,
 }: PrecipitationChartProps) {
   const { colorScheme } = useTheme();
-  const screenWidth = Dimensions.get('window').width;
-  const width = propWidth || screenWidth - 32;
+  const { width: windowWidth } = useWindowDimensions();
+  const { isMobile } = useBreakpoint();
+  
+  // Responsive width: mobile uses window width - 32px padding, desktop uses max 960px
+  const calculatedWidth = isMobile ? windowWidth - 32 : Math.min(windowWidth - 64, 960);
+  const width = propWidth || calculatedWidth;
+  
   const [selectedDataPoint, setSelectedDataPoint] = useState<{ index: number; value: number; dataset: number } | null>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -43,8 +49,15 @@ export function ChartKitPrecipitationChart({
     backgroundGradientFrom: themeColors.card,
     backgroundGradientTo: themeColors.card,
     decimalPlaces: 0,
-    color: (opacity = 1) => precipColor,
-    labelColor: (opacity = 1) => themeColors.muted,
+    color: (opacity = 1) => {
+      // Parse HSL color to RGB for opacity - blue-500
+      const rgb = colorScheme === 'dark' ? '96, 165, 250' : '59, 130, 246'; // blue-400/blue-500
+      return `rgba(${rgb}, ${opacity})`;
+    },
+    labelColor: (opacity = 1) => {
+      const rgb = colorScheme === 'dark' ? '156, 163, 175' : '107, 114, 128'; // gray-400/gray-500
+      return `rgba(${rgb}, ${opacity})`;
+    },
     style: {
       borderRadius: 16,
     },
@@ -72,7 +85,7 @@ export function ChartKitPrecipitationChart({
   };
 
   return (
-    <View>
+    <View className={!isMobile ? 'mx-auto' : ''}>
       <BarChart
         data={chartData}
         width={width}
@@ -81,6 +94,7 @@ export function ChartKitPrecipitationChart({
         style={{
           marginVertical: 8,
           borderRadius: 16,
+          backgroundColor: themeColors.card,
         }}
         yAxisLabel=""
         yAxisSuffix=""
