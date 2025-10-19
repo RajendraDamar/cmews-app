@@ -119,7 +119,7 @@ export function DesktopSidebar({
                   <Badge
                     variant={getSeverityBadge(selectedReport.severity).variant}
                     label={getSeverityBadge(selectedReport.severity).label}
-                    labelClasses="text-white font-semibold"
+                    labelClasses="text-primary-foreground font-semibold"
                   />
                 </View>
 

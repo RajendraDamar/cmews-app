@@ -38,7 +38,7 @@ export function SkiaWindChart({
     } else {
       animationProgress.value = 1;
     }
-  }, [data, animated]);
+  }, [data, animated, animationProgress]);
 
   // Chart dimensions
   const centerX = width / 2;
@@ -90,7 +90,7 @@ export function SkiaWindChart({
               y={y + 6}
               text={label}
               color={textColor}
-              font={{ size: 14, weight: 'bold' }}
+              font={{ size: 14, weight: 'bold' } as any}
             />
           );
         })}
@@ -160,7 +160,7 @@ export function SkiaWindChart({
               y={centerY - radius * scale + 5}
               text={`${speed}`}
               color={textColor}
-              font={{ size: 9 }}
+              font={{ size: 9 } as any}
             />
           );
         })}

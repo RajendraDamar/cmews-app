@@ -24,24 +24,25 @@ export function HeroCard({ temperature, weather, location, lastUpdate }: HeroCar
     <Card
       className={cn(
         'mx-4 mt-2 overflow-hidden border-0 shadow-lg md:mx-0',
-        colorScheme === 'dark' ? 'bg-blue-900/80' : 'bg-primary'
+        // Use blue theme on home hero card for both light and dark modes
+        colorScheme === 'dark' ? 'bg-sky-900/95' : 'bg-sky-600'
       )}>
       <CardContent className="p-6">
         <View className="flex-row items-start justify-between">
           <View className="flex-1">
-            <Text className="text-5xl font-bold text-white md:text-6xl">{temperature}°</Text>
-            <Text className="mt-3 text-xl text-white/90">{weather}</Text>
-            <Text className="mt-2 text-sm text-white/70">
+            <Text className="text-5xl font-bold md:text-6xl">{temperature}°</Text>
+            <Text className="mt-3 text-xl">{weather}</Text>
+            <Text className="mt-2 text-sm">
               {location.kecamatan}, {location.kota}
             </Text>
-            <Text className="mt-1 text-sm text-white/70">{location.provinsi}</Text>
+            <Text className="mt-1 text-sm">{location.provinsi}</Text>
           </View>
           <View className="items-center">
             <WeatherIcon condition={weather} size={80} />
           </View>
         </View>
-        <View className="mt-4 border-t border-white/20 pt-3">
-          <Text className="text-xs text-white/60">Diperbarui {lastUpdate}</Text>
+  <View className="mt-4 border-t border-border pt-3">
+          <Text variant="muted" size="sm">Diperbarui {lastUpdate}</Text>
         </View>
       </CardContent>
     </Card>

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text as RNText } from 'react-native';
+import { Text } from '~/components/ui/text';
 import { cn } from '~/utils/cn';
 
 const Card = React.forwardRef<
@@ -23,8 +24,8 @@ const CardHeader = React.forwardRef<
 CardHeader.displayName = 'CardHeader';
 
 const CardTitle = React.forwardRef<
-  React.ElementRef<typeof Text>,
-  React.ComponentPropsWithoutRef<typeof Text>
+  React.ElementRef<typeof RNText>,
+  React.ComponentPropsWithoutRef<typeof RNText>
 >(({ className, ...props }, ref) => (
   <Text
     ref={ref}
@@ -35,8 +36,8 @@ const CardTitle = React.forwardRef<
 CardTitle.displayName = 'CardTitle';
 
 const CardDescription = React.forwardRef<
-  React.ElementRef<typeof Text>,
-  React.ComponentPropsWithoutRef<typeof Text>
+  React.ElementRef<typeof RNText>,
+  React.ComponentPropsWithoutRef<typeof RNText>
 >(({ className, ...props }, ref) => (
   <Text ref={ref} className={cn('text-sm text-muted-foreground', className)} {...props} />
 ));

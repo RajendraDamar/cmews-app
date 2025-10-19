@@ -40,7 +40,7 @@ export function SkiaTemperatureChart({
     } else {
       animationProgress.value = 1;
     }
-  }, [data, animated]);
+  }, [data, animated, animationProgress]);
 
   // Chart dimensions
   const padding = { top: 30, right: 20, bottom: 40, left: 50 };
@@ -191,13 +191,14 @@ export function SkiaTemperatureChart({
           const y = padding.top + (chartHeight / 4) * i;
           return (
             <SkiaText
-              key={`temp-label-${i}`}
-              x={padding.left - 8}
-              y={y + 4}
-              text={`${Math.round(value)}°`}
-              color={textColor}
-              font={{ size: 10 }}
-            />
+                key={`temp-label-${i}`}
+                x={padding.left - 8}
+                y={y + 4}
+                text={`${Math.round(value)}°`}
+                color={textColor}
+                // font typing expects SkFont; cast literal to any to preserve runtime intent
+                font={{ size: 10 } as any}
+              />
           );
         })}
 
@@ -207,13 +208,13 @@ export function SkiaTemperatureChart({
           const x = xScale(i);
           return (
             <SkiaText
-              key={`x-label-${i}`}
-              x={x}
-              y={padding.top + chartHeight + 20}
-              text={d.time}
-              color={textColor}
-              font={{ size: 9 }}
-            />
+                key={`x-label-${i}`}
+                x={x}
+                y={padding.top + chartHeight + 20}
+                text={d.time}
+                color={textColor}
+                font={{ size: 9 } as any}
+              />
           );
         })}
       </Canvas>

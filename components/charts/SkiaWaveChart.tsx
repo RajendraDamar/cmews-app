@@ -46,7 +46,7 @@ export function SkiaWaveChart({
     } else {
       animationProgress.value = 1;
     }
-  }, [data, animated]);
+  }, [data, animated, animationProgress, waveOffset]);
 
   // Chart dimensions
   const padding = { top: 30, right: 20, bottom: 40, left: 50 };
@@ -159,12 +159,12 @@ export function SkiaWaveChart({
           const y = padding.top + (chartHeight / 4) * i;
           return (
             <SkiaText
-              key={`y-label-${i}`}
-              x={padding.left - 8}
+              key={`label-${i}`}
+              x={padding.left - 12}
               y={y + 4}
               text={`${value.toFixed(1)}`}
               color={textColor}
-              font={{ size: 10 }}
+              font={{ size: 10 } as any}
             />
           );
         })}
@@ -180,7 +180,7 @@ export function SkiaWaveChart({
               y={padding.top + chartHeight + 20}
               text={d.time}
               color={textColor}
-              font={{ size: 9 }}
+              font={{ size: 9 } as any}
             />
           );
         })}
@@ -191,7 +191,7 @@ export function SkiaWaveChart({
           y={padding.top + chartHeight / 2}
           text="m"
           color={textColor}
-          font={{ size: 11 }}
+          font={{ size: 11 } as any}
         />
       </Canvas>
 
