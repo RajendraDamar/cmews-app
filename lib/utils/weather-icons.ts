@@ -2,6 +2,7 @@
 import {
   Sun,
   Cloud,
+  CloudSun,
   CloudRain,
   CloudDrizzle,
   CloudSnow,
@@ -130,4 +131,48 @@ export function getWeatherColor(condition: string, isDark: boolean): string {
   }
 
   return isDark ? '#9ca3af' : '#6b7280';
+}
+
+/**
+ * Map textual weather description to an icon component and default colors.
+ * This keeps icon selection consistent across components that render a textual
+ * weather description (e.g. "Cerah Berawan", "Hujan Ringan").
+ */
+export function getIconForDescription(description: string) {
+  const desc = description.toLowerCase();
+
+  if (desc.includes('cerah') && desc.includes('berawan')) {
+    return {
+      icon: CloudSun as LucideIcon | any,
+      color: { light: '#f59e0b', dark: '#fbbf24' },
+      bgColor: { light: '#fef3c7', dark: '#0b1220' },
+      label: 'Cerah Berawan',
+    };
+  }
+
+  if (desc.includes('cerah')) {
+    return { icon: Sun as LucideIcon | any, color: { light: '#f59e0b', dark: '#fbbf24' }, bgColor: { light: '#fef3c7', dark: '#0b1220' }, label: 'Cerah' };
+  }
+
+  if (desc.includes('hujan') || desc.includes('gerimis')) {
+    // differentiate intensity
+    if (desc.includes('lebat') || desc.includes('petir')) {
+      return { icon: CloudRain as LucideIcon | any, color: { light: '#3b82f6', dark: '#60a5fa' }, bgColor: { light: '#dbeafe', dark: '#0b1220' }, label: 'Hujan Lebat' };
+    }
+    if (desc.includes('sedang')) {
+      return { icon: CloudRain as LucideIcon | any, color: { light: '#3b82f6', dark: '#60a5fa' }, bgColor: { light: '#dbeafe', dark: '#0b1220' }, label: 'Hujan Sedang' };
+    }
+    return { icon: CloudDrizzle as LucideIcon | any, color: { light: '#06b6d4', dark: '#22d3ee' }, bgColor: { light: '#dbeafe', dark: '#0b1220' }, label: 'Hujan Ringan' };
+  }
+
+  if (desc.includes('petir') || desc.includes('kilat')) {
+    return { icon: CloudLightning as LucideIcon | any, color: { light: '#8b5cf6', dark: '#a78bfa' }, bgColor: { light: '#f3e8ff', dark: '#0b1220' }, label: 'Petir' };
+  }
+
+  if (desc.includes('kabut') || desc.includes('asap')) {
+    return { icon: CloudFog as LucideIcon | any, color: { light: '#64748b', dark: '#94a3b8' }, bgColor: { light: '#f3f4f6', dark: '#0b1220' }, label: 'Kabut' };
+  }
+
+  // Fallback: cloudy
+  return { icon: Cloud as LucideIcon | any, color: { light: '#6b7280', dark: '#9ca3af' }, bgColor: { light: '#f3f4f6', dark: '#0b1220' }, label: 'Berawan' };
 }

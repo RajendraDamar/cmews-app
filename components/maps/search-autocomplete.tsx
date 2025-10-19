@@ -8,6 +8,7 @@ import { Card, CardContent } from '~/components/ui/card';
 import { Separator } from '~/components/ui/separator';
 import { EmptySearchState } from '~/components/maps/empty-states';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 interface SearchAutocompleteProps {
   onPlaceSelect: (place: any) => void;
@@ -20,6 +21,7 @@ export function SearchAutocomplete({ onPlaceSelect, onFocus, onBlur }: SearchAut
   const [results, setResults] = useState<typeof MOCK_MAP_PLACES>([]);
   const [showRecent, setShowRecent] = useState(false);
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   const handleSearch = (text: string) => {
     setQuery(text);
@@ -49,7 +51,7 @@ export function SearchAutocomplete({ onPlaceSelect, onFocus, onBlur }: SearchAut
     setShowRecent(true);
   };
 
-  const iconColor = colorScheme === 'dark' ? '#a1a1aa' : '#71717a';
+  const iconColor = themeColors.icon.muted;
 
   return (
     <Card className="shadow-lg">

@@ -8,7 +8,8 @@ import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Separator } from '~/components/ui/separator';
 import { Card, CardContent } from '~/components/ui/card';
 import { WeatherReport } from '~/lib/types/weather-report';
-import { UI_CONSTANTS } from '~/lib/constants';
+import { UI_CONSTANTS, getThemeColor, COLORS } from '~/lib/constants';
+import { useTheme } from '~/lib/theme-provider';
 
 interface ReportBottomSheetProps {
   report: WeatherReport | null;
@@ -38,6 +39,8 @@ const formatTimestamp = (timestamp: string) => {
 };
 
 export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
+  const { colorScheme } = useTheme();
+
   if (!report) return null;
 
   const severityBadge = getSeverityBadge(report.severity);
@@ -85,7 +88,7 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
                     <View className="rounded-lg bg-orange-500/10 p-2">
-                      <Thermometer size={22} color="#f97316" />
+                      <Thermometer size={22} color={getThemeColor(colorScheme === 'dark').primary} />
                     </View>
                     <View className="flex-1">
                       <Text className="text-xs text-muted-foreground">Suhu</Text>
@@ -101,7 +104,7 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
                     <View className="rounded-lg bg-blue-500/10 p-2">
-                      <Droplets size={22} color="#3b82f6" />
+                      <Droplets size={22} color={getThemeColor(colorScheme === 'dark').primary} />
                     </View>
                     <View className="flex-1">
                       <Text className="text-xs text-muted-foreground">Kelembaban</Text>
@@ -117,7 +120,7 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
                     <View className="rounded-lg bg-teal-500/10 p-2">
-                      <Wind size={22} color="#14b8a6" />
+                      <Wind size={22} color={COLORS.chart.wind} />
                     </View>
                     <View className="flex-1">
                       <Text className="text-xs text-muted-foreground">Kec. Angin</Text>
@@ -133,7 +136,7 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
                 <CardContent className="p-4">
                   <View className="flex-row items-center gap-3">
                     <View className="rounded-lg bg-indigo-500/10 p-2">
-                      <CloudRain size={22} color="#6366f1" />
+                      <CloudRain size={22} color={getThemeColor(colorScheme === 'dark').primary} />
                     </View>
                     <View className="flex-1">
                       <Text className="text-xs text-muted-foreground">Kondisi</Text>

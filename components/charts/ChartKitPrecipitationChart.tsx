@@ -51,15 +51,15 @@ export function ChartKitPrecipitationChart({
   const labels = data.map((d) => d.time);
   const precipitations = data.map((d) => d.precipitation);
 
-  // Colors
-  const precipColor = COLORS.chart.precipitation;
+  // Colors (theme-aware)
+  const precipColor = themeColors.chart?.precipitation ?? COLORS.chart.precipitation;
 
   const chartConfig = {
     backgroundColor: themeColors.card,
     backgroundGradientFrom: themeColors.card,
     backgroundGradientTo: themeColors.card,
     decimalPlaces: 0,
-    color: (opacity = 1) => precipColor,
+  color: (opacity = 1) => precipColor,
     labelColor: (opacity = 1) => themeColors.muted,
     style: {
       borderRadius: 16,

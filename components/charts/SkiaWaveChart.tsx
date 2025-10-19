@@ -4,7 +4,7 @@ import { Canvas, Path, Circle, Text as SkiaText, vec, LinearGradient } from '@sh
 import { useSharedValue, withTiming, withRepeat } from 'react-native-reanimated';
 import { scaleLinear } from 'd3-scale';
 import { Text } from '~/components/ui/text';
-import { COLORS } from '~/lib/constants';
+import { COLORS, getThemeColor } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
 
 interface WaveChartData {
@@ -67,7 +67,8 @@ export function SkiaWaveChart({
     .range([padding.top + chartHeight, padding.top]);
 
   // Colors
-  const waveColor = COLORS.chart.wind; // Using teal color for waves
+  const themeColors = getThemeColor(colorScheme === 'dark');
+  const waveColor = themeColors.chart?.wind ?? COLORS.chart.wind; // Using teal color for waves
   const textColor = colorScheme === 'dark' ? '#9ca3af' : '#6b7280';
   const gridColor = colorScheme === 'dark' ? '#374151' : '#e5e7eb';
 

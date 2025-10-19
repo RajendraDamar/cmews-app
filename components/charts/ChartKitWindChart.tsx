@@ -52,16 +52,16 @@ export function ChartKitWindChart({
   const labels = data.map((d) => d.direction);
   const speeds = data.map((d) => d.speed);
 
-  // Colors
-  const windColor = COLORS.chart.wind;
+  // Colors (theme-aware)
+  const windColor = themeColors.chart?.wind ?? COLORS.chart.wind;
 
   const chartConfig = {
     backgroundColor: themeColors.card,
     backgroundGradientFrom: themeColors.card,
     backgroundGradientTo: themeColors.card,
     decimalPlaces: 0,
-    color: (opacity = 1) => windColor,
-    labelColor: (opacity = 1) => themeColors.muted,
+  color: (opacity = 1) => windColor,
+  labelColor: (opacity = 1) => themeColors.muted,
     style: {
       borderRadius: 16,
     },

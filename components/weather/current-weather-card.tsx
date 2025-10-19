@@ -2,9 +2,9 @@ import React from 'react';
 import { View } from 'react-native';
 import { Card, CardContent, CardHeader } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
-import { getWeatherIcon } from '~/lib/utils/weather-icons';
+import { WeatherIcon } from '~/components/weather/weather-icon';
 import { getIndonesianDayName, formatIndonesianDateShort } from '~/lib/utils/indonesian-locale';
-import { useTheme } from '~/lib/theme-provider';
+
 
 interface CurrentWeatherCardProps {
   temperature: number;
@@ -23,10 +23,8 @@ export function CurrentWeatherCard({
   location,
   date,
 }: CurrentWeatherCardProps) {
-  const { colorScheme } = useTheme();
-  const iconInfo = getWeatherIcon(weatherCode);
-  const WeatherIcon = iconInfo.icon;
-  const iconColor = colorScheme === 'dark' ? iconInfo.color.dark : iconInfo.color.light;
+  // Use shared WeatherIcon component for consistent theme-aware icon rendering
+  const iconCondition = weatherDescription;
 
   const dayName = getIndonesianDayName(date);
   const dateStr = formatIndonesianDateShort(date);
@@ -43,7 +41,7 @@ export function CurrentWeatherCard({
             </Text>
           </View>
           <View className="items-center pt-2">
-            <WeatherIcon size={80} color={iconColor} />
+            <WeatherIcon condition={iconCondition} size={80} />
           </View>
         </View>
       </CardHeader>

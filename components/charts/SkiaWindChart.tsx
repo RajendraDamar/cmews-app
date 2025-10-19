@@ -3,7 +3,7 @@ import { View, Dimensions } from 'react-native';
 import { Canvas, Circle, Path, Text as SkiaText } from '@shopify/react-native-skia';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
 import { Text } from '~/components/ui/text';
-import { COLORS } from '~/lib/constants';
+import { COLORS, getThemeColor } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
 
 interface WindChartData {
@@ -46,7 +46,8 @@ export function SkiaWindChart({
   const radius = Math.min(width, propHeight) / 2 - 60;
 
   // Colors
-  const windColor = COLORS.chart.wind;
+  const themeColors = getThemeColor(colorScheme === 'dark');
+  const windColor = themeColors.chart?.wind ?? COLORS.chart.wind;
   const textColor = colorScheme === 'dark' ? '#9ca3af' : '#6b7280';
   const circleColor = colorScheme === 'dark' ? '#374151' : '#e5e7eb';
 

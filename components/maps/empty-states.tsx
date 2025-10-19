@@ -2,6 +2,7 @@ import { View } from 'react-native';
 import { Search, MapPin } from 'lucide-react-native';
 import { Text } from '~/components/ui/text';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 interface EmptySearchStateProps {
   message?: string;
@@ -9,7 +10,8 @@ interface EmptySearchStateProps {
 
 export function EmptySearchState({ message = 'No places found' }: EmptySearchStateProps) {
   const { colorScheme } = useTheme();
-  const iconColor = colorScheme === 'dark' ? '#6b7280' : '#9ca3af';
+  const themeColors = getThemeColor(colorScheme === 'dark');
+  const iconColor = themeColors.icon.muted;
 
   return (
     <View className="items-center gap-3 p-6">
@@ -24,7 +26,8 @@ export function EmptySearchState({ message = 'No places found' }: EmptySearchSta
 
 export function EmptyPlacesState() {
   const { colorScheme } = useTheme();
-  const iconColor = colorScheme === 'dark' ? '#6b7280' : '#9ca3af';
+  const themeColors = getThemeColor(colorScheme === 'dark');
+  const iconColor = themeColors.icon.muted;
 
   return (
     <View className="items-center gap-3 p-6">

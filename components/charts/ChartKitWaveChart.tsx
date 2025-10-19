@@ -52,8 +52,8 @@ export function ChartKitWaveChart({
   const labels = data.map((d) => d.time);
   const heights = data.map((d) => d.height);
 
-  // Colors
-  const waveColor = COLORS.chart.wind; // Using teal color for waves
+  // Colors (theme-aware)
+  const waveColor = themeColors.chart?.wind ?? COLORS.chart.wind; // Using teal color for waves
   
   
   

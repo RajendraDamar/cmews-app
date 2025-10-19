@@ -9,6 +9,7 @@ import { ChartKitWindChart } from '~/components/charts';
 import type { WindForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
+import { COLORS } from '~/lib/constants';
 
 export function WindCard({ seaArea, direction, speedMin, speedMax, hourly }: WindForecastData) {
   const [isOpen, setIsOpen] = useState(false);
@@ -74,7 +75,7 @@ export function WindCard({ seaArea, direction, speedMin, speedMax, hourly }: Win
 
               <View className="flex-row items-center gap-4">
                 <View className="rounded-full bg-teal-500/20 p-2">
-                  <Wind size={24} color="#14b8a6" />
+                  <Wind size={24} color={COLORS.chart.wind} />
                 </View>
 
                 <View className="items-end">

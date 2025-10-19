@@ -12,6 +12,7 @@ import {
 } from 'lucide-react-native';
 import { MAP_CATEGORIES } from '~/constants/mock-data';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 interface CategoryFilterProps {
   selectedCategory: string | null;
@@ -63,7 +64,7 @@ export function CategoryFilter({ selectedCategory, onSelectCategory }: CategoryF
             {Icon && (
               <Icon
                 size={14}
-                color={isSelected ? '#fff' : colorScheme === 'dark' ? '#a1a1aa' : '#52525b'}
+                color={isSelected ? getThemeColor(colorScheme === 'dark').primaryForeground : (colorScheme === 'dark' ? getThemeColor(true).muted : getThemeColor(false).muted)}
               />
             )}
             <Text className={`text-sm font-medium ${isSelected ? 'text-primary-foreground' : ''}`}>

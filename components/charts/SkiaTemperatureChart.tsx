@@ -4,7 +4,7 @@ import { Canvas, Path, Circle, Text as SkiaText, vec, LinearGradient } from '@sh
 import { useSharedValue, withTiming, useDerivedValue } from 'react-native-reanimated';
 import { scaleLinear } from 'd3-scale';
 import { Text } from '~/components/ui/text';
-import { COLORS } from '~/lib/constants';
+import { COLORS, getThemeColor } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
 import { createSmoothPath, createAreaPath, type DataPoint } from './utils';
 
@@ -96,8 +96,9 @@ export function SkiaTemperatureChart({
   }, [humidityPoints, width, propHeight]);
 
   // Colors
-  const tempColor = COLORS.chart.temperature;
-  const humidityColor = COLORS.chart.humidity;
+  const themeColors = getThemeColor(colorScheme === 'dark');
+  const tempColor = themeColors.chart?.temperature ?? COLORS.chart.temperature;
+  const humidityColor = themeColors.chart?.humidity ?? COLORS.chart.humidity;
   const textColor = colorScheme === 'dark' ? '#9ca3af' : '#6b7280';
   const gridColor = colorScheme === 'dark' ? '#374151' : '#e5e7eb';
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { Card, CardContent } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
-import { getWeatherIcon } from '~/lib/utils/weather-icons';
+import { WeatherIcon } from '~/components/weather/weather-icon';
 import { parseBMKGDateTime, formatTime24 } from '~/lib/utils/indonesian-locale';
 import type { BMKGHourlyData } from '~/lib/types/weather';
 import { useTheme } from '~/lib/theme-provider';
@@ -27,17 +27,13 @@ export function HourlyForecast({ hourlyData }: HourlyForecastProps) {
         contentContainerStyle={{ gap: 12 }}>
         {hourlyData.map((hour, index) => {
           const time = parseBMKGDateTime(hour.datetime);
-          const iconInfo = getWeatherIcon(hour.weather.code);
-          const WeatherIcon = iconInfo.icon;
-          const iconColor = colorScheme === 'dark' ? iconInfo.color.dark : iconInfo.color.light;
-
           return (
             <Card key={index} className="w-24">
               <CardContent className="items-center p-3">
                 <Text className="mb-2 text-sm" variant="muted">
                   {formatTime24(time)}
                 </Text>
-                <WeatherIcon size={32} color={iconColor} />
+                <WeatherIcon condition={hour.weather.description} size={32} />
                 <Text className="mt-2 text-lg font-semibold">{hour.temperature}°</Text>
                 <View className="mt-1 flex-row items-center gap-1">
                   <Droplets size={12} color={themeColors.muted} />

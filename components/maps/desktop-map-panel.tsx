@@ -1,9 +1,10 @@
 // Desktop Map Panel Component - Minimal sidebar for map screen
 import React from 'react';
 import { View, Pressable } from 'react-native';
-import { Plus } from 'lucide-react-native';
+import { Plus, Eye, EyeOff } from 'lucide-react-native';
+import { Text } from '~/components/ui/text';
 import { Input } from '~/components/ui/input';
-import { Button } from '~/components/ui/button';
+// Button intentionally not used here; using Pressable + Text for consistent icon
 import { useTheme } from '~/lib/theme-provider';
 import { getThemeColor } from '~/lib/constants';
 
@@ -56,12 +57,19 @@ export function DesktopMapPanel({
           shadowRadius: 4,
           elevation: 4,
         }}>
-        <Button
-          label={showWeatherLayer ? '🌧️ Sembunyikan Lapisan' : '☀️ Tampilkan Lapisan'}
+        <Pressable
           onPress={onToggleLayer}
-          variant="ghost"
-          className="h-11 justify-start"
-        />
+          className="h-11 flex-row items-center justify-start gap-3 px-3"
+          accessibilityRole="button">
+          {showWeatherLayer ? (
+            <EyeOff size={18} color={colorScheme === 'dark' ? '#e5e7eb' : themeColors.icon.foreground} />
+          ) : (
+            <Eye size={18} color={colorScheme === 'dark' ? '#e5e7eb' : themeColors.icon.foreground} />
+          )}
+          <Text className="text-sm font-medium">
+            {showWeatherLayer ? 'Sembunyikan Lapisan' : 'Tampilkan Lapisan'}
+          </Text>
+        </Pressable>
       </View>
 
       {/* Floating Action Button - Add Report */}

@@ -14,6 +14,7 @@ import {
 import { useRouter, usePathname } from 'expo-router';
 import { Text } from '~/components/ui/text';
 import { useTheme } from '~/lib/theme-provider';
+import { NAV_COLORS } from '~/lib/constants';
 import { useState } from 'react';
 import { ProfileModal } from '~/components/profile-modal';
 import { Separator } from '~/components/ui/separator';
@@ -47,8 +48,8 @@ export function Sidebar() {
       <View
         className={`h-full border-r ${collapsed ? 'w-16' : 'w-64'}`}
         style={{
-          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
-          borderColor: colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+          backgroundColor: colorScheme === 'dark' ? NAV_COLORS.darkBg : NAV_COLORS.lightBg,
+          borderColor: colorScheme === 'dark' ? NAV_COLORS.darkBorder : NAV_COLORS.lightBorder,
         }}>
         {/* Logo & Collapse Button */}
         <View

@@ -4,6 +4,7 @@ import { Pressable } from 'react-native';
 import { Check } from 'lucide-react-native';
 import { cn } from '~/lib/utils';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 interface CheckboxProps {
   checked: boolean;
@@ -14,6 +15,7 @@ interface CheckboxProps {
 
 export function Checkbox({ checked, onCheckedChange, className, disabled }: CheckboxProps) {
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
   return (
     <Pressable
@@ -25,7 +27,7 @@ export function Checkbox({ checked, onCheckedChange, className, disabled }: Chec
         disabled && 'opacity-50',
         className
       )}>
-      {checked && <Check size={14} color={colorScheme === 'dark' ? '#fff' : '#fff'} />}
+  {checked && <Check size={14} color={themeColors.icon.foreground} />}
     </Pressable>
   );
 }

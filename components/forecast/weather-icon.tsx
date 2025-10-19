@@ -1,6 +1,7 @@
 import { View } from 'react-native';
 import { Sun, Cloud, CloudRain, CloudDrizzle, CloudSnow, CloudRainWind } from 'lucide-react-native';
 import { useTheme } from '~/lib/theme-provider';
+import { getIconForDescription } from '~/lib/utils/weather-icons';
 
 interface WeatherIconProps {
   weather: string;
@@ -13,7 +14,10 @@ export function WeatherIcon({ weather, size = 32 }: WeatherIconProps) {
   // Determine icon and background color based on weather condition
   let IconComponent = Cloud;
   let bgColor = 'bg-muted';
-  const iconColor = colorScheme === 'dark' ? '#fff' : '#fff';
+  const isDark = colorScheme === 'dark';
+  const suggested = getIconForDescription(weather);
+  const iconColor = suggested?.color?.[isDark ? 'dark' : 'light'] || (isDark ? '#fff' : '#111');
+  const darkBg = isDark ? { backgroundColor: suggested?.bgColor?.dark ?? '#0b1220' } : {};
 
   const weatherLower = weather.toLowerCase();
 
@@ -41,7 +45,7 @@ export function WeatherIcon({ weather, size = 32 }: WeatherIconProps) {
   }
 
   return (
-    <View className={`${bgColor} rounded-full p-2`}>
+    <View className={`${bgColor} rounded-full p-2`} style={darkBg}>
       <IconComponent size={size} color={iconColor} />
     </View>
   );

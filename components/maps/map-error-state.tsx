@@ -4,6 +4,7 @@ import { Text } from '~/components/ui/text';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent } from '~/components/ui/card';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 interface MapErrorStateProps {
   message?: string;
@@ -12,7 +13,8 @@ interface MapErrorStateProps {
 
 export function MapErrorState({ message = 'Unable to load map', onRetry }: MapErrorStateProps) {
   const { colorScheme } = useTheme();
-  const iconColor = colorScheme === 'dark' ? '#6b7280' : '#9ca3af';
+  const themeColors = getThemeColor(colorScheme === 'dark');
+  const iconColor = themeColors.icon.muted;
 
   return (
     <View className="flex-1 items-center justify-center bg-muted p-6">

@@ -65,7 +65,8 @@ export function ChartKitTemperatureChart({
     backgroundGradientFrom: themeColors.card,
     backgroundGradientTo: themeColors.card,
     decimalPlaces: 1,
-    color: (opacity = 1) => `rgba(239, 68, 68, ${opacity})`, // Temperature color
+    // Use theme-aware primary colors for lines and fall back to COLORS tokens
+    color: (opacity = 1) => `rgba(${hexToRgb(themeColors.primary || '#3b82f6')}, ${opacity})`,
     labelColor: (opacity = 1) => themeColors.muted,
     style: {
       borderRadius: 16,
@@ -88,16 +89,50 @@ export function ChartKitTemperatureChart({
     datasets: [
       {
         data: temperatures,
-        color: (opacity = 1) => tempColor,
+        color: (opacity = 1) => `rgba(${hexToRgb(tempColor)}, ${opacity})`,
         strokeWidth: 3,
       },
       {
         data: humidities,
-        color: (opacity = 1) => humidityColor,
+        color: (opacity = 1) => `rgba(${hexToRgb(humidityColor)}, ${opacity})`,
         strokeWidth: 2,
       },
     ],
   };
+
+// Helper: convert hex or hsl start values to r,g,b string for rgba
+function hexToRgb(hexOrHsl: string): string {
+  // If hsl, attempt to compute approximate rgb by parsing numbers
+  if (hexOrHsl.startsWith('hsl')) {
+    // crude parse: hsl(h s% l%) -> convert to rgb via a basic algorithm
+    try {
+      const inner = hexOrHsl.replace(/hsl\(|\)|%/g, '').split(' ').map((s) => s.replace(',', ''));
+      const h = Number(inner[0]);
+      const s = Number(inner[1]) / 100;
+      const l = Number(inner[2]) / 100;
+      // HSL to RGB conversion (0..1 range)
+      const a = s * Math.min(l, 1 - l);
+      const f = (n: number) => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color);
+      };
+      return `${f(0)}, ${f(8)}, ${f(4)}`;
+    } catch {
+      return '59,130,246';
+    }
+  }
+
+  // If hex like #rrggbb
+  const hex = hexOrHsl.replace('#', '');
+  if (hex.length === 6) {
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `${r}, ${g}, ${b}`;
+  }
+  return '59,130,246';
+}
 
   const handleDataPointClick = (dataPointClickData: any) => {
     const { index, value, dataset } = dataPointClickData;

@@ -1,6 +1,8 @@
 // Severity Marker Component for Weather Reports
 import { View, Pressable } from 'react-native';
 import { CloudRain, Cloud, Sun, CloudDrizzle, Wind } from 'lucide-react-native';
+import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 import { WeatherReport } from '~/lib/types/weather-report';
 
 interface SeverityMarkerProps {
@@ -34,6 +36,8 @@ const getWeatherIcon = (weather: string) => {
 export function SeverityMarker({ report, onPress, selected = false }: SeverityMarkerProps) {
   const color = getSeverityColor(report.severity);
   const Icon = getWeatherIcon(report.weather);
+  const { colorScheme } = useTheme();
+  const theme = getThemeColor(colorScheme === 'dark');
 
   return (
     <Pressable onPress={onPress}>
@@ -44,7 +48,7 @@ export function SeverityMarker({ report, onPress, selected = false }: SeverityMa
           borderRadius: selected ? 24 : 21,
           backgroundColor: color,
           borderWidth: selected ? 4 : 3,
-          borderColor: '#fff',
+          borderColor: theme.primaryForeground,
           justifyContent: 'center',
           alignItems: 'center',
           shadowColor: '#000',
@@ -53,7 +57,7 @@ export function SeverityMarker({ report, onPress, selected = false }: SeverityMa
           shadowRadius: 6,
           elevation: 6,
         }}>
-        <Icon size={selected ? 24 : 22} color="#fff" />
+  <Icon size={selected ? 24 : 22} color={theme.primary} />
       </View>
     </Pressable>
   );

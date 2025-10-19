@@ -7,6 +7,7 @@ import { Button } from '~/components/ui/button';
 import { MOCK_SAVED_PLACES } from '~/constants/mock-data';
 import { EmptyPlacesState } from '~/components/maps/empty-states';
 import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 
 interface SavedPlacesDrawerProps {
   onPlaceSelect: (place: any) => void;
@@ -28,7 +29,7 @@ export function SavedPlacesDrawer({ onPlaceSelect, onClose }: SavedPlacesDrawerP
     <Card className="h-full shadow-lg">
       <CardHeader className="flex-row items-center justify-between pb-3">
         <View className="flex-row items-center gap-2">
-          <Star size={24} color="#f59e0b" fill="#f59e0b" />
+          <Star size={24} color={getThemeColor(colorScheme === 'dark').primary} fill={getThemeColor(colorScheme === 'dark').primary} />
           <CardTitle>Saved Places</CardTitle>
         </View>
         <Pressable onPress={onClose} className="ml-2">
@@ -63,7 +64,7 @@ export function SavedPlacesDrawer({ onPlaceSelect, onClose }: SavedPlacesDrawerP
                     className="rounded-lg border border-border bg-card p-4 active:bg-muted">
                     <View className="flex-row items-center gap-3">
                       <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                        <Icon size={20} color="#3b82f6" />
+                        <Icon size={20} color={getThemeColor(colorScheme === 'dark').primary} />
                       </View>
                       <View className="flex-1">
                         <Text className="font-semibold">{place.name}</Text>
@@ -71,7 +72,7 @@ export function SavedPlacesDrawer({ onPlaceSelect, onClose }: SavedPlacesDrawerP
                           {place.address}
                         </Text>
                       </View>
-                      <Star size={20} color="#f59e0b" fill="#f59e0b" />
+                      <Star size={20} color={getThemeColor(colorScheme === 'dark').primary} fill={getThemeColor(colorScheme === 'dark').primary} />
                     </View>
                   </Pressable>
                 );

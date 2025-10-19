@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { Card, CardContent } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
-import { getWeatherIcon } from '~/lib/utils/weather-icons';
+import { WeatherIcon } from '~/components/weather/weather-icon';
 import { parseBMKGDateTime, getIndonesianDayName } from '~/lib/utils/indonesian-locale';
 import type { BMKGDailyData } from '~/lib/types/weather';
 import { useTheme } from '~/lib/theme-provider';
@@ -24,10 +24,7 @@ export function DailyForecast({ dailyData }: DailyForecastProps) {
         {dailyData.map((day, index) => {
           const date = parseBMKGDateTime(day.date + '0000');
           const dayName = index === 0 ? 'Hari Ini' : getIndonesianDayName(date);
-          const iconInfo = getWeatherIcon(day.weather.code);
-          const WeatherIcon = iconInfo.icon;
-          const iconColor = colorScheme === 'dark' ? iconInfo.color.dark : iconInfo.color.light;
-
+          
           return (
             <Card key={index}>
               <CardContent className="flex-row items-center justify-between p-4">
@@ -48,7 +45,7 @@ export function DailyForecast({ dailyData }: DailyForecastProps) {
                     </View>
                   )}
 
-                  <WeatherIcon size={32} color={iconColor} />
+                  <WeatherIcon condition={day.weather.description} size={32} />
 
                   <View className="min-w-[60px] items-end">
                     <Text className="font-semibold">{day.tempMax}°</Text>

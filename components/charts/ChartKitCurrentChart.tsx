@@ -51,8 +51,8 @@ export function ChartKitCurrentChart({
   const labels = data.map((d) => d.time);
   const speeds = data.map((d) => d.speed);
 
-  // Colors
-  const currentColor = COLORS.chart.current;
+  // Colors (theme-aware)
+  const currentColor = themeColors.chart?.current ?? COLORS.chart.current;
   
   
   
@@ -62,8 +62,8 @@ export function ChartKitCurrentChart({
     backgroundGradientFrom: themeColors.card,
     backgroundGradientTo: themeColors.card,
     decimalPlaces: 1,
-    color: (opacity = 1) => currentColor,
-    labelColor: (opacity = 1) => themeColors.muted,
+  color: (opacity = 1) => currentColor,
+  labelColor: (opacity = 1) => themeColors.muted,
     style: {
       borderRadius: 16,
     },

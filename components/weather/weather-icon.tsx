@@ -1,5 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
+import { useTheme } from '~/lib/theme-provider';
+import { getWeatherColor, getIconForDescription } from '~/lib/utils/weather-icons';
 import {
   Sun,
   CloudSun,
@@ -72,9 +74,20 @@ const WEATHER_ICON_MAP: Record<string, WeatherIconConfig> = {
 };
 
 export function WeatherIcon({ condition, size = 48 }: WeatherIconProps) {
-  const config = WEATHER_ICON_MAP[condition] || WEATHER_ICON_MAP.Cerah;
-  const IconComponent = config.icon;
+  const { colorScheme } = useTheme();
+  const isDark = colorScheme === 'dark';
+
+  const fallback = WEATHER_ICON_MAP[condition] || WEATHER_ICON_MAP.Cerah;
+  const suggested = getIconForDescription(condition);
+
+  const IconComponent = suggested.icon || fallback.icon;
   const iconSize = size * 0.6; // Icon is 60% of container size
+
+  // Pick an icon color that adapts to dark mode for good contrast
+  const iconColor = suggested?.color?.[isDark ? 'dark' : 'light'] || getWeatherColor(condition, isDark);
+
+  // For dark mode use a subdued background so the colored icon remains visible
+  const backgroundColor = isDark ? (suggested?.bgColor?.dark ?? '#0b1220') : (suggested?.bgColor?.light ?? fallback.bgColor);
 
   return (
     <View
@@ -82,9 +95,9 @@ export function WeatherIcon({ condition, size = 48 }: WeatherIconProps) {
       style={{
         width: size,
         height: size,
-        backgroundColor: config.bgColor,
+        backgroundColor,
       }}>
-      <IconComponent size={iconSize} color={config.iconColor} />
+      <IconComponent size={iconSize} color={iconColor} />
     </View>
   );
 }

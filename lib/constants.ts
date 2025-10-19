@@ -52,6 +52,14 @@ export const getThemeColor = (isDark: boolean) => ({
     muted: isDark ? '#9ca3af' : '#6b7280',
     foreground: isDark ? '#e5e7eb' : '#1f2937',
   },
+  // Provide chart color tokens so components can use themeColors.chart?.{temperature,humidity,wind,precipitation,current}
+  chart: {
+    temperature: COLORS.chart.temperature,
+    humidity: COLORS.chart.humidity,
+    wind: COLORS.chart.wind,
+    precipitation: COLORS.chart.precipitation,
+    current: COLORS.chart.current,
+  },
 });
 
 export const getPrecipitationColor = (percentage: number): string => {
@@ -76,4 +84,12 @@ export const DIRECTION_MAP: Record<string, number> = {
 export const MAP_STYLES = {
   dark: 'https://tiles.openfreemap.org/styles/dark',
   light: 'https://tiles.openfreemap.org/styles/bright',
+};
+
+// Navigation colors (used for sidebars and bottom tab background)
+export const NAV_COLORS = {
+  darkBg: 'hsl(222.2 84% 4.9%)',
+  lightBg: 'hsl(0 0% 100%)',
+  darkBorder: 'hsl(217.2 32.6% 17.5%)',
+  lightBorder: 'hsl(214.3 31.8% 91.4%)',
 };

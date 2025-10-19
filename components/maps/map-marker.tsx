@@ -1,4 +1,6 @@
 import { View } from 'react-native';
+import { useTheme } from '~/lib/theme-provider';
+import { getThemeColor } from '~/lib/constants';
 import {
   Utensils,
   Fuel,
@@ -17,6 +19,8 @@ interface MapMarkerProps {
 }
 
 export function MapMarker({ category, selected = false }: MapMarkerProps) {
+  const { colorScheme } = useTheme();
+  const theme = getThemeColor(colorScheme === 'dark');
   const iconMap: Record<string, any> = {
     restaurant: Utensils,
     gas: Fuel,
@@ -52,14 +56,14 @@ export function MapMarker({ category, selected = false }: MapMarkerProps) {
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: selected ? 4 : 3,
-        borderColor: '#fff',
+  borderColor: theme.primaryForeground,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5,
       }}>
-      <Icon size={selected ? 20 : 16} color="#fff" />
+  <Icon size={selected ? 20 : 16} color={theme.primaryForeground} />
     </View>
   );
 }

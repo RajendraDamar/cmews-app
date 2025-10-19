@@ -5,6 +5,7 @@ import { Separator } from '~/components/ui/separator';
 import { Switch } from '~/components/ui/switch';
 import { useTheme } from '~/lib/theme-provider';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
+import { getThemeColor } from '~/lib/constants';
 
 interface LayerSwitcherProps {
   mapType: 'standard' | 'satellite' | 'terrain';
@@ -24,11 +25,10 @@ export function LayerSwitcher({
   onLayerToggle,
 }: LayerSwitcherProps) {
   const { colorScheme } = useTheme();
+  const themeColors = getThemeColor(colorScheme === 'dark');
 
-  const iconColor = colorScheme === 'dark' ? '#e5e7eb' : '#1f2937';
-  // oklch(62.3% 0.214 259.815) converts to approximately #5b7dff in light mode
-  // oklch(70.7% 0.165 254.624) for dark mode
-  const activeColor = colorScheme === 'dark' ? '#8b9cff' : '#5b7dff';
+  const iconColor = themeColors.icon.foreground;
+  const activeColor = themeColors.primary;
 
   return (
     <Popover>

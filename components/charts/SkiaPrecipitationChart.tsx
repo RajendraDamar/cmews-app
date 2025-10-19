@@ -4,7 +4,7 @@ import { Canvas, Path, RoundedRect, Text as SkiaText } from '@shopify/react-nati
 import { useSharedValue, withTiming } from 'react-native-reanimated';
 import { scaleLinear } from 'd3-scale';
 import { Text } from '~/components/ui/text';
-import { COLORS } from '~/lib/constants';
+import { COLORS, getThemeColor } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
 
 interface PrecipitationChartData {
@@ -60,7 +60,8 @@ export function SkiaPrecipitationChart({
     .range([padding.top + chartHeight, padding.top]);
 
   // Colors
-  const precipColor = COLORS.chart.precipitation;
+  const themeColors = getThemeColor(colorScheme === 'dark');
+  const precipColor = themeColors.chart?.precipitation ?? COLORS.chart.precipitation;
   const textColor = colorScheme === 'dark' ? '#9ca3af' : '#6b7280';
   const gridColor = colorScheme === 'dark' ? '#374151' : '#e5e7eb';
 
