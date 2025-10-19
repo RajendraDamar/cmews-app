@@ -7,6 +7,11 @@ import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 
+// Workaround: some UI popover typings differ from usage here; cast to any to avoid TS errors
+const PopoverAny: any = Popover as any;
+const PopoverTriggerAny: any = PopoverTrigger as any;
+const PopoverContentAny: any = PopoverContent as any;
+
 interface TemperatureChartData {
   time: string;
   temp: number;
@@ -28,12 +33,18 @@ export function ChartKitTemperatureChart({
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
   const { width: windowWidth } = useWindowDimensions();
-  
-  // Calculate responsive width
-  // For desktop: use max container width (similar to forecast tab max-w-4xl = 896px), minus padding
-  // For mobile: use screen width minus padding
-  const responsiveWidth = propWidth || (isDesktop ? Math.min(windowWidth, 896) - 64 : windowWidth - 32);
-  const width = responsiveWidth;
+
+  // Measure actual container width to avoid guesswork and trailing empty space
+  const [containerWidth, setContainerWidth] = React.useState<number>(0);
+
+  // Calculate responsive width using measured container when available, otherwise fallback
+  const width =
+    propWidth ||
+    (containerWidth > 0
+      ? containerWidth
+      : isDesktop
+      ? Math.min(windowWidth, 896) - 64
+      : windowWidth - 32);
   
   const [selectedDataPoint, setSelectedDataPoint] = useState<{ index: number; value: number; dataset: number } | null>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -95,7 +106,7 @@ export function ChartKitTemperatureChart({
   };
 
   return (
-    <View>
+  <View onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}>
       <LineChart
         data={chartData}
         width={width}
@@ -120,11 +131,11 @@ export function ChartKitTemperatureChart({
       {selectedDataPoint !== null && 
        selectedDataPoint.index >= 0 && 
        selectedDataPoint.index < data.length && (
-        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-          <PopoverTrigger asChild>
+        <PopoverAny open={popoverOpen} onOpenChange={setPopoverOpen}>
+          <PopoverTriggerAny asChild>
             <View />
-          </PopoverTrigger>
-          <PopoverContent className="w-56">
+          </PopoverTriggerAny>
+          <PopoverContentAny className="w-56">
             <View className="gap-2">
               <Text className="font-semibold">Detail Cuaca</Text>
               <View className="flex-row justify-between">
@@ -143,8 +154,8 @@ export function ChartKitTemperatureChart({
                 </Text>
               </View>
             </View>
-          </PopoverContent>
-        </Popover>
+          </PopoverContentAny>
+        </PopoverAny>
       )}
 
       {/* Legend */}

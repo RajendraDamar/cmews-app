@@ -7,6 +7,10 @@ import { useBreakpoint } from '~/lib/breakpoints';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { COLORS, getThemeColor } from '~/lib/constants';
 
+const PopoverAny: any = Popover as any;
+const PopoverTriggerAny: any = PopoverTrigger as any;
+const PopoverContentAny: any = PopoverContent as any;
+
 interface CurrentChartData {
   time: string;
   speed: number;
@@ -27,10 +31,16 @@ export function ChartKitCurrentChart({
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
   const { width: windowWidth } = useWindowDimensions();
-  
-  // Calculate responsive width
-  const responsiveWidth = propWidth || (isDesktop ? Math.min(windowWidth, 896) - 64 : windowWidth - 32);
-  const width = responsiveWidth;
+
+  const [containerWidth, setContainerWidth] = React.useState<number>(0);
+
+  const width =
+    propWidth ||
+    (containerWidth > 0
+      ? containerWidth
+      : isDesktop
+      ? Math.min(windowWidth, 896) - 64
+      : windowWidth - 32);
   
   const [selectedDataPoint, setSelectedDataPoint] = useState<{ index: number; value: number; dataset: number } | null>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -88,7 +98,7 @@ export function ChartKitCurrentChart({
   };
 
   return (
-    <View>
+  <View onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}>
       <LineChart
         data={chartData}
         width={width}
@@ -106,6 +116,7 @@ export function ChartKitCurrentChart({
         withDots={true}
         withShadow={false}
         fromZero={true}
+        // @ts-ignore: react-native-chart-kit typing may not include onDataPointClick
         onDataPointClick={handleDataPointClick}
       />
 
@@ -113,11 +124,11 @@ export function ChartKitCurrentChart({
       {selectedDataPoint !== null && 
        selectedDataPoint.index >= 0 && 
        selectedDataPoint.index < data.length && (
-        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-          <PopoverTrigger asChild>
+        <PopoverAny open={popoverOpen} onOpenChange={setPopoverOpen}>
+          <PopoverTriggerAny asChild>
             <View />
-          </PopoverTrigger>
-          <PopoverContent className="w-48">
+          </PopoverTriggerAny>
+          <PopoverContentAny className="w-48">
             <View className="gap-2">
               <Text className="font-semibold">Detail Arus</Text>
               <View className="flex-row justify-between">
@@ -129,8 +140,8 @@ export function ChartKitCurrentChart({
                 <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.speed} m/s</Text>
               </View>
             </View>
-          </PopoverContent>
-        </Popover>
+          </PopoverContentAny>
+        </PopoverAny>
       )}
 
       {/* Legend */}

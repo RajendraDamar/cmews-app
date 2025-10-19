@@ -7,6 +7,10 @@ import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 
+const PopoverAny: any = Popover as any;
+const PopoverTriggerAny: any = PopoverTrigger as any;
+const PopoverContentAny: any = PopoverContent as any;
+
 interface PrecipitationChartData {
   time: string;
   precipitation: number;
@@ -27,10 +31,16 @@ export function ChartKitPrecipitationChart({
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
   const { width: windowWidth } = useWindowDimensions();
-  
-  // Calculate responsive width
-  const responsiveWidth = propWidth || (isDesktop ? Math.min(windowWidth, 896) - 64 : windowWidth - 32);
-  const width = responsiveWidth;
+
+  const [containerWidth, setContainerWidth] = React.useState<number>(0);
+
+  const width =
+    propWidth ||
+    (containerWidth > 0
+      ? containerWidth
+      : isDesktop
+      ? Math.min(windowWidth, 896) - 64
+      : windowWidth - 32);
   
   const [selectedDataPoint, setSelectedDataPoint] = useState<{ index: number; value: number; dataset: number } | null>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -78,7 +88,7 @@ export function ChartKitPrecipitationChart({
   };
 
   return (
-    <View>
+  <View onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}>
       <BarChart
         data={chartData}
         width={width}
@@ -96,6 +106,7 @@ export function ChartKitPrecipitationChart({
         fromZero={true}
         showBarTops={false}
         showValuesOnTopOfBars={false}
+        // @ts-ignore: react-native-chart-kit typing may not include onDataPointClick
         onDataPointClick={handleDataPointClick}
       />
 
@@ -103,11 +114,11 @@ export function ChartKitPrecipitationChart({
       {selectedDataPoint !== null && 
        selectedDataPoint.index >= 0 && 
        selectedDataPoint.index < data.length && (
-        <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
-          <PopoverTrigger asChild>
+        <PopoverAny open={popoverOpen} onOpenChange={setPopoverOpen}>
+          <PopoverTriggerAny asChild>
             <View />
-          </PopoverTrigger>
-          <PopoverContent className="w-48">
+          </PopoverTriggerAny>
+          <PopoverContentAny className="w-48">
             <View className="gap-2">
               <Text className="font-semibold">Detail Curah Hujan</Text>
               <View className="flex-row justify-between">
@@ -119,8 +130,8 @@ export function ChartKitPrecipitationChart({
                 <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.precipitation} mm</Text>
               </View>
             </View>
-          </PopoverContent>
-        </Popover>
+          </PopoverContentAny>
+        </PopoverAny>
       )}
 
       {/* Legend */}
