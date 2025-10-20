@@ -11,6 +11,20 @@ import type {
 } from '~/lib/types/weather';
 import { formatToBMKGDateTime } from '~/lib/utils/indonesian-locale';
 
+/**
+ * Format date to BMKG API datetime format: "YYYY-MM-DD HH:mm:ss"
+ * This matches the real BMKG API response structure
+ */
+function formatToBMKGAPIDateTime(date: Date): string {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hour = date.getHours().toString().padStart(2, '0');
+  const minute = date.getMinutes().toString().padStart(2, '0');
+  const second = date.getSeconds().toString().padStart(2, '0');
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+}
+
 // Indonesian Provinces with Cities and Districts
 export const MOCK_LOCATIONS: LocationOption[] = [
   {
@@ -126,16 +140,18 @@ const WIND_DIRECTIONS = [
 
 /**
  * Generate hourly forecast data for next 24 hours (3-hour intervals)
+ * Returns exactly 24 entries (3 days × 8 per day) as per BMKG API structure
  */
 function generateHourlyForecast(): BMKGHourlyData[] {
   const hourlyData: BMKGHourlyData[] = [];
   const now = new Date();
 
-  for (let i = 0; i < 8; i++) {
+  // Generate exactly 24 forecasts (3 days × 8 per day) with 3-hour intervals
+  for (let i = 0; i < 24; i++) {
     const forecastTime = new Date(now.getTime() + i * 3 * 60 * 60 * 1000);
     const hour = forecastTime.getHours();
 
-    // Temperature varies by time of day
+    // Temperature varies by time of day - realistic Indonesian climate (20-35°C)
     let temp = 25 + Math.random() * 5;
     if (hour >= 6 && hour < 12) temp += 2;
     if (hour >= 12 && hour < 16) temp += 5;
@@ -308,18 +324,50 @@ export const mockWeatherData = {
 
 // BMKG API-compatible export for service layer
 // This matches the structure expected by MockBMKGService
+// Returns exactly 24 forecast entries (3 days × 8 per day) with 3-hour intervals
 export const mockWeatherForecast = {
-  data: generateHourlyForecast().slice(0, 24).map((h) => ({
-    utc_datetime: h.datetime,
-    local_datetime: h.datetime,
-    t: h.temperature,
-    hu: h.humidity,
-    weather_desc: h.weather.description,
-    weather_desc_en: h.weather.description, // TODO: Add English translations
-    ws: h.windSpeed,
-    wd: h.windDirection,
-    tcc: 50, // Cloud coverage - placeholder
-    vs_text: '10', // Visibility - placeholder
-  })),
+  data: (() => {
+    const forecasts = [];
+    const now = new Date();
+    
+    // Generate exactly 24 forecasts (3 days × 8 per day) with 3-hour intervals
+    for (let i = 0; i < 24; i++) {
+      const forecastTime = new Date(now.getTime() + i * 3 * 60 * 60 * 1000);
+      const hour = forecastTime.getHours();
+      
+      // Temperature: 22-32°C realistic range for Indonesian climate
+      let temp = 22 + Math.random() * 10;
+      if (hour >= 6 && hour < 12) temp += 2;
+      if (hour >= 12 && hour < 16) temp += 3;
+      if (hour >= 22 || hour < 6) temp -= 2;
+      
+      // Select weather based on hour
+      let weatherCondition;
+      if (hour >= 6 && hour < 18) {
+        weatherCondition = WEATHER_CONDITIONS[Math.floor(Math.random() * 4)];
+      } else {
+        weatherCondition = WEATHER_CONDITIONS[Math.floor(Math.random() * 3)];
+      }
+      
+      // Calculate UTC time (Indonesia is UTC+7)
+      const utcTime = new Date(forecastTime.getTime() - 7 * 60 * 60 * 1000);
+      
+      forecasts.push({
+        utc_datetime: formatToBMKGAPIDateTime(utcTime),
+        local_datetime: formatToBMKGAPIDateTime(forecastTime),
+        t: Math.round(temp),
+        hu: Math.round(55 + Math.random() * 30), // 55-85% humidity
+        weather_desc: weatherCondition.description,
+        weather_desc_en: weatherCondition.description, // TODO: Add English translations
+        ws: Math.round(5 + Math.random() * 15), // 5-20 km/h wind speed
+        wd: WIND_DIRECTIONS[Math.floor(Math.random() * WIND_DIRECTIONS.length)],
+        tcc: Math.round(30 + Math.random() * 50), // 30-80% cloud coverage
+        vs_text: '10', // Visibility in km
+        image: `${weatherCondition.code}.png`,
+      });
+    }
+    
+    return forecasts;
+  })(),
 };
 
