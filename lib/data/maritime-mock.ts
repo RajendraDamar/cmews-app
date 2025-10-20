@@ -8,6 +8,19 @@ import type {
   CurrentStrength,
 } from '../types/maritime';
 
+/**
+ * Format date to BMKG API datetime format: "YYYY-MM-DD HH:mm:ss"
+ */
+function formatToBMKGAPIDateTime(date: Date): string {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hour = date.getHours().toString().padStart(2, '0');
+  const minute = date.getMinutes().toString().padStart(2, '0');
+  const second = date.getSeconds().toString().padStart(2, '0');
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+}
+
 // Indonesian sea areas
 export const SEA_AREAS = [
   'Laut Jawa',
@@ -97,7 +110,7 @@ function generateWeatherData(timeframe: '24h' | '3d' | '7d'): WeatherDataPoint[]
     const isDaytime = hour >= 6 && hour < 18;
 
     data.push({
-      datetime: datetime.toISOString(),
+      datetime: formatToBMKGAPIDateTime(datetime),
       temperature: Math.round(24 + Math.random() * 8 + (isDaytime ? 2 : -2)),
       humidity: Math.round(60 + Math.random() * 30),
       precipitation: Math.round(Math.random() * 60),
@@ -129,7 +142,7 @@ function generateWindData(): WindData[] {
       speedMax,
       beaufortScale,
       gusts: speedMax + Math.round(Math.random() * 10),
-      timestamp: baseDate.toISOString(),
+      timestamp: formatToBMKGAPIDateTime(baseDate),
     });
   });
 
@@ -155,7 +168,7 @@ function generateWaveData(): WaveData[] {
       period: Math.round(4 + Math.random() * 8),
       direction: direction.name,
       seaState: getSeaState(significantHeight),
-      timestamp: baseDate.toISOString(),
+      timestamp: formatToBMKGAPIDateTime(baseDate),
     });
   });
 
@@ -177,7 +190,7 @@ function generateCurrentData(): CurrentData[] {
       direction: direction.name,
       directionDegrees: direction.degrees,
       strength: getCurrentStrength(speed),
-      timestamp: baseDate.toISOString(),
+      timestamp: formatToBMKGAPIDateTime(baseDate),
     });
   });
 
