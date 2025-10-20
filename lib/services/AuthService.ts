@@ -8,16 +8,16 @@ import {
 } from 'firebase/auth';
 
 export class AuthService {
-  async signIn(email: string, password: string) {
-    return await signInWithEmailAndPassword(auth, email, password);
+  signIn(email: string, password: string) {
+    return signInWithEmailAndPassword(auth, email, password);
   }
 
-  async signUp(email: string, password: string) {
-    return await createUserWithEmailAndPassword(auth, email, password);
+  signUp(email: string, password: string) {
+    return createUserWithEmailAndPassword(auth, email, password);
   }
 
-  async signOut() {
-    return await firebaseSignOut(auth);
+  signOut() {
+    return firebaseSignOut(auth);
   }
 
   onAuthStateChange(callback: (user: User | null) => void) {
