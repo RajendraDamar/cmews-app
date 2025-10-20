@@ -16,7 +16,11 @@ const requiredEnvVars = {
 // Check for missing environment variables
 const missingVars = Object.entries(requiredEnvVars)
   .filter(([, value]) => !value)
-  .map(([key]) => `EXPO_PUBLIC_FIREBASE_${key.replace(/[A-Z]/g, (m) => '_' + m).toUpperCase()}`);
+  .map(([key]) => {
+    // Convert camelCase to SCREAMING_SNAKE_CASE
+    const snakeCase = key.replace(/[A-Z]/g, (m) => '_' + m).toUpperCase();
+    return `EXPO_PUBLIC_FIREBASE_${snakeCase}`;
+  });
 
 if (missingVars.length > 0) {
   throw new Error(
