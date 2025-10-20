@@ -7,6 +7,12 @@ import type {
   ProcessedForecastResponse,
 } from '~/lib/types/bmkg-api-types';
 
+// Constants for BMKG data validation
+const EXPECTED_FORECAST_ENTRIES = 24; // 3 days × 8 per day
+const MAX_FORECAST_ENTRIES = 30; // Allow some flexibility for API variations
+const FORECASTS_PER_DAY = 8; // 3-hour intervals
+const FORECAST_DAYS = 3; // BMKG provides 3 days of forecast
+
 /**
  * Process BMKG weather forecast API response
  * CRITICAL: BMKG returns exactly 24 entries (3 days × 8 per day, 3-hour intervals)
@@ -38,23 +44,25 @@ export const processBMKGForecast = (
   
   // BMKG API returns 24 entries total
   // Ensure we only process up to 24 entries and group them correctly
-  const totalEntries = Math.min(processed.length, 24);
+  const totalEntries = Math.min(processed.length, EXPECTED_FORECAST_ENTRIES);
   
-  for (let i = 0; i < totalEntries; i += 8) {
-    const dayForecast = processed.slice(i, i + 8);
+  for (let i = 0; i < totalEntries; i += FORECASTS_PER_DAY) {
+    const dayForecast = processed.slice(i, i + FORECASTS_PER_DAY);
     if (dayForecast.length > 0) {
       dailyGroups.push(dayForecast);
     }
   }
 
   // Ensure exactly 3 days
-  const exactlyThreeDays = dailyGroups.slice(0, 3);
+  const exactlyThreeDays = dailyGroups.slice(0, FORECAST_DAYS);
 
   return {
     location: rawData.lokasi,
     dailyForecasts: exactlyThreeDays,
     totalForecasts: processed.length,
-    lastUpdated: processed[0]?.datetime || new Date().toISOString(),
+    // Use current timestamp as data processing time
+    // Note: BMKG API doesn't provide a specific "lastUpdated" field
+    lastUpdated: new Date().toISOString(),
   };
 };
 
@@ -78,7 +86,7 @@ export const validateBMKGForecastData = (
 
   // BMKG should return 24 entries (3 days × 8 per day)
   // Allow some flexibility for API variations
-  if (data.data.length === 0 || data.data.length > 30) {
+  if (data.data.length === 0 || data.data.length > MAX_FORECAST_ENTRIES) {
     return false;
   }
 

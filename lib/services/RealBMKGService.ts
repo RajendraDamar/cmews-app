@@ -17,16 +17,16 @@ export class RealBMKGService {
   private readonly maritimeUrl = 'https://peta-maritim.bmkg.go.id/public_api';
 
   /**
-   * Fetch weather forecast for a specific region
+   * Generic fetch helper with error handling
+   * Reduces code duplication across API methods
    * 
-   * @param adm4Code - Administrative level 4 code (village/sub-district)
-   * @returns BMKG weather forecast response
-   * @throws Error if API request fails
+   * @param url - API endpoint URL
+   * @param errorContext - Context for error messages
+   * @returns Parsed JSON response
+   * @throws Error with context-specific message
    */
-  async getWeatherForecast(adm4Code: string): Promise<BMKGWeatherAPIResponse> {
+  private async fetchJSON<T>(url: string, errorContext: string): Promise<T> {
     try {
-      const url = `${this.baseUrl}/prakiraan-cuaca?adm4=${adm4Code}`;
-      
       const response = await fetch(url, {
         method: 'GET',
         headers: {
@@ -36,27 +36,39 @@ export class RealBMKGService {
 
       if (!response.ok) {
         throw new Error(
-          `BMKG API error: ${response.status} ${response.statusText}`
+          `${errorContext} error: ${response.status} ${response.statusText}`
         );
       }
 
-      const data = await response.json();
-      
-      // Validate response structure
-      if (!data || !data.data || !Array.isArray(data.data)) {
-        throw new Error('Invalid BMKG API response structure');
-      }
-
-      return data as BMKGWeatherAPIResponse;
+      return await response.json();
     } catch (error) {
-      console.error('Failed to fetch weather forecast from BMKG:', error);
+      console.error(`Failed to fetch ${errorContext}:`, error);
       
       if (error instanceof Error) {
-        throw new Error(`Weather forecast fetch failed: ${error.message}`);
+        throw new Error(`${errorContext} fetch failed: ${error.message}`);
       }
       
-      throw new Error('Weather forecast fetch failed: Unknown error');
+      throw new Error(`${errorContext} fetch failed: Unknown error`);
     }
+  }
+
+  /**
+   * Fetch weather forecast for a specific region
+   * 
+   * @param adm4Code - Administrative level 4 code (village/sub-district)
+   * @returns BMKG weather forecast response
+   * @throws Error if API request fails
+   */
+  async getWeatherForecast(adm4Code: string): Promise<BMKGWeatherAPIResponse> {
+    const url = `${this.baseUrl}/prakiraan-cuaca?adm4=${adm4Code}`;
+    const data = await this.fetchJSON<BMKGWeatherAPIResponse>(url, 'Weather forecast');
+    
+    // Validate response structure
+    if (!data || !data.data || !Array.isArray(data.data)) {
+      throw new Error('Invalid BMKG API response structure');
+    }
+
+    return data;
   }
 
   /**
@@ -66,33 +78,8 @@ export class RealBMKGService {
    * @throws Error if API request fails
    */
   async getEarlyWarning(): Promise<BMKGEarlyWarningResponse> {
-    try {
-      const url = `${this.earlyWarningUrl}/autogempa.json`;
-      
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          `Early warning API error: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      return data as BMKGEarlyWarningResponse;
-    } catch (error) {
-      console.error('Failed to fetch early warning from BMKG:', error);
-      
-      if (error instanceof Error) {
-        throw new Error(`Early warning fetch failed: ${error.message}`);
-      }
-      
-      throw new Error('Early warning fetch failed: Unknown error');
-    }
+    const url = `${this.earlyWarningUrl}/autogempa.json`;
+    return await this.fetchJSON<BMKGEarlyWarningResponse>(url, 'Early warning');
   }
 
   /**
@@ -102,33 +89,8 @@ export class RealBMKGService {
    * @throws Error if API request fails
    */
   async getMaritimeWeather(): Promise<BMKGMaritimeResponse> {
-    try {
-      const url = `${this.maritimeUrl}/perairan`;
-      
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: {
-          'Accept': 'application/json',
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(
-          `Maritime API error: ${response.status} ${response.statusText}`
-        );
-      }
-
-      const data = await response.json();
-      return data as BMKGMaritimeResponse;
-    } catch (error) {
-      console.error('Failed to fetch maritime weather from BMKG:', error);
-      
-      if (error instanceof Error) {
-        throw new Error(`Maritime weather fetch failed: ${error.message}`);
-      }
-      
-      throw new Error('Maritime weather fetch failed: Unknown error');
-    }
+    const url = `${this.maritimeUrl}/perairan`;
+    return await this.fetchJSON<BMKGMaritimeResponse>(url, 'Maritime weather');
   }
 
   /**
@@ -139,9 +101,10 @@ export class RealBMKGService {
    */
   async testConnection(): Promise<boolean> {
     try {
-      // Try to fetch with a common adm4 code (Jakarta Pusat - Menteng)
-      const testCode = '31.71.05.1001'; // Example code
-      await this.getWeatherForecast(testCode);
+      // Example Jakarta Pusat (Central Jakarta) code for testing
+      // Note: Replace with actual valid code when available
+      const EXAMPLE_ADM4_CODE = '31.71.05.1001';
+      await this.getWeatherForecast(EXAMPLE_ADM4_CODE);
       return true;
     } catch (error) {
       console.warn('BMKG API connection test failed:', error);
