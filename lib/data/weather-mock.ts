@@ -301,9 +301,7 @@ export const mockWeatherData = {
     wd: 'Barat Laut', // wind direction
     ws: 12, // wind speed
   },
-  hourly: generateHourlyForecast()
-    .slice(0, 8)
-    .map((h) => ({
+  hourly: generateHourlyForecast().slice(0, 24).map((h) => ({
       time: h.datetime,
       temp: h.temperature,
       humidity: h.humidity,
