@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, useWindowDimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
@@ -6,6 +6,7 @@ import { COLORS, getThemeColor } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
+import { useWeatherStore } from '~/store/weatherStore';
 
 // Workaround: some UI popover typings differ from usage here; cast to any to avoid TS errors
 const PopoverAny: any = Popover as any;
@@ -19,20 +20,30 @@ interface TemperatureChartData {
 }
 
 interface TemperatureChartProps {
-  data: TemperatureChartData[];
+  data?: TemperatureChartData[];
+  adm4Code?: string;
   width?: number;
   height?: number;
   animated?: boolean;
 }
 
 export function ChartKitTemperatureChart({
-  data,
+  data: propData,
+  adm4Code,
   width: propWidth,
   height: propHeight = 220,
 }: TemperatureChartProps) {
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
   const { width: windowWidth } = useWindowDimensions();
+  const { forecast, loading, fetchWeatherData } = useWeatherStore();
+
+  // Fetch data when adm4Code is provided
+  useEffect(() => {
+    if (adm4Code) {
+      fetchWeatherData(adm4Code);
+    }
+  }, [adm4Code, fetchWeatherData]);
 
   // Measure actual container width to avoid guesswork and trailing empty space
   const [containerWidth, setContainerWidth] = React.useState<number>(0);
@@ -51,10 +62,54 @@ export function ChartKitTemperatureChart({
 
   const themeColors = getThemeColor(colorScheme === 'dark');
 
+  // Transform real data or use prop data for backward compatibility
+  let chartData: TemperatureChartData[] = [];
+  
+  if (propData) {
+    // Use provided data (backward compatible)
+    chartData = propData;
+  } else if (forecast && forecast.length > 0) {
+    // Use first 24 hours from forecast (first day + part of second day to get 8 data points)
+    const allForecasts = forecast.flat();
+    const next24Hours = allForecasts.slice(0, 8);
+    
+    // Validate temperature range (15-40°C for Indonesian climate)
+    const validData = next24Hours.filter(item => 
+      item.temperature >= 15 && item.temperature <= 40
+    );
+
+    chartData = validData.map(item => ({
+      time: new Date(item.datetime).toLocaleTimeString('id-ID', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }),
+      temp: item.temperature,
+      humidity: item.humidity,
+    }));
+  }
+
+  // Show loading state
+  if (!propData && loading) {
+    return (
+      <View className="flex items-center justify-center" style={{ height: propHeight }}>
+        <Text>Memuat data cuaca...</Text>
+      </View>
+    );
+  }
+
+  // Show empty state if no data
+  if (chartData.length === 0) {
+    return (
+      <View className="flex items-center justify-center" style={{ height: propHeight }}>
+        <Text variant="muted">Tidak ada data cuaca</Text>
+      </View>
+    );
+  }
+
   // Prepare chart data
-  const labels = data.map((d) => d.time);
-  const temperatures = data.map((d) => d.temp);
-  const humidities = data.map((d) => d.humidity);
+  const labels = chartData.map((d) => d.time);
+  const temperatures = chartData.map((d) => d.temp);
+  const humidities = chartData.map((d) => d.humidity);
 
   // Colors
   const tempColor = COLORS.chart.temperature;
@@ -84,7 +139,7 @@ export function ChartKitTemperatureChart({
     },
   };
 
-  const chartData = {
+  const lineChartData = {
     labels: labels,
     datasets: [
       {
@@ -143,7 +198,7 @@ function hexToRgb(hexOrHsl: string): string {
   return (
   <View onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}>
       <LineChart
-        data={chartData}
+        data={lineChartData}
         width={width}
         height={propHeight}
         chartConfig={chartConfig}
@@ -165,7 +220,7 @@ function hexToRgb(hexOrHsl: string): string {
       {/* Popup for data point details */}
       {selectedDataPoint !== null && 
        selectedDataPoint.index >= 0 && 
-       selectedDataPoint.index < data.length && (
+       selectedDataPoint.index < chartData.length && (
         <PopoverAny open={popoverOpen} onOpenChange={setPopoverOpen}>
           <PopoverTriggerAny asChild>
             <View />
@@ -175,7 +230,7 @@ function hexToRgb(hexOrHsl: string): string {
               <Text className="font-semibold">Detail Cuaca</Text>
               <View className="flex-row justify-between">
                 <Text variant="muted" size="sm">Waktu:</Text>
-                <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.time}</Text>
+                <Text size="sm" className="font-medium">{chartData[selectedDataPoint.index]?.time}</Text>
               </View>
               <View className="flex-row justify-between">
                 <Text variant="muted" size="sm">
@@ -183,8 +238,8 @@ function hexToRgb(hexOrHsl: string): string {
                 </Text>
                 <Text size="sm" className="font-medium">
                   {selectedDataPoint.dataset === 0 
-                    ? `${data[selectedDataPoint.index]?.temp}°C`
-                    : `${data[selectedDataPoint.index]?.humidity}%`
+                    ? `${chartData[selectedDataPoint.index]?.temp}°C`
+                    : `${chartData[selectedDataPoint.index]?.humidity}%`
                   }
                 </Text>
               </View>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, useWindowDimensions } from 'react-native';
 import { BarChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
@@ -6,6 +6,7 @@ import { COLORS, getThemeColor } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
+import { useWeatherStore } from '~/store/weatherStore';
 
 const PopoverAny: any = Popover as any;
 const PopoverTriggerAny: any = PopoverTrigger as any;
@@ -17,20 +18,30 @@ interface PrecipitationChartData {
 }
 
 interface PrecipitationChartProps {
-  data: PrecipitationChartData[];
+  data?: PrecipitationChartData[];
+  adm4Code?: string;
   width?: number;
   height?: number;
   animated?: boolean;
 }
 
 export function ChartKitPrecipitationChart({
-  data,
+  data: propData,
+  adm4Code,
   width: propWidth,
   height: propHeight = 200,
 }: PrecipitationChartProps) {
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
   const { width: windowWidth } = useWindowDimensions();
+  const { forecast, loading, fetchWeatherData } = useWeatherStore();
+
+  // Fetch data when adm4Code is provided
+  useEffect(() => {
+    if (adm4Code) {
+      fetchWeatherData(adm4Code);
+    }
+  }, [adm4Code, fetchWeatherData]);
 
   const [containerWidth, setContainerWidth] = React.useState<number>(0);
 
@@ -47,9 +58,49 @@ export function ChartKitPrecipitationChart({
 
   const themeColors = getThemeColor(colorScheme === 'dark');
 
+  // Transform real data or use prop data for backward compatibility
+  let chartData: PrecipitationChartData[] = [];
+  
+  if (propData) {
+    // Use provided data (backward compatible)
+    chartData = propData;
+  } else if (forecast && forecast.length > 0) {
+    // Use first 8 data points from forecast
+    const allForecasts = forecast.flat();
+    const next24Hours = allForecasts.slice(0, 8);
+
+    chartData = next24Hours.map(item => ({
+      time: new Date(item.datetime).toLocaleTimeString('id-ID', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      }),
+      // Note: BMKG API doesn't provide precipitation data directly
+      // Using cloud coverage as a proxy (0-100% -> 0-10mm scale)
+      precipitation: Math.round(item.cloudCover / 10),
+    }));
+  }
+
+  // Show loading state
+  if (!propData && loading) {
+    return (
+      <View className="flex items-center justify-center" style={{ height: propHeight }}>
+        <Text>Memuat data cuaca...</Text>
+      </View>
+    );
+  }
+
+  // Show empty state if no data
+  if (chartData.length === 0) {
+    return (
+      <View className="flex items-center justify-center" style={{ height: propHeight }}>
+        <Text variant="muted">Tidak ada data cuaca</Text>
+      </View>
+    );
+  }
+
   // Prepare chart data
-  const labels = data.map((d) => d.time);
-  const precipitations = data.map((d) => d.precipitation);
+  const labels = chartData.map((d) => d.time);
+  const precipitations = chartData.map((d) => d.precipitation);
 
   // Colors (theme-aware)
   const precipColor = themeColors.chart?.precipitation ?? COLORS.chart.precipitation;
@@ -72,7 +123,7 @@ export function ChartKitPrecipitationChart({
     },
   };
 
-  const chartData = {
+  const barChartData = {
     labels: labels,
     datasets: [
       {
@@ -90,7 +141,7 @@ export function ChartKitPrecipitationChart({
   return (
   <View onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}>
       <BarChart
-        data={chartData}
+        data={barChartData}
         width={width}
         height={propHeight}
         chartConfig={chartConfig}
@@ -113,7 +164,7 @@ export function ChartKitPrecipitationChart({
       {/* Popup for data point details */}
       {selectedDataPoint !== null && 
        selectedDataPoint.index >= 0 && 
-       selectedDataPoint.index < data.length && (
+       selectedDataPoint.index < chartData.length && (
         <PopoverAny open={popoverOpen} onOpenChange={setPopoverOpen}>
           <PopoverTriggerAny asChild>
             <View />
@@ -123,11 +174,11 @@ export function ChartKitPrecipitationChart({
               <Text className="font-semibold">Detail Curah Hujan</Text>
               <View className="flex-row justify-between">
                 <Text variant="muted" size="sm">Waktu:</Text>
-                <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.time}</Text>
+                <Text size="sm" className="font-medium">{chartData[selectedDataPoint.index]?.time}</Text>
               </View>
               <View className="flex-row justify-between">
                 <Text variant="muted" size="sm">Curah Hujan:</Text>
-                <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.precipitation} mm</Text>
+                <Text size="sm" className="font-medium">{chartData[selectedDataPoint.index]?.precipitation} mm</Text>
               </View>
             </View>
           </PopoverContentAny>
