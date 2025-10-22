@@ -16,20 +16,21 @@ import { useTheme } from '~/lib/theme-provider';
 import { getThemeColor } from '~/lib/constants';
 
 export default function Home() {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Set to false for static rendering
   const [refreshing, setRefreshing] = useState(false);
   const [weatherData, setWeatherData] = useState(MOCK_BMKG_WEATHER);
   const [alerts, setAlerts] = useState(MOCK_WEATHER_ALERTS);
   const { isDesktop } = useBreakpoint();
   const { colorScheme } = useTheme();
 
-  useEffect(() => {
-    // Simulate data loading
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-    return () => clearTimeout(timer);
-  }, []);
+  // Removed artificial loading delay for better static rendering
+  // useEffect(() => {
+  //   // Simulate data loading
+  //   const timer = setTimeout(() => {
+  //     setLoading(false);
+  //   }, 1500);
+  //   return () => clearTimeout(timer);
+  // }, []);
 
   const handleRefresh = () => {
     setRefreshing(true);
