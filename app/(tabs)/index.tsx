@@ -11,6 +11,7 @@ import { HourlyForecastCard } from '~/components/weather/hourly-forecast-card';
 import { DetailedMetrics } from '~/components/weather/detailed-metrics';
 import { DailyForecastCard } from '~/components/weather/daily-forecast-card';
 import { WeatherAlertCard } from '~/components/weather/weather-alert';
+import { LocationSelectionDialog } from '~/components/location/LocationSelectionDialog';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { useTheme } from '~/lib/theme-provider';
 import { getThemeColor } from '~/lib/constants';
@@ -20,6 +21,7 @@ export default function Home() {
   const { isDesktop } = useBreakpoint();
   const { colorScheme } = useTheme();
   const [alerts, setAlerts] = useState(MOCK_WEATHER_ALERTS);
+  const [showLocationDialog, setShowLocationDialog] = useState(false);
   
   // Use real weather store
   const {
@@ -57,8 +59,7 @@ export default function Home() {
   };
 
   const handleLocationPress = () => {
-    // TODO: Implement location selection modal
-    console.log('Open location selector');
+    setShowLocationDialog(true);
   };
 
   // Prepare data from real weather store
@@ -265,6 +266,12 @@ export default function Home() {
           </>
         )}
       </ScrollView>
+      
+      {/* Location Selection Dialog */}
+      <LocationSelectionDialog
+        open={showLocationDialog}
+        onOpenChange={setShowLocationDialog}
+      />
     </>
   );
 }
