@@ -2,8 +2,8 @@ import { ScrollView, View, RefreshControl } from 'react-native';
 import { Skeleton } from '~/components/ui';
 import { Stack } from 'expo-router';
 import { useState, useEffect } from 'react';
-import { MOCK_BMKG_WEATHER, MOCK_WEATHER_ALERTS } from '~/lib/data/weather-mock';
-import { getRelativeTimeIndonesian, parseBMKGDateTime } from '~/lib/utils/indonesian-locale';
+import { MOCK_WEATHER_ALERTS } from '~/lib/data/weather-mock';
+import { getRelativeTimeIndonesian } from '~/lib/utils/indonesian-locale';
 import { LocationSelector } from '~/components/weather/location-selector';
 import { HeroCard } from '~/components/weather/hero-card';
 import { QuickStats } from '~/components/weather/quick-stats';
@@ -14,31 +14,42 @@ import { WeatherAlertCard } from '~/components/weather/weather-alert';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { useTheme } from '~/lib/theme-provider';
 import { getThemeColor } from '~/lib/constants';
+import { useWeatherStore } from '~/store/weatherStore';
 
 export default function Home() {
-  const [loading, setLoading] = useState(false); // Set to false for static rendering
-  const [refreshing, setRefreshing] = useState(false);
-  const [weatherData, setWeatherData] = useState(MOCK_BMKG_WEATHER);
-  const [alerts, setAlerts] = useState(MOCK_WEATHER_ALERTS);
   const { isDesktop } = useBreakpoint();
   const { colorScheme } = useTheme();
+  const [alerts, setAlerts] = useState(MOCK_WEATHER_ALERTS);
+  
+  // Use real weather store
+  const {
+    currentWeather,
+    forecast,
+    location,
+    loading,
+    lastUpdated,
+    selectedWilayah,
+    fetchWeatherData,
+    refreshAllData,
+  } = useWeatherStore();
 
-  // Removed artificial loading delay for better static rendering
-  // useEffect(() => {
-  //   // Simulate data loading
-  //   const timer = setTimeout(() => {
-  //     setLoading(false);
-  //   }, 1500);
-  //   return () => clearTimeout(timer);
-  // }, []);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const handleRefresh = () => {
+  // Fetch weather data on mount
+  useEffect(() => {
+    if (!currentWeather) {
+      fetchWeatherData(selectedWilayah);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleRefresh = async () => {
     setRefreshing(true);
-    setTimeout(() => {
-      setWeatherData(MOCK_BMKG_WEATHER);
-      setAlerts(MOCK_WEATHER_ALERTS);
+    try {
+      await refreshAllData(selectedWilayah);
+    } finally {
       setRefreshing(false);
-    }, 1000);
+    }
   };
 
   const handleDismissAlert = (alertId: string) => {
@@ -50,18 +61,27 @@ export default function Home() {
     console.log('Open location selector');
   };
 
-  const lastUpdatedDate = parseBMKGDateTime(weatherData.lastUpdated);
-  const lastUpdatedText = getRelativeTimeIndonesian(lastUpdatedDate);
+  // Prepare data from real weather store
+  const lastUpdatedText = lastUpdated ? getRelativeTimeIndonesian(new Date(lastUpdated)) : 'Belum ada data';
   const themeColors = getThemeColor(colorScheme === 'dark');
 
-  // Prepare data for new components
-  const hourlyData = weatherData.hourlyForecast.slice(0, 8).map((h) => ({
-    time: h.datetime,
-    weather: h.weather.description,
-    temp: h.temperature,
-  }));
+  // Prepare hourly data from first day's forecast (8 entries)
+  const hourlyData = forecast.length > 0 && forecast[0]
+    ? forecast[0].slice(0, 8).map((h) => ({
+        time: h.datetime,
+        weather: h.weatherDesc,
+        temp: h.temperature,
+      }))
+    : [];
 
-  const dailyForecast = weatherData.dailyForecast[0];
+  // Get today's forecast summary for detailed metrics
+  const todayForecast = forecast.length > 0 && forecast[0] ? forecast[0] : [];
+  const todayTemps = todayForecast.map(f => f.temperature);
+  const tempMin = todayTemps.length > 0 ? Math.min(...todayTemps) : 20;
+  const tempMax = todayTemps.length > 0 ? Math.max(...todayTemps) : 30;
+
+  // Show loading state if no current weather data
+  const isLoading = loading || !currentWeather;
 
   return (
     <>
@@ -76,7 +96,7 @@ export default function Home() {
             tintColor={themeColors.primary}
           />
         }>
-        {loading ? (
+        {isLoading ? (
           // Skeleton Loading State
           <>
             <View className="px-4 pb-3 pt-4">
@@ -114,9 +134,9 @@ export default function Home() {
             {/* Location Selector */}
             <View className={isDesktop ? 'mx-auto w-full max-w-6xl' : ''}>
               <LocationSelector
-                provinsi={weatherData.location.provinsi}
-                kota={weatherData.location.kota}
-                kecamatan={weatherData.location.kecamatan}
+                provinsi={location?.adm1 || 'Indonesia'}
+                kota={location?.adm2 || 'Memuat...'}
+                kecamatan={location?.adm3 || ''}
                 lastUpdated={lastUpdatedText}
                 onRefresh={handleRefresh}
                 onLocationPress={handleLocationPress}
@@ -142,22 +162,22 @@ export default function Home() {
                 <View className="flex-row gap-4 pt-2">
                   <View className="w-[40%]">
                     <HeroCard
-                      temperature={weatherData.currentWeather.temperature}
-                      weather={weatherData.currentWeather.weather.description}
+                      temperature={currentWeather?.temperature || 0}
+                      weather={currentWeather?.weatherDesc || 'Memuat...'}
                       location={{
-                        kecamatan: weatherData.location.kecamatan,
-                        kota: weatherData.location.kota,
-                        provinsi: weatherData.location.provinsi,
+                        kecamatan: location?.adm3 || '',
+                        kota: location?.adm2 || '',
+                        provinsi: location?.adm1 || '',
                       }}
                       lastUpdate={lastUpdatedText}
                     />
                   </View>
                   <View className="flex-1">
                     <QuickStats
-                      humidity={weatherData.currentWeather.humidity}
-                      windSpeed={weatherData.currentWeather.windSpeed}
-                      feelsLike={weatherData.currentWeather.feelsLike}
-                      windDirection={weatherData.currentWeather.windDirection}
+                      humidity={currentWeather?.humidity || 0}
+                      windSpeed={currentWeather?.windSpeed || 0}
+                      feelsLike={currentWeather?.temperature || 0}
+                      windDirection={currentWeather?.windDirection || 'N'}
                     />
                   </View>
                 </View>
@@ -165,21 +185,21 @@ export default function Home() {
             ) : (
               <>
                 <HeroCard
-                  temperature={weatherData.currentWeather.temperature}
-                  weather={weatherData.currentWeather.weather.description}
+                  temperature={currentWeather?.temperature || 0}
+                  weather={currentWeather?.weatherDesc || 'Memuat...'}
                   location={{
-                    kecamatan: weatherData.location.kecamatan,
-                    kota: weatherData.location.kota,
-                    provinsi: weatherData.location.provinsi,
+                    kecamatan: location?.adm3 || '',
+                    kota: location?.adm2 || '',
+                    provinsi: location?.adm1 || '',
                   }}
                   lastUpdate={lastUpdatedText}
                 />
 
                 <QuickStats
-                  humidity={weatherData.currentWeather.humidity}
-                  windSpeed={weatherData.currentWeather.windSpeed}
-                  feelsLike={weatherData.currentWeather.feelsLike}
-                  windDirection={weatherData.currentWeather.windDirection}
+                  humidity={currentWeather?.humidity || 0}
+                  windSpeed={currentWeather?.windSpeed || 0}
+                  feelsLike={currentWeather?.temperature || 0}
+                  windDirection={currentWeather?.windDirection || 'N'}
                 />
               </>
             )}
@@ -193,20 +213,20 @@ export default function Home() {
             <View className={isDesktop ? 'mx-auto w-full max-w-6xl px-4' : ''}>
               <DetailedMetrics
                 temperature={{
-                  current: weatherData.currentWeather.temperature,
-                  feelsLike: weatherData.currentWeather.feelsLike,
-                  min: dailyForecast.tempMin,
-                  max: dailyForecast.tempMax,
+                  current: currentWeather?.temperature || 0,
+                  feelsLike: currentWeather?.temperature || 0,
+                  min: tempMin,
+                  max: tempMax,
                 }}
                 wind={{
-                  speed: weatherData.currentWeather.windSpeed,
-                  direction: weatherData.currentWeather.windDirection,
-                  gust: weatherData.currentWeather.windSpeed + 5,
+                  speed: currentWeather?.windSpeed || 0,
+                  direction: currentWeather?.windDirection || 'N',
+                  gust: (currentWeather?.windSpeed || 0) + 5,
                 }}
                 atmospheric={{
                   pressure: 1013,
-                  humidity: weatherData.currentWeather.humidity,
-                  visibility: 10,
+                  humidity: currentWeather?.humidity || 0,
+                  visibility: parseInt(currentWeather?.visibility || '10'),
                 }}
               />
             </View>
@@ -214,22 +234,30 @@ export default function Home() {
             {/* Daily Forecast */}
             <View className={isDesktop ? 'mx-auto w-full max-w-6xl px-4 pb-6' : 'px-4 pb-4'}>
               <DailyForecastCard
-                forecast={weatherData.dailyForecast.map((d, index) => {
-                  const dateObj = new Date(
-                    d.date.substring(0, 4) +
-                      '-' +
-                      d.date.substring(4, 6) +
-                      '-' +
-                      d.date.substring(6, 8)
-                  );
+                forecast={forecast.map((dayForecast, index) => {
+                  const firstEntry = dayForecast[0];
+                  if (!firstEntry) {
+                    return {
+                      day: index === 0 ? 'Hari Ini' : `Hari ${index + 1}`,
+                      date: new Date().toISOString(),
+                      weather: 'Tidak ada data',
+                      tempHigh: 0,
+                      tempLow: 0,
+                      precipitation: 0,
+                    };
+                  }
+                  
+                  const dateObj = new Date(firstEntry.datetime);
                   const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                  const temps = dayForecast.map(f => f.temperature);
+                  
                   return {
                     day: index === 0 ? 'Hari Ini' : dayNames[dateObj.getDay()],
                     date: dateObj.toISOString(),
-                    weather: d.weather.description,
-                    tempHigh: d.tempMax,
-                    tempLow: d.tempMin,
-                    precipitation: d.precipitation || d.humidity || 50,
+                    weather: firstEntry.weatherDesc,
+                    tempHigh: Math.max(...temps),
+                    tempLow: Math.min(...temps),
+                    precipitation: firstEntry.humidity,
                   };
                 })}
               />
