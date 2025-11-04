@@ -1,4 +1,5 @@
 import { notificationService, WeatherNotification } from '../services/NotificationService';
+import * as Notifications from 'expo-notifications';
 
 /**
  * Mock Notification Data - Pre-configured weather notifications for testing
@@ -228,7 +229,11 @@ export class MockNotificationSender {
     const notification1 = MOCK_NOTIFICATIONS[1];
     const id1 = await notificationService.scheduleNotification(
       notification1,
-      { seconds: 60 }
+      { 
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: 60, 
+        repeats: false 
+      }
     );
     identifiers.push(id1);
     
@@ -236,7 +241,11 @@ export class MockNotificationSender {
     const notification2 = MOCK_NOTIFICATIONS[2];
     const id2 = await notificationService.scheduleNotification(
       notification2,
-      { seconds: 300 }
+      { 
+        type: Notifications.SchedulableTriggerInputTypes.TIME_INTERVAL,
+        seconds: 300, 
+        repeats: false 
+      }
     );
     identifiers.push(id2);
     

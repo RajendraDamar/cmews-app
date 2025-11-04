@@ -247,11 +247,53 @@ All charts use React Native Skia for hardware-accelerated rendering. Charts rend
 
 **Web Platform**: Charts require CanvasKit WASM file. Run `npx setup-skia-web` to generate the required `/public/canvaskit.wasm` file (~7.7MB). This file is excluded from git and must be generated locally or during CI/CD builds.
 
+## 🔔 Push Notifications
+
+The CMEWS app includes comprehensive push notification support for weather alerts and updates:
+
+### Features
+- **Cross-platform support**: iOS, Android, and Web
+- **Firebase Cloud Messaging**: Backend notification delivery
+- **Local & Scheduled Notifications**: Send immediate or scheduled alerts
+- **Weather-specific notifications**: Alerts, warnings, maritime updates, forecasts
+- **Mock notification system**: 8 pre-configured weather notifications for testing
+- **Custom React hooks**: Easy integration with `useNotifications()` hook
+
+### Quick Start
+```typescript
+import { useNotifications } from '~/hooks/useNotifications';
+import { MockNotificationSender } from '~/lib/data/notification-mock';
+
+function MyComponent() {
+  const { requestPermission, sendNotification } = useNotifications();
+
+  // Request permission
+  await requestPermission();
+
+  // Send weather alert
+  await MockNotificationSender.sendWeatherAlert(
+    'Jakarta',
+    'Hujan lebat',
+    'warning'
+  );
+}
+```
+
+### Testing
+- Navigate to `/notification-demo` in the app to test notifications
+- Use `MockNotificationSender` to send pre-configured weather notifications
+- Schedule test notifications at different intervals
+
+### Documentation
+- [Complete FCM Setup Guide](./lib/services/README_NotificationService.md)
+- [Code Examples](./lib/services/notification-examples.ts)
+- [Notification Assets Guide](./assets/NOTIFICATION_ASSETS.md)
+
 ## 🚀 Future Enhancements
 
 - Real BMKG API integration
 - Offline data caching with Enhanced File System
-- Push notifications for weather alerts (Firebase FCM)
+- ✅ Push notifications for weather alerts (Firebase FCM) - **Implemented**
 - GPS-based location detection
 - User accounts and saved locations
 - Historical weather data
