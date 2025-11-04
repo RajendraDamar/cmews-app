@@ -2,6 +2,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 import { getFunctions } from 'firebase/functions';
+import { getMessaging, isSupported } from 'firebase/messaging';
 
 // Validate required environment variables
 const requiredEnvVars = {
@@ -42,3 +43,20 @@ const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const functions = getFunctions(app);
+
+// Firebase Cloud Messaging (FCM) - Only available on web
+// For native platforms, use expo-notifications
+let messaging: ReturnType<typeof getMessaging> | null = null;
+
+// Initialize messaging only on web platform
+if (typeof window !== 'undefined') {
+  isSupported().then((supported) => {
+    if (supported) {
+      messaging = getMessaging(app);
+    }
+  }).catch((error) => {
+    console.warn('Firebase Messaging not supported:', error);
+  });
+}
+
+export { messaging };
