@@ -3,7 +3,12 @@
  * 
  * This file contains practical examples of how to use the notification
  * system in the CMEWS app. Copy and paste these examples into your components.
+ * 
+ * Note: Some variables in examples are intentionally unused as they demonstrate
+ * the API surface but are not used in the minimal examples.
  */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { useEffect } from 'react';
 import { Alert } from 'react-native';
