@@ -5,6 +5,10 @@ import * as Notifications from 'expo-notifications';
  * Mock Notification Data - Pre-configured weather notifications for testing
  */
 
+// Time constants for better readability
+const TWO_HOURS_MS = 2 * 60 * 60 * 1000;
+const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
+
 export const MOCK_NOTIFICATIONS: WeatherNotification[] = [
   {
     title: '⚠️ Peringatan Cuaca Ekstrem',
@@ -13,7 +17,7 @@ export const MOCK_NOTIFICATIONS: WeatherNotification[] = [
       type: 'weather_alert',
       severity: 'warning',
       location: 'Jakarta',
-      validUntil: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(), // 2 hours from now
+      validUntil: new Date(Date.now() + TWO_HOURS_MS).toISOString(),
       weatherCondition: 'heavy_rain',
     },
   },
@@ -25,7 +29,7 @@ export const MOCK_NOTIFICATIONS: WeatherNotification[] = [
       severity: 'warning',
       location: 'Laut Jawa',
       waveHeight: '2.5-4.0 meter',
-      validUntil: new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString(), // 6 hours from now
+      validUntil: new Date(Date.now() + SIX_HOURS_MS).toISOString(),
     },
   },
   {

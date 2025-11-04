@@ -55,7 +55,7 @@ if (typeof window !== 'undefined') {
       messaging = getMessaging(app);
     }
   }).catch((error) => {
-    console.warn('Firebase Messaging not supported:', error);
+    console.warn('Firebase Messaging not supported in this browser environment. Push notifications will use local notifications only. This is normal for development.', error);
   });
 }
 

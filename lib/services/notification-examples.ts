@@ -95,8 +95,7 @@ export async function scheduleDailyForecastExample() {
     {
       type: Notifications.SchedulableTriggerInputTypes.DAILY,
       hour: 7,
-      minute: 0,
-      repeats: true
+      minute: 0
     }
   );
 }
@@ -375,20 +374,23 @@ export async function sendNotificationsByTypeExample(
 // ============================================================================
 
 export function SimplePermissionCheck() {
-  const { status, isGranted, request } = useNotifications();
+  const { 
+    permissionStatus, 
+    requestPermission 
+  } = useNotifications();
 
   useEffect(() => {
-    if (!isGranted) {
+    if (permissionStatus !== 'granted') {
       Alert.alert(
         'Enable Notifications',
         'Get weather alerts and updates',
         [
           { text: 'Not Now', style: 'cancel' },
-          { text: 'Enable', onPress: request }
+          { text: 'Enable', onPress: requestPermission }
         ]
       );
     }
-  }, [isGranted, request]);
+  }, [permissionStatus, requestPermission]);
 
   return null;
 }

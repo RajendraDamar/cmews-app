@@ -42,9 +42,15 @@ export function useNotifications(handlers?: NotificationHandlers) {
         const { status } = await Notifications.getPermissionsAsync();
         
         if (isMounted) {
+          // Handle all possible permission states
+          const normalizedStatus = 
+            status === 'granted' ? 'granted' : 
+            status === 'denied' ? 'denied' : 
+            'unknown';
+          
           setState((prev) => ({
             ...prev,
-            permissionStatus: status as 'granted' | 'denied',
+            permissionStatus: normalizedStatus,
             isLoading: false,
           }));
         }

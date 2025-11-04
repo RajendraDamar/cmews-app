@@ -96,7 +96,7 @@ export class NotificationService {
 
       const projectId = Constants.expoConfig?.extra?.eas?.projectId;
       if (!projectId) {
-        console.warn('No Expo project ID found. Using device push token.');
+        console.warn('No Expo project ID found. Using device-specific push token. This is normal for development without EAS.');
       }
 
       const tokenData = await Notifications.getExpoPushTokenAsync({

@@ -23,9 +23,11 @@ export default function NotificationDemoScreen() {
     const { status } = await Notifications.getPermissionsAsync();
     setPermissionStatus(status);
 
-    // Register for push notifications
-    const token = await notificationService.registerForPushNotifications();
-    setPushToken(token);
+    // Register for push notifications if granted
+    if (status === 'granted') {
+      const token = await notificationService.registerForPushNotifications();
+      setPushToken(token);
+    }
 
     // Load scheduled notifications
     await loadScheduledNotifications();
