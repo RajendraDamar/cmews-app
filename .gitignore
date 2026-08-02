@@ -31,3 +31,8 @@ android
 test-results/
 playwright-report/
 playwright/.cache/
+
+# Firebase service account key
+serviceAccountKey.json
+test-server/serviceAccountKey.json
+

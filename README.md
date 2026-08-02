@@ -41,6 +41,25 @@ npm run ios
 npm run build
 ```
 
+### 🔔 FCM Push Notification Test Server
+
+The repository includes an isolated Node/Express backend in `./test-server` to test real native push notifications and BMKG alert levels (*Info, Waspada, Siaga, Awas*).
+
+```bash
+# 1. Navigate to test-server and install dependencies
+cd test-server
+npm install
+
+# 2. Add your Firebase service account key to test-server/serviceAccountKey.json
+
+# 3. Start the test server (Web Admin Dashboard on http://localhost:3003)
+npm start
+
+# 4. (Optional) Expose server via ngrok for testing on physical devices over 4G/5G
+npx ngrok http 3003
+```
+
+
 ## 📱 Platform Support
 
 | Platform | Status | Details |

@@ -1,0 +1,27 @@
+{
+  "name": "cmews-notification-test-server",
+  "version": "1.0.0",
+  "description": "FCM Push Notification Test Server & Web Admin Dashboard for CMEWS App",
+  "main": "test-server.ts",
+  "scripts": {
+    "start": "tsx test-server.ts",
+    "dev": "tsx watch test-server.ts",
+    "android": "expo run:android",
+    "ios": "expo run:ios"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "firebase-admin": "^12.0.0",
+    "expo": "~54.0.13",
+    "react": "19.1.0",
+    "react-native": "0.81.4"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}

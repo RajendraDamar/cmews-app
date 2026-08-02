@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1024655592389",
+    "project_id": "cmews-app",
+    "storage_bucket": "cmews-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1024655592389:android:412b5cb961e777e8e499ac",
+        "android_client_info": {
+          "package_name": "com.rajendradamar.cmewsapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA3q9li-sjA4MleyI7Un51CilHSynpnZEE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
