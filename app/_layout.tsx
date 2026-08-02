@@ -5,6 +5,7 @@ import { PortalHost } from '@rn-primitives/portal';
 import { ThemeProvider, useTheme } from '~/lib/theme-provider';
 import { View, Platform } from 'react-native';
 import { useEffect } from 'react';
+import { initializePushNotifications } from '~/lib/notifications/push-service';
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -26,6 +27,12 @@ function ThemedApp() {
       }
     }
   }, [colorScheme]);
+
+  useEffect(() => {
+    initializePushNotifications().catch((error) => {
+      console.error('Push notification initialization failed:', error);
+    });
+  }, []);
 
   return (
     <View className={`flex-1 ${colorScheme === 'dark' ? 'dark' : ''}`}>

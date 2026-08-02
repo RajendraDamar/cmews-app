@@ -4,13 +4,22 @@
     "slug": "cmews-app",
     "version": "1.0.0",
     "scheme": "cmews-app",
-    "platforms": ["ios", "android", "web"],
+    "platforms": [
+      "ios",
+      "android",
+      "web"
+    ],
     "web": {
       "bundler": "metro",
       "output": "static",
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-router", "expo-font", "@maplibre/maplibre-react-native"],
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      "expo-notifications",
+      "@maplibre/maplibre-react-native"
+    ],
     "experiments": {
       "typedRoutes": true,
       "tsconfigPaths": true
@@ -23,7 +32,10 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*", "public/**/*"],
+    "assetBundlePatterns": [
+      "**/*",
+      "public/**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
@@ -31,7 +43,9 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.rajendradamar.cmewsapp",
+      "googleServicesFile": "./google-services.json"
     }
   }
 }

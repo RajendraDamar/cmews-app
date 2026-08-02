@@ -6,6 +6,36 @@ This document tracks all major changes, improvements, and fixes implemented in t
 
 ## 🔧 Latest Changes (October 2025)
 
+### ✅ **FEATURE**: Centralized Firebase Service Singleton (`lib/firebase.ts`)
+
+**Date**: October 2025
+
+**Objective**: Set up a clean, singleton Firebase initialization module using Firebase Web JS SDK v10 with Fast Refresh safety and cross-platform native auth persistence via `@react-native-async-storage/async-storage`.
+
+**What Changed**:
+- **Environment Configuration**: Updated [.env](file:///c:/Users/Damar/Downloads/Github/cmews-app/.env) and created [.env.example](file:///c:/Users/Damar/Downloads/Github/cmews-app/.env.example) with `EXPO_PUBLIC_FIREBASE_*` variables.
+- **Centralized Singleton ([lib/firebase.ts](file:///c:/Users/Damar/Downloads/Github/cmews-app/lib/firebase.ts))**:
+  - Fast Refresh safe `app` initialization (`getApps().length ? getApp() : initializeApp(...)`).
+  - Cross-platform `auth` initialization using `getReactNativePersistence(AsyncStorage)` on iOS/Android and standard `getAuth` on web.
+  - Exported initialized `app`, `auth`, `db` (Firestore), and `storage` (Firebase Storage) instances.
+
+---
+
+### ✅ **FEATURE**: Real FCM Push Notification Testing Harness & Web Admin Dashboard
+
+**Date**: October 2025
+
+**Objective**: Implement real end-to-end push notification testing harness using Google Firebase Cloud Messaging (FCM HTTP v1 API) and APNs for BMKG weather alerts (*Info, Waspada, Siaga, Awas*).
+
+**What Changed**:
+- **Isolated Backend Test Server (`./test-server/`)**: Express server running `firebase-admin` with endpoints `/api/register-device`, `/api/devices`, `/api/test-notification`, and Web Admin Dashboard served at `http://localhost:3003`.
+- **Android Notification Channels**: Multi-channel setup (`cmews-info`, `cmews-waspada`, `cmews-siaga`, `cmews-awas`, `awas`) with appropriate priority, light colors, lockscreen visibility, and vibration patterns.
+- **Native Push Token Registration**: `lib/notifications/push-service.ts` obtains native push token using `Notifications.getDevicePushTokenAsync()` and registers token to `REGISTER_SERVER_URL`.
+- **Root Layout Wiring**: Automatically initializes push notification setup on app launch in `app/_layout.tsx`.
+- **Git Security**: Added `serviceAccountKey.json` and `test-server/serviceAccountKey.json` to `.gitignore`.
+
+---
+
 ### ✅ **BREAKING**: Migrated to React Native Chart Kit for Perfect Cross-Platform Compatibility
 
 **Date**: October 2025

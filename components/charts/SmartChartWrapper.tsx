@@ -6,6 +6,7 @@ import { Text } from '~/components/ui/text';
 let useCanvasKitLoader: any;
 if (Platform.OS === 'web') {
   // Dynamic import for web only
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const loaderModule = require('~/lib/canvaskit-loader');
   useCanvasKitLoader = loaderModule.useCanvasKitLoader;
 }
