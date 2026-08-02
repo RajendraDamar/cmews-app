@@ -19,6 +19,10 @@ public/
 # firebase/supabase/vexo
 .env
 
+# Firebase configuration files (sensitive)
+google-services.json
+GoogleService-Info.plist
+
 ios
 android
 

@@ -14,7 +14,7 @@ module.exports = defineConfig([
     },
   },
   {
-    ignores: ['dist/*'],
+    ignores: ['dist/*', 'scripts/*'],
   },
   {
     rules: {

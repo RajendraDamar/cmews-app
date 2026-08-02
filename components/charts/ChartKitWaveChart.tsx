@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, useWindowDimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Text } from '~/components/ui/text';
@@ -6,6 +6,7 @@ import { COLORS, getThemeColor } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
+import { useWeatherStore } from '~/store/weatherStore';
 
 const PopoverAny: any = Popover as any;
 const PopoverTriggerAny: any = PopoverTrigger as any;
@@ -18,20 +19,30 @@ interface WaveChartData {
 }
 
 interface WaveChartProps {
-  data: WaveChartData[];
+  data?: WaveChartData[];
+  adm4Code?: string;
   width?: number;
   height?: number;
   animated?: boolean;
 }
 
 export function ChartKitWaveChart({
-  data,
+  data: propData,
+  adm4Code,
   width: propWidth,
   height: propHeight = 200,
 }: WaveChartProps) {
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
   const { width: windowWidth } = useWindowDimensions();
+  const { maritimeWeather, loading, fetchMaritimeData } = useWeatherStore();
+
+  // Fetch maritime data when adm4Code is provided
+  useEffect(() => {
+    if (adm4Code) {
+      fetchMaritimeData();
+    }
+  }, [adm4Code, fetchMaritimeData]);
 
   const [containerWidth, setContainerWidth] = React.useState<number>(0);
 
@@ -48,9 +59,50 @@ export function ChartKitWaveChart({
 
   const themeColors = getThemeColor(colorScheme === 'dark');
 
+  // Transform real data or use prop data for backward compatibility
+  let chartData: WaveChartData[] = [];
+  
+  if (propData) {
+    // Use provided data (backward compatible)
+    chartData = propData;
+  } else if (maritimeWeather && maritimeWeather.length > 0) {
+    // Use maritime weather data
+    // Note: BMKG maritime API provides wave height as string like "1.25 - 2.5 m"
+    chartData = maritimeWeather.slice(0, 8).map((item: any, index: number) => {
+      const waveHeightStr = item.tinggi_gelombang || '0';
+      // Extract first number from string like "1.25 - 2.5 m"
+      const heightMatch = waveHeightStr.match(/[\d.]+/);
+      const height = heightMatch ? parseFloat(heightMatch[0]) : 1.5;
+      
+      return {
+        time: `${String(index * 3).padStart(2, '0')}:00`,
+        height: height,
+        period: undefined,
+      };
+    });
+  }
+
+  // Show loading state
+  if (!propData && loading) {
+    return (
+      <View className="flex items-center justify-center" style={{ height: propHeight }}>
+        <Text>Memuat data cuaca...</Text>
+      </View>
+    );
+  }
+
+  // Show empty state if no data
+  if (chartData.length === 0) {
+    return (
+      <View className="flex items-center justify-center" style={{ height: propHeight }}>
+        <Text variant="muted">Tidak ada data gelombang</Text>
+      </View>
+    );
+  }
+
   // Prepare chart data
-  const labels = data.map((d) => d.time);
-  const heights = data.map((d) => d.height);
+  const labels = chartData.map((d) => d.time);
+  const heights = chartData.map((d) => d.height);
 
   // Colors (theme-aware)
   const waveColor = themeColors.chart?.wind ?? COLORS.chart.wind; // Using teal color for waves
@@ -81,7 +133,7 @@ export function ChartKitWaveChart({
     },
   };
 
-  const chartData = {
+  const lineChartData = {
     labels: labels,
     datasets: [
       {
@@ -101,7 +153,7 @@ export function ChartKitWaveChart({
   return (
   <View onLayout={(e) => setContainerWidth(e.nativeEvent.layout.width)}>
       <LineChart
-        data={chartData}
+        data={lineChartData}
         width={width}
         height={propHeight}
         chartConfig={chartConfig}
@@ -124,7 +176,7 @@ export function ChartKitWaveChart({
       {/* Popup for data point details */}
       {selectedDataPoint !== null && 
        selectedDataPoint.index >= 0 && 
-       selectedDataPoint.index < data.length && (
+       selectedDataPoint.index < chartData.length && (
         <PopoverAny open={popoverOpen} onOpenChange={setPopoverOpen}>
           <PopoverTriggerAny asChild>
             <View />
@@ -134,11 +186,11 @@ export function ChartKitWaveChart({
               <Text className="font-semibold">Detail Gelombang</Text>
               <View className="flex-row justify-between">
                 <Text variant="muted" size="sm">Waktu:</Text>
-                <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.time}</Text>
+                <Text size="sm" className="font-medium">{chartData[selectedDataPoint.index]?.time}</Text>
               </View>
               <View className="flex-row justify-between">
                 <Text variant="muted" size="sm">Tinggi:</Text>
-                <Text size="sm" className="font-medium">{data[selectedDataPoint.index]?.height} m</Text>
+                <Text size="sm" className="font-medium">{chartData[selectedDataPoint.index]?.height} m</Text>
               </View>
             </View>
           </PopoverContentAny>

@@ -17,8 +17,13 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-notifications",
-      "@maplibre/maplibre-react-native"
+      "@maplibre/maplibre-react-native",
+      [
+        "expo-notifications",
+        {
+          "color": "#ffffff"
+        }
+      ]
     ],
     "experiments": {
       "typedRoutes": true,
@@ -45,7 +50,12 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.rajendradamar.cmewsapp",
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "INTERNET"
+      ]
     }
   }
 }

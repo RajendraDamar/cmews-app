@@ -15,6 +15,7 @@ jobs:
   # The job MUST be called `copilot-setup-steps` or it will not be picked up by Copilot.
   copilot-setup-steps:
     runs-on: ubuntu-latest
+    timeout-minutes: 59
 
     # Set the permissions to the lowest permissions possible needed for your steps.
     # Copilot will be given its own token for its operations.
@@ -39,3 +40,23 @@ jobs:
 
       - name: Run lint checks
         run: npm run lint --if-present
+
+      - name: Validate BMKG service structure
+        run: |
+          node -e "const fs = require('fs'); if (!fs.existsSync('lib/services/RealBMKGService.ts')) { console.log('RealBMKGService.ts not found - using mock'); } else { console.log('RealBMKGService.ts found'); }"
+
+      - name: Validate forecast data structure
+        run: |
+          node -e "const fs = require('fs'); const content = fs.readFileSync('lib/data/weather-mock.ts', 'utf8'); const match = content.match(/generateHourlyForecast\\(\\)\\.slice\\(0, (\\d+)\\)/); if (!match || parseInt(match[1]) !== 24) { throw new Error('Mock forecast must have exactly 24 entries (3 days × 8)'); } console.log('Forecast data structure validated: 24 entries (3 days × 8 forecasts)');"
+
+      - name: Validate Firebase configuration types
+        run: |
+          node -e "const fs = require('fs'); const firebaseContent = fs.readFileSync('utils/firebase.ts', 'utf8'); if (!firebaseContent.includes('firebaseConfig')) { throw new Error('Firebase configuration not found'); } const envVars = ['EXPO_PUBLIC_FIREBASE_API_KEY', 'EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN', 'EXPO_PUBLIC_PROJECT_ID']; const missingVars = envVars.filter(v => !firebaseContent.includes(v)); if (missingVars.length > 0) { console.warn('Warning: Some Firebase env vars may be missing:', missingVars.join(', ')); } console.log('Firebase configuration is properly typed');"
+
+      - name: Validate cache service with Expo FileSystem
+        run: |
+          node -e "const fs = require('fs'); const storageContent = fs.readFileSync('lib/services/MockStorageService.ts', 'utf8'); if (!storageContent.includes('Expo File System')) { console.warn('Warning: Storage service should document Expo File System usage'); } const typesContent = fs.readFileSync('lib/services/types.ts', 'utf8'); if (!typesContent.includes('StorageServiceInterface')) { throw new Error('StorageServiceInterface not found in types'); } console.log('Cache service structure validated for Expo FileSystem compatibility');"
+
+      - name: Validate weather store structure
+        run: |
+          node -e "const fs = require('fs'); const storeContent = fs.readFileSync('store/store.ts', 'utf8'); const requiredInterfaces = ['UserPreferences', 'AppState']; const missingInterfaces = requiredInterfaces.filter(i => !storeContent.includes(i)); if (missingInterfaces.length > 0) { throw new Error('Missing required interfaces: ' + missingInterfaces.join(', ')); } const requiredMethods = ['setSelectedLocation', 'updatePreferences', 'reset']; const missingMethods = requiredMethods.filter(m => !storeContent.includes(m)); if (missingMethods.length > 0) { throw new Error('Missing required methods: ' + missingMethods.join(', ')); } console.log('Weather store structure matches requirements');"

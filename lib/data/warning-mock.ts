@@ -1,6 +1,19 @@
 // Mock BMKG Early Warning Data
 // Based on BMKG API structure: https://api.bmkg.go.id/publik/peringatan-dini
 
+/**
+ * Format date to BMKG API datetime format: "YYYY-MM-DD HH:mm:ss"
+ */
+function formatToBMKGAPIDateTime(date: Date): string {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hour = date.getHours().toString().padStart(2, '0');
+  const minute = date.getMinutes().toString().padStart(2, '0');
+  const second = date.getSeconds().toString().padStart(2, '0');
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+}
+
 export interface EarlyWarning {
   wilayah: string;
   level: 'Normal' | 'Waspada' | 'Siaga' | 'Awas';
@@ -22,8 +35,8 @@ export const mockEarlyWarning: EarlyWarningResponse = {
       level: 'Waspada',
       cuaca: 'Hujan Lebat',
       warning_desc: 'Potensi hujan lebat dengan intensitas 20-50 mm dalam 24 jam',
-      valid_from: '2025-10-12 12:00:00',
-      valid_to: '2025-10-13 12:00:00',
+      valid_from: formatToBMKGAPIDateTime(new Date(Date.now() - 2 * 60 * 60 * 1000)),
+      valid_to: formatToBMKGAPIDateTime(new Date(Date.now() + 22 * 60 * 60 * 1000)),
     },
     {
       wilayah: 'DKI Jakarta',
@@ -31,40 +44,40 @@ export const mockEarlyWarning: EarlyWarningResponse = {
       cuaca: 'Hujan Lebat Disertai Angin Kencang',
       warning_desc:
         'Potensi hujan lebat dengan intensitas 50-100 mm dan angin kencang 30-40 km/jam dalam 24 jam',
-      valid_from: '2025-10-12 14:00:00',
-      valid_to: '2025-10-13 14:00:00',
+      valid_from: formatToBMKGAPIDateTime(new Date()),
+      valid_to: formatToBMKGAPIDateTime(new Date(Date.now() + 24 * 60 * 60 * 1000)),
     },
     {
       wilayah: 'Jawa Barat',
       level: 'Waspada',
       cuaca: 'Hujan Sedang',
       warning_desc: 'Potensi hujan sedang dengan intensitas 10-20 mm dalam 24 jam',
-      valid_from: '2025-10-12 10:00:00',
-      valid_to: '2025-10-13 10:00:00',
+      valid_from: formatToBMKGAPIDateTime(new Date(Date.now() - 4 * 60 * 60 * 1000)),
+      valid_to: formatToBMKGAPIDateTime(new Date(Date.now() + 20 * 60 * 60 * 1000)),
     },
     {
       wilayah: 'Bali',
       level: 'Normal',
       cuaca: 'Cerah Berawan',
       warning_desc: 'Tidak ada peringatan cuaca ekstrem',
-      valid_from: '2025-10-12 00:00:00',
-      valid_to: '2025-10-13 00:00:00',
+      valid_from: formatToBMKGAPIDateTime(new Date(Date.now() - 12 * 60 * 60 * 1000)),
+      valid_to: formatToBMKGAPIDateTime(new Date(Date.now() + 12 * 60 * 60 * 1000)),
     },
     {
       wilayah: 'Sulawesi Selatan',
       level: 'Waspada',
       cuaca: 'Hujan Lebat',
       warning_desc: 'Potensi hujan lebat dengan intensitas 20-50 mm dalam 24 jam',
-      valid_from: '2025-10-12 15:00:00',
-      valid_to: '2025-10-13 15:00:00',
+      valid_from: formatToBMKGAPIDateTime(new Date(Date.now() + 1 * 60 * 60 * 1000)),
+      valid_to: formatToBMKGAPIDateTime(new Date(Date.now() + 25 * 60 * 60 * 1000)),
     },
     {
       wilayah: 'Jawa Tengah',
       level: 'Normal',
       cuaca: 'Hujan Ringan',
       warning_desc: 'Potensi hujan ringan dengan intensitas di bawah 10 mm',
-      valid_from: '2025-10-12 00:00:00',
-      valid_to: '2025-10-13 00:00:00',
+      valid_from: formatToBMKGAPIDateTime(new Date(Date.now() - 12 * 60 * 60 * 1000)),
+      valid_to: formatToBMKGAPIDateTime(new Date(Date.now() + 12 * 60 * 60 * 1000)),
     },
   ],
 };
