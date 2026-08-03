@@ -178,6 +178,36 @@ app.post('/api/register-device', (req, res) => {
   });
 });
 
+app.get('/api/proxy', async (req, res) => {
+  const targetUrl = req.query.url as string;
+
+  if (!targetUrl || typeof targetUrl !== 'string') {
+    return res.status(400).json({ error: 'url parameter is required' });
+  }
+
+  try {
+    const response = await fetch(targetUrl, {
+      headers: {
+        'User-Agent': 'CMEWS-App/1.0',
+        Accept: 'application/json, text/plain, */*',
+      },
+    });
+
+    const contentType = response.headers.get('content-type') || 'application/json';
+    const bodyText = await response.text();
+
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Content-Type', contentType);
+    return res.status(response.status).send(bodyText);
+  } catch (error) {
+    const details = error instanceof Error ? error.message : String(error);
+    return res.status(500).json({
+      error: 'Proxy fetch failed',
+      details,
+    });
+  }
+});
+
 app.get('/api/devices', (_req, res) => {
   return res.json({
     devices: Object.values(devices),

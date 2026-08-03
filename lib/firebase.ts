@@ -26,27 +26,25 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Fast Refresh safe app initialization
-const app: FirebaseApp = !getApps().length
-  ? initializeApp(firebaseConfig)
-  : getApp();
+// Fast Refresh safe app initialization - must happen synchronously before any service initialization
+const app: FirebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// Fast Refresh safe Auth initialization with AsyncStorage persistence for native platforms
-let auth: Auth;
-if (Platform.OS === 'web') {
-  auth = getAuth(app);
-} else {
+// Safe Auth initialization across Native & Web
+export const auth: Auth = (() => {
+  if (Platform.OS === 'web') {
+    return getAuth(app);
+  }
   try {
-    auth = initializeAuth(app, {
+    return initializeAuth(app, {
       persistence: getReactNativePersistence(AsyncStorage),
     });
   } catch {
-    auth = getAuth(app);
+    return getAuth(app); // Fallback if auth is already initialized
   }
-}
+})();
 
-const db: Firestore = getFirestore(app);
-const storage: FirebaseStorage = getStorage(app);
+export const db: Firestore = getFirestore(app);
+export const storage: FirebaseStorage = getStorage(app);
 
 export async function getFirebaseMessaging(): Promise<Messaging | null> {
   try {
@@ -57,4 +55,4 @@ export async function getFirebaseMessaging(): Promise<Messaging | null> {
   }
 }
 
-export { app, auth, db, storage };
+export { app };

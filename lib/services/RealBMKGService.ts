@@ -1,6 +1,7 @@
 // Real BMKG Service Implementation
-// Connects to actual BMKG API endpoints for live weather data
+// Connects to actual BMKG API endpoints for live weather data with Web proxy support
 
+import { Platform } from 'react-native';
 import type {
   BMKGWeatherAPIResponse,
   BMKGEarlyWarningResponse,
@@ -13,7 +14,7 @@ import { mockMaritimeWeather } from '~/lib/data/maritime-mock';
 
 /**
  * Real BMKG API Service
- * Replaces MockBMKGService with actual API integration and graceful mock fallback
+ * Replaces MockBMKGService with actual API integration, web proxy routing, and graceful mock fallback
  */
 export class RealBMKGService {
   private readonly baseUrl = 'https://api.bmkg.go.id/publik';
@@ -21,32 +22,34 @@ export class RealBMKGService {
   private readonly maritimeUrl = 'https://peta-maritim.bmkg.go.id/public_api';
 
   /**
-   * Generic fetch helper with error handling
-   * Reduces code duplication across API methods
+   * Generic fetch helper with Web CORS proxy support and error handling
    * 
-   * @param url - API endpoint URL
+   * @param endpointUrl - API endpoint URL
    * @param errorContext - Context for error messages
    * @returns Parsed JSON response
    * @throws Error with context-specific message
    */
-  private async fetchJSON<T>(url: string, errorContext: string): Promise<T> {
+  private async fetchJSON<T>(endpointUrl: string, errorContext: string): Promise<T> {
+    const targetUrl =
+      Platform.OS === 'web' && typeof window !== 'undefined'
+        ? `http://localhost:3003/api/proxy?url=${encodeURIComponent(endpointUrl)}`
+        : endpointUrl;
+
     try {
-      const response = await fetch(url, {
+      const response = await fetch(targetUrl, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
         },
       });
 
       if (!response.ok) {
-        throw new Error(
-          `${errorContext} error: ${response.status} ${response.statusText}`
-        );
+        throw new Error(`${errorContext} error: ${response.status} ${response.statusText}`);
       }
 
       return await response.json();
     } catch (error) {
-      console.warn(`Failed to fetch ${errorContext}, falling back to mock:`, error);
+      console.error(`❌ [WeatherFetch] Failed to fetch ${errorContext}:`, error);
       throw error;
     }
   }
@@ -69,7 +72,7 @@ export class RealBMKGService {
 
       return data;
     } catch (error) {
-      console.warn('Weather forecast fetch failed, using mock forecast data instead:', error);
+      console.warn('⚠️ Weather forecast fetch failed, using mock forecast data fallback:', error);
       return mockWeatherForecast as unknown as BMKGWeatherAPIResponse;
     }
   }
@@ -84,7 +87,7 @@ export class RealBMKGService {
       const url = `${this.earlyWarningUrl}/autogempa.json`;
       return await this.fetchJSON<BMKGEarlyWarningResponse>(url, 'Early warning');
     } catch (error) {
-      console.warn('Early warning fetch failed, using mock warning data instead:', error);
+      console.warn('⚠️ Early warning fetch failed, using mock warning data fallback:', error);
       return mockEarlyWarning as unknown as BMKGEarlyWarningResponse;
     }
   }
@@ -99,7 +102,7 @@ export class RealBMKGService {
       const url = `${this.maritimeUrl}/perairan`;
       return await this.fetchJSON<BMKGMaritimeResponse>(url, 'Maritime weather');
     } catch (error) {
-      console.warn('Maritime weather fetch failed, using mock maritime data instead:', error);
+      console.warn('⚠️ Maritime weather fetch failed, using mock maritime data fallback:', error);
       return mockMaritimeWeather as unknown as BMKGMaritimeResponse;
     }
   }
@@ -112,9 +115,7 @@ export class RealBMKGService {
    */
   async testConnection(): Promise<boolean> {
     try {
-      // Example Jakarta Pusat (Central Jakarta) code for testing
-      // Note: Replace with actual valid code when available
-      const EXAMPLE_ADM4_CODE = '31.71.05.1001';
+      const EXAMPLE_ADM4_CODE = '3171031001';
       await this.getWeatherForecast(EXAMPLE_ADM4_CODE);
       return true;
     } catch (error) {

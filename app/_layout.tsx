@@ -16,23 +16,21 @@ function ThemedApp() {
   const { colorScheme } = useTheme();
 
   useEffect(() => {
-    if (Platform.OS === 'web') {
-      // Update the root HTML element class for web
-      if (typeof document !== 'undefined') {
-        if (colorScheme === 'dark') {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      // Update the root HTML element class for web dark mode styling
+      if (colorScheme === 'dark') {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
 
-        // Inject maplibre-gl CSS for Web map rendering if not already present
-        if (!document.getElementById('maplibre-gl-css')) {
-          const link = document.createElement('link');
-          link.id = 'maplibre-gl-css';
-          link.rel = 'stylesheet';
-          link.href = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css';
-          document.head.appendChild(link);
-        }
+      // Inject maplibre-gl CSS for Web map rendering if not already present
+      if (!document.getElementById('maplibre-gl-css')) {
+        const link = document.createElement('link');
+        link.id = 'maplibre-gl-css';
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css';
+        document.head.appendChild(link);
       }
     }
   }, [colorScheme]);
