@@ -26,22 +26,37 @@ const firebaseConfig = {
   appId: process.env.EXPO_PUBLIC_FIREBASE_APP_ID,
 };
 
-// Fast Refresh safe app initialization - must happen synchronously before any service initialization
-const app: FirebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+// 1. Initialize app safely at module evaluation
+export const app: FirebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// Safe Auth initialization across Native & Web
-export const auth: Auth = (() => {
+// 2. Lazy Singleton Instance
+let authInstance: Auth | null = null;
+
+export function getFirebaseAuth(): Auth {
+  if (authInstance) return authInstance;
+
   if (Platform.OS === 'web') {
-    return getAuth(app);
+    authInstance = getAuth(app);
+  } else {
+    try {
+      authInstance = initializeAuth(app, {
+        persistence: getReactNativePersistence(AsyncStorage),
+      });
+    } catch {
+      authInstance = getAuth(app);
+    }
   }
-  try {
-    return initializeAuth(app, {
-      persistence: getReactNativePersistence(AsyncStorage),
-    });
-  } catch {
-    return getAuth(app); // Fallback if auth is already initialized
-  }
-})();
+  return authInstance;
+}
+
+// 3. Lazy Proxy Export (Prevents top-level execution crash while keeping 'auth' import intact)
+export const auth = new Proxy({} as Auth, {
+  get(_, prop) {
+    const instance = getFirebaseAuth();
+    const value = (instance as any)[prop];
+    return typeof value === 'function' ? value.bind(instance) : value;
+  },
+});
 
 export const db: Firestore = getFirestore(app);
 export const storage: FirebaseStorage = getStorage(app);
@@ -54,5 +69,3 @@ export async function getFirebaseMessaging(): Promise<Messaging | null> {
     return null;
   }
 }
-
-export { app };

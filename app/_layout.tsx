@@ -12,6 +12,7 @@ export const unstable_settings = {
   initialRouteName: '(auth)',
 };
 
+// Child component rendered INSIDE ThemeProvider where useTheme() is safe
 function ThemedApp() {
   const { colorScheme } = useTheme();
 
@@ -22,15 +23,6 @@ function ThemedApp() {
         document.documentElement.classList.add('dark');
       } else {
         document.documentElement.classList.remove('dark');
-      }
-
-      // Inject maplibre-gl CSS for Web map rendering if not already present
-      if (!document.getElementById('maplibre-gl-css')) {
-        const link = document.createElement('link');
-        link.id = 'maplibre-gl-css';
-        link.rel = 'stylesheet';
-        link.href = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css';
-        document.head.appendChild(link);
       }
     }
   }, [colorScheme]);
@@ -61,7 +53,21 @@ function ThemedApp() {
   );
 }
 
+// Outermost RootLayout wrapper - NO useTheme() calls allowed here!
 export default function RootLayout() {
+  useEffect(() => {
+    if (Platform.OS === 'web' && typeof document !== 'undefined') {
+      // Inject maplibre-gl CSS for Web map rendering if not already present
+      if (!document.getElementById('maplibre-gl-css')) {
+        const link = document.createElement('link');
+        link.id = 'maplibre-gl-css';
+        link.rel = 'stylesheet';
+        link.href = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css';
+        document.head.appendChild(link);
+      }
+    }
+  }, []);
+
   return (
     <ThemeProvider>
       <ThemedApp />
