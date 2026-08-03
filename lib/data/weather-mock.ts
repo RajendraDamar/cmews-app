@@ -367,5 +367,12 @@ export const mockWeatherForecast = {
     
     return forecasts;
   })(),
+  lokasi: {
+    adm1: 'DKI Jakarta',
+    adm2: 'Jakarta Pusat',
+    adm3: 'Menteng',
+    adm4: 'Menteng',
+    koord: '-6.1944,106.8229',
+  },
 };
 

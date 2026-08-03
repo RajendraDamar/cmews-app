@@ -7,9 +7,13 @@ import type {
   BMKGMaritimeResponse,
 } from '~/lib/types/bmkg-api-types';
 
+import { mockWeatherForecast } from '~/lib/data/weather-mock';
+import { mockEarlyWarning } from '~/lib/data/warning-mock';
+import { mockMaritimeWeather } from '~/lib/data/maritime-mock';
+
 /**
  * Real BMKG API Service
- * Replaces MockBMKGService with actual API integration
+ * Replaces MockBMKGService with actual API integration and graceful mock fallback
  */
 export class RealBMKGService {
   private readonly baseUrl = 'https://api.bmkg.go.id/publik';
@@ -42,55 +46,62 @@ export class RealBMKGService {
 
       return await response.json();
     } catch (error) {
-      console.error(`Failed to fetch ${errorContext}:`, error);
-      
-      if (error instanceof Error) {
-        throw new Error(`${errorContext} fetch failed: ${error.message}`);
-      }
-      
-      throw new Error(`${errorContext} fetch failed: Unknown error`);
+      console.warn(`Failed to fetch ${errorContext}, falling back to mock:`, error);
+      throw error;
     }
   }
 
   /**
-   * Fetch weather forecast for a specific region
+   * Fetch weather forecast for a specific region with mock fallback
    * 
    * @param adm4Code - Administrative level 4 code (village/sub-district)
    * @returns BMKG weather forecast response
-   * @throws Error if API request fails
    */
   async getWeatherForecast(adm4Code: string): Promise<BMKGWeatherAPIResponse> {
-    const url = `${this.baseUrl}/prakiraan-cuaca?adm4=${adm4Code}`;
-    const data = await this.fetchJSON<BMKGWeatherAPIResponse>(url, 'Weather forecast');
-    
-    // Validate response structure
-    if (!data || !data.data || !Array.isArray(data.data)) {
-      throw new Error('Invalid BMKG API response structure');
-    }
+    try {
+      const url = `${this.baseUrl}/prakiraan-cuaca?adm4=${adm4Code}`;
+      const data = await this.fetchJSON<BMKGWeatherAPIResponse>(url, 'Weather forecast');
+      
+      // Validate response structure
+      if (!data || !data.data || !Array.isArray(data.data)) {
+        throw new Error('Invalid BMKG API response structure');
+      }
 
-    return data;
+      return data;
+    } catch (error) {
+      console.warn('Weather forecast fetch failed, using mock forecast data instead:', error);
+      return mockWeatherForecast as unknown as BMKGWeatherAPIResponse;
+    }
   }
 
   /**
-   * Fetch early warning and earthquake data
+   * Fetch early warning and earthquake data with mock fallback
    * 
    * @returns BMKG early warning response
-   * @throws Error if API request fails
    */
   async getEarlyWarning(): Promise<BMKGEarlyWarningResponse> {
-    const url = `${this.earlyWarningUrl}/autogempa.json`;
-    return await this.fetchJSON<BMKGEarlyWarningResponse>(url, 'Early warning');
+    try {
+      const url = `${this.earlyWarningUrl}/autogempa.json`;
+      return await this.fetchJSON<BMKGEarlyWarningResponse>(url, 'Early warning');
+    } catch (error) {
+      console.warn('Early warning fetch failed, using mock warning data instead:', error);
+      return mockEarlyWarning as unknown as BMKGEarlyWarningResponse;
+    }
   }
 
   /**
-   * Fetch maritime weather data
+   * Fetch maritime weather data with mock fallback
    * 
    * @returns BMKG maritime weather response
-   * @throws Error if API request fails
    */
   async getMaritimeWeather(): Promise<BMKGMaritimeResponse> {
-    const url = `${this.maritimeUrl}/perairan`;
-    return await this.fetchJSON<BMKGMaritimeResponse>(url, 'Maritime weather');
+    try {
+      const url = `${this.maritimeUrl}/perairan`;
+      return await this.fetchJSON<BMKGMaritimeResponse>(url, 'Maritime weather');
+    } catch (error) {
+      console.warn('Maritime weather fetch failed, using mock maritime data instead:', error);
+      return mockMaritimeWeather as unknown as BMKGMaritimeResponse;
+    }
   }
 
   /**
