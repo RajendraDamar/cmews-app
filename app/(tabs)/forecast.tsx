@@ -10,6 +10,7 @@ import { Text } from '~/components/ui/text';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { useWeatherStore } from '~/store/weatherStore';
 import { EmptyState } from '~/components/ui/empty-state';
+import { MARITIME_MOCK_DATA } from '~/lib/data/maritime-mock';
 
 export default function ForecastTab() {
   const [activeTab, setActiveTab] = useState('weather');
@@ -80,13 +81,14 @@ export default function ForecastTab() {
     };
   }).filter(Boolean);
 
-  // Use maritime data or provide fallback for wave/current tabs
-  const waveData = maritimeWeather.slice(0, 3).map((data: any) => ({
-    seaArea: data?.wilayah || 'Perairan Indonesia',
-    heightMin: 1.0,
-    heightMax: 2.0,
-    period: 6,
-    seaState: data?.tinggi_gelombang || 'Sedang',
+  // Use maritime data or provide mock fallback for wave/current tabs
+  const rawWaveList = maritimeWeather.length > 0 ? maritimeWeather : MARITIME_MOCK_DATA.wave;
+  const waveData = rawWaveList.slice(0, 5).map((data: any, index: number) => ({
+    seaArea: data?.wilayah || data?.seaArea || `Perairan ${index + 1}`,
+    heightMin: data?.heightMin ?? parseFloat(data?.wave_desc?.split('-')[0]) ?? 1.0,
+    heightMax: data?.heightMax ?? parseFloat(data?.wave_desc?.split('-')[1]) ?? 2.5,
+    period: data?.period ?? 6,
+    seaState: data?.seaState || data?.wave_cat || 'Sedang',
     hourly: [
       { time: '06:00', height: 1.2 },
       { time: '12:00', height: 1.5 },
@@ -94,10 +96,11 @@ export default function ForecastTab() {
     ],
   }));
 
-  const currentData = maritimeWeather.slice(0, 3).map((data: any) => ({
-    seaArea: data?.wilayah || 'Perairan Indonesia',
-    speed: 0.5,
-    direction: data?.arah_angin || 'Timur Laut',
+  const rawCurrentList = maritimeWeather.length > 0 ? maritimeWeather : MARITIME_MOCK_DATA.current;
+  const currentData = rawCurrentList.slice(0, 5).map((data: any, index: number) => ({
+    seaArea: data?.wilayah || data?.seaArea || `Perairan ${index + 1}`,
+    speed: data?.speed ?? 0.5,
+    direction: data?.direction || data?.arah_angin || 'Timur Laut',
     hourly: [
       { time: '06:00', speed: 0.4, direction: 'Timur' },
       { time: '12:00', speed: 0.6, direction: 'Timur Laut' },

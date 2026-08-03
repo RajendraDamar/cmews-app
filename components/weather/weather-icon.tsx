@@ -1,7 +1,6 @@
 import React from 'react';
 import { View } from 'react-native';
 import { useTheme } from '~/lib/theme-provider';
-import { getWeatherColor, getIconForDescription } from '~/lib/utils/weather-icons';
 import {
   Sun,
   CloudSun,
@@ -19,75 +18,46 @@ interface WeatherIconProps {
   size?: number;
 }
 
-interface WeatherIconConfig {
-  icon: React.ComponentType<{ size: number; color: string }>;
-  iconColor: string;
-  bgColor: string;
-}
-
-const WEATHER_ICON_MAP: Record<string, WeatherIconConfig> = {
-  Cerah: {
-    icon: Sun,
-    iconColor: '#eab308', // yellow-500
-    bgColor: '#fef3c7', // yellow-100
-  },
-  'Cerah Berawan': {
-    icon: CloudSun,
-    iconColor: '#fb923c', // orange-400
-    bgColor: '#ffedd5', // orange-100
-  },
-  Berawan: {
-    icon: Cloud,
-    iconColor: '#9ca3af', // gray-400
-    bgColor: '#f3f4f6', // gray-100
-  },
-  'Hujan Ringan': {
-    icon: CloudDrizzle,
-    iconColor: '#60a5fa', // blue-400
-    bgColor: '#dbeafe', // blue-100
-  },
-  'Hujan Sedang': {
-    icon: CloudRain,
-    iconColor: '#3b82f6', // blue-500
-    bgColor: '#dbeafe', // blue-100
-  },
-  'Hujan Lebat': {
-    icon: CloudRainWind,
-    iconColor: '#1d4ed8', // blue-700
-    bgColor: '#bfdbfe', // blue-200
-  },
-  'Hujan Petir': {
-    icon: CloudLightning,
-    iconColor: '#a855f7', // purple-500
-    bgColor: '#f3e8ff', // purple-100
-  },
-  Petir: {
-    icon: CloudLightning,
-    iconColor: '#a855f7', // purple-500
-    bgColor: '#f3e8ff', // purple-100
-  },
-  Kabut: {
-    icon: CloudFog,
-    iconColor: '#d1d5db', // gray-300
-    bgColor: '#f3f4f6', // gray-100
-  },
-};
-
 export function WeatherIcon({ condition, size = 48 }: WeatherIconProps) {
   const { colorScheme } = useTheme();
   const isDark = colorScheme === 'dark';
+  const weatherLower = (condition || '').toLowerCase();
 
-  const fallback = WEATHER_ICON_MAP[condition] || WEATHER_ICON_MAP.Cerah;
-  const suggested = getIconForDescription(condition);
+  let IconComponent = Cloud;
+  let iconColor = isDark ? '#f8fafc' : '#334155';
+  let backgroundColor = isDark ? '#1e293b' : '#e2e8f0';
 
-  const IconComponent = suggested.icon || fallback.icon;
-  const iconSize = size * 0.6; // Icon is 60% of container size
+  if (weatherLower.includes('cerah') && !weatherLower.includes('berawan')) {
+    IconComponent = Sun;
+    iconColor = isDark ? '#fbbf24' : '#d97706';
+    backgroundColor = isDark ? '#451a03' : '#fef3c7';
+  } else if (weatherLower.includes('cerah berawan')) {
+    IconComponent = CloudSun;
+    iconColor = isDark ? '#fdba74' : '#c2410c';
+    backgroundColor = isDark ? '#431407' : '#ffedd5';
+  } else if (weatherLower.includes('berawan')) {
+    IconComponent = Cloud;
+    iconColor = isDark ? '#e2e8f0' : '#475569';
+    backgroundColor = isDark ? '#334155' : '#e2e8f0';
+  } else if (weatherLower.includes('hujan lebat') || weatherLower.includes('petir')) {
+    IconComponent = weatherLower.includes('petir') ? CloudLightning : CloudRainWind;
+    iconColor = isDark ? '#c084fc' : '#6d28d9';
+    backgroundColor = isDark ? '#3b0764' : '#f3e8ff';
+  } else if (weatherLower.includes('hujan sedang') || weatherLower.includes('hujan')) {
+    IconComponent = CloudRain;
+    iconColor = isDark ? '#60a5fa' : '#1d4ed8';
+    backgroundColor = isDark ? '#172554' : '#dbeafe';
+  } else if (weatherLower.includes('hujan ringan') || weatherLower.includes('gerimis')) {
+    IconComponent = CloudDrizzle;
+    iconColor = isDark ? '#38bdf8' : '#0284c7';
+    backgroundColor = isDark ? '#082f49' : '#e0f2fe';
+  } else if (weatherLower.includes('kabut') || weatherLower.includes('asap')) {
+    IconComponent = CloudFog;
+    iconColor = isDark ? '#cbd5e1' : '#475569';
+    backgroundColor = isDark ? '#1e293b' : '#f1f5f9';
+  }
 
-  // Pick an icon color that adapts to dark mode for good contrast
-  const iconColor = suggested?.color?.[isDark ? 'dark' : 'light'] || getWeatherColor(condition, isDark);
-
-  // For dark mode use a subdued background so the colored icon remains visible
-  const backgroundColor = isDark ? (suggested?.bgColor?.dark ?? '#0b1220') : (suggested?.bgColor?.light ?? fallback.bgColor);
+  const iconSize = size * 0.55;
 
   return (
     <View

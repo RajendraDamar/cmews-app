@@ -134,7 +134,8 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
         await cacheService.set(cacheKey, maritime, 1800000); // 30 min cache
       }
 
-      set({ maritimeWeather: maritime?.data || [] });
+      const items = maritime?.perairan || maritime?.data || (Array.isArray(maritime) ? maritime : []);
+      set({ maritimeWeather: items });
     } catch (error) {
       console.warn('Maritime data fetch failed:', error);
       set({ maritimeWeather: [] });
