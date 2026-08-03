@@ -24,6 +24,15 @@ function ThemedApp() {
         } else {
           document.documentElement.classList.remove('dark');
         }
+
+        // Inject maplibre-gl CSS for Web map rendering if not already present
+        if (!document.getElementById('maplibre-gl-css')) {
+          const link = document.createElement('link');
+          link.id = 'maplibre-gl-css';
+          link.rel = 'stylesheet';
+          link.href = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css';
+          document.head.appendChild(link);
+        }
       }
     }
   }, [colorScheme]);

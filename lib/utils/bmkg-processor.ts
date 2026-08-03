@@ -26,7 +26,7 @@ export const processBMKGForecast = (
   // Transform raw API data to processed format
   const processed: ProcessedForecastEntry[] = rawData.data.map((item) => ({
     datetime: item.local_datetime,
-    timestamp: new Date(item.local_datetime).getTime(),
+    timestamp: new Date(item.local_datetime ? item.local_datetime.replace(' ', 'T') : Date.now()).getTime(),
     temperature: item.t,
     humidity: item.hu,
     weatherDesc: item.weather_desc,

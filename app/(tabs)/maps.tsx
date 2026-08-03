@@ -28,6 +28,7 @@ if (Platform.OS === 'web') {
 // Conditionally import MapLibre based on platform
 let MapLibreGL: any = null;
 let MapGL: any = null;
+let MapMarker: any = null;
 
 if (Platform.OS !== 'web') {
   try {
@@ -42,18 +43,28 @@ if (Platform.OS !== 'web') {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const ReactMapGL = require('react-map-gl/maplibre');
     MapGL = ReactMapGL.default;
+    MapMarker = ReactMapGL.Marker;
   } catch (error) {
     console.error('Failed to load react-map-gl:', error);
   }
 }
 
-function WebMap() {
+interface WebMapProps {
+  filteredReports: WeatherReport[];
+  selectedReport: WeatherReport | null;
+  onReportSelect: (report: WeatherReport) => void;
+  webViewState: { longitude: number; latitude: number; zoom: number };
+  onMoveWeb: (evt: any) => void;
+}
+
+function WebMap({
+  filteredReports,
+  selectedReport,
+  onReportSelect,
+  webViewState,
+  onMoveWeb,
+}: WebMapProps) {
   const { colorScheme } = useTheme();
-  const [viewState, setViewState] = useState({
-    longitude: 106.8272,
-    latitude: -6.1754,
-    zoom: 11,
-  });
 
   if (!MapGL) {
     return (
@@ -69,17 +80,30 @@ function WebMap() {
   const mapStyle = colorScheme === 'dark' ? MAP_STYLES.dark : MAP_STYLES.light;
 
   return (
-    <View className="maplibregl-map" style={{ width: '100%', height: '100%' }}>
+    <View className="maplibregl-map" style={{ width: '100%', height: '100%', flex: 1, minHeight: 400 }}>
       <MapGL
-        {...viewState}
-        onMove={(evt: any) => setViewState(evt.viewState)}
-        // disable built-in attribution control on web
+        {...webViewState}
+        onMove={onMoveWeb}
         attributionControl={false}
         style={{ width: '100%', height: '100%' }}
         mapStyle={mapStyle}
         dragRotate={true}
-        pitchWithRotate={true}
-      />
+        pitchWithRotate={true}>
+        {MapMarker &&
+          filteredReports.map((report) => (
+            <MapMarker
+              key={report.id}
+              longitude={report.lon}
+              latitude={report.lat}
+              anchor="center">
+              <SeverityMarker
+                report={report}
+                onPress={() => onReportSelect(report)}
+                selected={selectedReport?.id === report.id}
+              />
+            </MapMarker>
+          ))}
+      </MapGL>
     </View>
   );
 }
@@ -103,8 +127,13 @@ export default function MapsScreen() {
   const [reports, setReports] = useState<WeatherReport[]>(mockWeatherReports);
   const cameraRef = useRef<any>(null);
 
+  const [webViewState, setWebViewState] = useState({
+    longitude: 106.8272,
+    latitude: -6.1754,
+    zoom: 11,
+  });
+
   const themeColors = getThemeColor(colorScheme === 'dark');
-  // Use JS theme colors for FAB so narrow and wide screens follow the same theme state
 
   // Calculate exact map height for full screen
   const mapHeight = height - insets.top - insets.bottom;
@@ -134,18 +163,28 @@ export default function MapsScreen() {
         zoomLevel: 11,
         animationDuration: 1000,
       });
+    } else {
+      setWebViewState({
+        longitude: 106.8272,
+        latitude: -6.1754,
+        zoom: 11,
+      });
     }
   };
 
   const handleZoomIn = () => {
     if (Platform.OS !== 'web' && cameraRef.current) {
       cameraRef.current.zoomTo(15, 500);
+    } else {
+      setWebViewState((prev) => ({ ...prev, zoom: Math.min(prev.zoom + 1, 18) }));
     }
   };
 
   const handleZoomOut = () => {
     if (Platform.OS !== 'web' && cameraRef.current) {
       cameraRef.current.zoomTo(9, 500);
+    } else {
+      setWebViewState((prev) => ({ ...prev, zoom: Math.max(prev.zoom - 1, 3) }));
     }
   };
 
@@ -156,6 +195,12 @@ export default function MapsScreen() {
         centerCoordinate: [report.lon, report.lat],
         zoomLevel: 14,
         animationDuration: 1000,
+      });
+    } else {
+      setWebViewState({
+        longitude: report.lon,
+        latitude: report.lat,
+        zoom: 14,
       });
     }
   };
@@ -204,7 +249,13 @@ export default function MapsScreen() {
     return (
       <View style={{ flex: 1, height: isDesktop ? '100%' : mapHeight }}>
         {Platform.OS === 'web' ? (
-          <WebMap />
+          <WebMap
+            filteredReports={filteredReports}
+            selectedReport={selectedReport}
+            onReportSelect={handleReportSelect}
+            webViewState={webViewState}
+            onMoveWeb={(evt: any) => setWebViewState(evt.viewState)}
+          />
         ) : MapLibreGL ? (
           <MapLibreGL.MapView
             style={{ flex: 1 }}
@@ -259,36 +310,34 @@ export default function MapsScreen() {
           />
 
           {/* Map Controls (Desktop - Right Side) */}
-          {Platform.OS !== 'web' && MapLibreGL && (
-            <View
-              className="absolute right-6 top-24 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
-              style={{
-                zIndex: 10,
-                shadowColor: themeColors.shadow,
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.15,
-                shadowRadius: 8,
-                elevation: 8,
-              }}>
-              <Pressable
-                onPress={handleZoomIn}
-                className="h-11 w-11 items-center justify-center border-b border-border active:bg-muted/50">
-                <Plus size={20} color={themeColors.icon.foreground} />
-              </Pressable>
+          <View
+            className="absolute right-6 top-24 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+            style={{
+              zIndex: 10,
+              shadowColor: themeColors.shadow,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.15,
+              shadowRadius: 8,
+              elevation: 8,
+            }}>
+            <Pressable
+              onPress={handleZoomIn}
+              className="h-11 w-11 items-center justify-center border-b border-border active:bg-muted/50">
+              <Plus size={20} color={themeColors.icon.foreground} />
+            </Pressable>
 
-              <Pressable
-                onPress={handleZoomOut}
-                className="h-11 w-11 items-center justify-center border-b border-border active:bg-muted/50">
-                <Minus size={20} color={themeColors.icon.foreground} />
-              </Pressable>
+            <Pressable
+              onPress={handleZoomOut}
+              className="h-11 w-11 items-center justify-center border-b border-border active:bg-muted/50">
+              <Minus size={20} color={themeColors.icon.foreground} />
+            </Pressable>
 
-              <Pressable
-                onPress={handleLocationPress}
-                className="h-11 w-11 items-center justify-center active:bg-muted/50">
-                <MapPin size={18} color={themeColors.icon.foreground} />
-              </Pressable>
-            </View>
-          )}
+            <Pressable
+              onPress={handleLocationPress}
+              className="h-11 w-11 items-center justify-center active:bg-muted/50">
+              <MapPin size={18} color={themeColors.icon.foreground} />
+            </Pressable>
+          </View>
 
           {/* Report Form Dialog */}
           {showReportForm && (
@@ -319,36 +368,34 @@ export default function MapsScreen() {
           />
 
           {/* Map Controls (Mobile - Right Side) */}
-          {Platform.OS !== 'web' && MapLibreGL && (
-            <View
-              className="absolute bottom-32 right-4 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
-              style={{
-                zIndex: 10,
-                shadowColor: themeColors.shadow,
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.15,
-                shadowRadius: 8,
-                elevation: 8,
-              }}>
-              <Pressable
-                onPress={handleZoomIn}
-                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Plus size={20} color={themeColors.icon.foreground} />
-              </Pressable>
+          <View
+            className="absolute bottom-32 right-4 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+            style={{
+              zIndex: 10,
+              shadowColor: themeColors.shadow,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.15,
+              shadowRadius: 8,
+              elevation: 8,
+            }}>
+            <Pressable
+              onPress={handleZoomIn}
+              className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+              <Plus size={20} color={themeColors.icon.foreground} />
+            </Pressable>
 
-              <Pressable
-                onPress={handleZoomOut}
-                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Minus size={20} color={themeColors.icon.foreground} />
-              </Pressable>
+            <Pressable
+              onPress={handleZoomOut}
+              className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+              <Minus size={20} color={themeColors.icon.foreground} />
+            </Pressable>
 
-              <Pressable
-                onPress={handleLocationPress}
-                className="h-12 w-12 items-center justify-center active:bg-muted/50">
-                <MapPin size={18} color={themeColors.icon.foreground} />
-              </Pressable>
-            </View>
-          )}
+            <Pressable
+              onPress={handleLocationPress}
+              className="h-12 w-12 items-center justify-center active:bg-muted/50">
+              <MapPin size={18} color={themeColors.icon.foreground} />
+            </Pressable>
+          </View>
 
           {/* Floating Action Button (Mobile) */}
           <Pressable
