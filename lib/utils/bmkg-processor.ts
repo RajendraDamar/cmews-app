@@ -14,6 +14,29 @@ const FORECASTS_PER_DAY = 8; // 3-hour intervals
 const FORECAST_DAYS = 3; // BMKG provides 3 days of forecast
 
 /**
+ * Safely parse BMKG date strings across Safari, Chrome, V8, and Hermes
+ * Handles both SQL timestamps ("YYYY-MM-DD HH:mm:ss") and compact format ("YYYYMMDDHHmm")
+ */
+export function parseBMKGTimestamp(dateStr: string): Date {
+  if (!dateStr) return new Date();
+
+  // Handle compact format: YYYYMMDDHHmm (e.g., "202608031200")
+  if (/^\d{12}$/.test(dateStr)) {
+    const year = parseInt(dateStr.substring(0, 4), 10);
+    const month = parseInt(dateStr.substring(4, 6), 10) - 1;
+    const day = parseInt(dateStr.substring(6, 8), 10);
+    const hour = parseInt(dateStr.substring(8, 10), 10);
+    const minute = parseInt(dateStr.substring(10, 12), 10);
+    return new Date(Date.UTC(year, month, day, hour, minute));
+  }
+
+  // Handle SQL format: YYYY-MM-DD HH:mm:ss -> Convert to ISO 8601 for WebKit/Hermes safety
+  const isoString = dateStr.replace(' ', 'T');
+  const parsed = new Date(isoString);
+  return isNaN(parsed.getTime()) ? new Date() : parsed;
+}
+
+/**
  * Process BMKG weather forecast API response
  * CRITICAL: BMKG returns exactly 24 entries (3 days × 8 per day, 3-hour intervals)
  * 
@@ -26,7 +49,7 @@ export const processBMKGForecast = (
   // Transform raw API data to processed format
   const processed: ProcessedForecastEntry[] = rawData.data.map((item) => ({
     datetime: item.local_datetime,
-    timestamp: new Date(item.local_datetime ? item.local_datetime.replace(' ', 'T') : Date.now()).getTime(),
+    timestamp: parseBMKGTimestamp(item.local_datetime).getTime(),
     temperature: item.t,
     humidity: item.hu,
     weatherDesc: item.weather_desc,

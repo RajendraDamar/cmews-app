@@ -12,6 +12,8 @@ import { mockWeatherForecast } from '~/lib/data/weather-mock';
 import { mockEarlyWarning } from '~/lib/data/warning-mock';
 import { mockMaritimeWeather } from '~/lib/data/maritime-mock';
 
+const PROXY_BASE_URL = 'http://localhost:3003/api/proxy?url=';
+
 /**
  * Real BMKG API Service
  * Replaces MockBMKGService with actual API integration, web proxy routing, and graceful mock fallback
@@ -23,6 +25,8 @@ export class RealBMKGService {
 
   /**
    * Generic fetch helper with Web CORS proxy support and error handling
+   * 1. Native iOS/Android ALWAYS calls BMKG directly (bypasses proxy/localhost)
+   * 2. Web browser uses the backend CORS proxy
    * 
    * @param endpointUrl - API endpoint URL
    * @param errorContext - Context for error messages
@@ -31,25 +35,26 @@ export class RealBMKGService {
    */
   private async fetchJSON<T>(endpointUrl: string, errorContext: string): Promise<T> {
     const targetUrl =
-      Platform.OS === 'web' && typeof window !== 'undefined'
-        ? `http://localhost:3003/api/proxy?url=${encodeURIComponent(endpointUrl)}`
+      Platform.OS === 'web'
+        ? `${PROXY_BASE_URL}${encodeURIComponent(endpointUrl)}`
         : endpointUrl;
 
     try {
+      console.log(`🌐 [BMKG-Fetch] Platform: ${Platform.OS} | Fetching: ${targetUrl}`);
       const response = await fetch(targetUrl, {
         method: 'GET',
         headers: {
-          Accept: 'application/json',
+          Accept: 'application/json, application/xml, text/plain, */*',
         },
       });
 
       if (!response.ok) {
-        throw new Error(`${errorContext} error: ${response.status} ${response.statusText}`);
+        throw new Error(`${errorContext} HTTP Error ${response.status}: ${response.statusText}`);
       }
 
       return await response.json();
     } catch (error) {
-      console.error(`❌ [WeatherFetch] Failed to fetch ${errorContext}:`, error);
+      console.error(`❌ [BMKG-Fetch-Error] (${Platform.OS}) Target: ${endpointUrl}`, error);
       throw error;
     }
   }

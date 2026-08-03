@@ -178,33 +178,40 @@ app.post('/api/register-device', (req, res) => {
   });
 });
 
+app.options('/api/proxy', (_req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  return res.sendStatus(204);
+});
+
 app.get('/api/proxy', async (req, res) => {
   const targetUrl = req.query.url as string;
-
   if (!targetUrl || typeof targetUrl !== 'string') {
-    return res.status(400).json({ error: 'url parameter is required' });
+    return res.status(400).json({ error: 'Missing "url" query parameter' });
   }
 
   try {
+    // Enable CORS for Expo Web
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
     const response = await fetch(targetUrl, {
       headers: {
-        'User-Agent': 'CMEWS-App/1.0',
-        Accept: 'application/json, text/plain, */*',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) CMEWS-App/1.0',
+        Accept: 'application/json, application/xml, text/plain, */*',
       },
     });
 
-    const contentType = response.headers.get('content-type') || 'application/json';
-    const bodyText = await response.text();
+    const contentType = response.headers.get('content-type') || 'text/plain';
+    res.setHeader('Content-Type', contentType);
 
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Content-Type', contentType);
-    return res.status(response.status).send(bodyText);
-  } catch (error) {
-    const details = error instanceof Error ? error.message : String(error);
-    return res.status(500).json({
-      error: 'Proxy fetch failed',
-      details,
-    });
+    const data = await response.text();
+    return res.status(200).send(data);
+  } catch (error: any) {
+    console.error('❌ [Proxy-Error] Failed to fetch target:', targetUrl, error?.message ?? String(error));
+    return res.status(502).json({ error: 'Proxy fetch failed', details: error?.message ?? String(error) });
   }
 });
 
