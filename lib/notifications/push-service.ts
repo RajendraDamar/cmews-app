@@ -1,5 +1,6 @@
 import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
+import { getFirebaseMessaging } from '~/lib/firebase';
 
 export const REGISTER_SERVER_URL =
   process.env.EXPO_PUBLIC_REGISTER_SERVER_URL ?? 'https://excuse-qualifier-baguette.ngrok-free.dev';
@@ -64,7 +65,6 @@ export function configureForegroundNotifications(): void {
 
   Notifications.setNotificationHandler({
     handleNotification: async () => ({
-      shouldShowAlert: true,
       shouldShowBanner: true,
       shouldShowList: true,
       shouldPlaySound: true,
@@ -77,7 +77,47 @@ export function configureForegroundNotifications(): void {
 
 export async function registerNativePushToken(baseUrl: string = REGISTER_SERVER_URL): Promise<string | null> {
   if (Platform.OS === 'web') {
-    return null;
+    console.log('1️⃣ [PUSH-WEB] Requesting browser notification permission...');
+    const permission = await Notification.requestPermission();
+
+    if (permission !== 'granted') {
+      throw new Error('Browser notification permissions were not granted.');
+    }
+
+    const messaging = await getFirebaseMessaging();
+    if (!messaging) {
+      throw new Error('Firebase Messaging is not supported in this browser.');
+    }
+
+    const vapidKey = process.env.EXPO_PUBLIC_FIREBASE_VAPID_KEY;
+    if (!vapidKey) {
+      throw new Error('Missing EXPO_PUBLIC_FIREBASE_VAPID_KEY in environment.');
+    }
+
+    console.log('2️⃣ [PUSH-WEB] Fetching web FCM token...');
+    const { getToken } = await import('firebase/messaging');
+    const webToken = await getToken(messaging, { vapidKey });
+
+    console.log('3️⃣ [PUSH-WEB] Registering token with backend...');
+    const response = await fetch(getRegisterEndpoint(baseUrl), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'ngrok-skip-browser-warning': 'true',
+      },
+      body: JSON.stringify({
+        token: webToken,
+        deviceName: 'web-pwa',
+      }),
+    });
+
+    if (!response.ok) {
+      const serverError = await response.text();
+      throw new Error(`Web device registration failed (${response.status}): ${serverError}`);
+    }
+
+    console.log('4️⃣ [PUSH-WEB] Successfully registered Web PWA!');
+    return webToken;
   }
 
   const permission = await Notifications.getPermissionsAsync();

@@ -8,6 +8,7 @@ import {
 } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
+import { getMessaging, isSupported, Messaging } from 'firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 
@@ -46,5 +47,14 @@ if (Platform.OS === 'web') {
 
 const db: Firestore = getFirestore(app);
 const storage: FirebaseStorage = getStorage(app);
+
+export async function getFirebaseMessaging(): Promise<Messaging | null> {
+  try {
+    const supported = await isSupported();
+    return supported ? getMessaging(app) : null;
+  } catch {
+    return null;
+  }
+}
 
 export { app, auth, db, storage };
