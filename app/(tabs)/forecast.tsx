@@ -43,38 +43,36 @@ export default function ForecastTab() {
     const firstEntry = dayForecast[0];
     const dateObj = new Date(firstEntry.datetime);
     const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+    const temps = dayForecast.map(e => e.temperature);
     
     return {
       day: index === 0 ? 'Hari Ini' : dayNames[dateObj.getDay()],
       date: dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
       weather: firstEntry.weatherDesc,
-      temperature: firstEntry.temperature,
-      hourlyForecast: dayForecast.map(entry => ({
+      tempMin: Math.min(...temps),
+      tempMax: Math.max(...temps),
+      hourly: dayForecast.map(entry => ({
         time: new Date(entry.datetime).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-        temperature: entry.temperature,
         weather: entry.weatherDesc,
-        precipitation: entry.humidity,
+        temp: entry.temperature,
+        humidity: entry.humidity,
       })),
     };
   }).filter(Boolean);
 
-  // Transform forecast data for wind cards (aggregate by day)
-  const windData = forecast.map((dayForecast, index) => {
+  // Transform forecast data for wind cards
+  const windData = forecast.map((dayForecast) => {
     if (dayForecast.length === 0) return null;
     
     const firstEntry = dayForecast[0];
-    const dateObj = new Date(firstEntry.datetime);
-    const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-    
-    // Average wind speed for the day
-    const avgWindSpeed = dayForecast.reduce((sum, entry) => sum + entry.windSpeed, 0) / dayForecast.length;
+    const speeds = dayForecast.map(e => e.windSpeed);
     
     return {
-      day: index === 0 ? 'Hari Ini' : dayNames[dateObj.getDay()],
-      date: dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
-      windSpeed: Math.round(avgWindSpeed),
+      seaArea: 'Perairan Indonesia',
       direction: firstEntry.windDirection,
-      hourlyData: dayForecast.map(entry => ({
+      speedMin: Math.min(...speeds),
+      speedMax: Math.max(...speeds),
+      hourly: dayForecast.map(entry => ({
         time: new Date(entry.datetime).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
         speed: entry.windSpeed,
         direction: entry.windDirection,
@@ -82,21 +80,29 @@ export default function ForecastTab() {
     };
   }).filter(Boolean);
 
-  // Use maritime data or provide mock for wave/current tabs
-  const waveData = maritimeWeather.slice(0, 3).map((data: any, index) => ({
-    day: index === 0 ? 'Hari Ini' : `Hari ${index + 1}`,
-    date: new Date(Date.now() + index * 86400000).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
-    waveHeight: data?.tinggi_gelombang || '1.0 - 1.5',
-    area: data?.wilayah || 'Perairan Jakarta',
-    warning: data?.warning || null,
+  // Use maritime data or provide fallback for wave/current tabs
+  const waveData = maritimeWeather.slice(0, 3).map((data: any) => ({
+    seaArea: data?.wilayah || 'Perairan Indonesia',
+    heightMin: 1.0,
+    heightMax: 2.0,
+    period: 6,
+    seaState: data?.tinggi_gelombang || 'Sedang',
+    hourly: [
+      { time: '06:00', height: 1.2 },
+      { time: '12:00', height: 1.5 },
+      { time: '18:00', height: 1.3 },
+    ],
   }));
 
-  const currentData = maritimeWeather.slice(0, 3).map((data: any, index) => ({
-    day: index === 0 ? 'Hari Ini' : `Hari ${index + 1}`,
-    date: new Date(Date.now() + index * 86400000).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
-    speed: data?.arah_angin || 'Sedang',
+  const currentData = maritimeWeather.slice(0, 3).map((data: any) => ({
+    seaArea: data?.wilayah || 'Perairan Indonesia',
+    speed: 0.5,
     direction: data?.arah_angin || 'Timur Laut',
-    area: data?.wilayah || 'Perairan Jakarta',
+    hourly: [
+      { time: '06:00', speed: 0.4, direction: 'Timur' },
+      { time: '12:00', speed: 0.6, direction: 'Timur Laut' },
+      { time: '18:00', speed: 0.5, direction: 'Utara' },
+    ],
   }));
 
   if (loading && forecast.length === 0) {
@@ -144,14 +150,14 @@ export default function ForecastTab() {
           <TabsContent value="weather">
             {weatherData.length > 0 ? (
               <View className="gap-3">
-                {weatherData.map((day, index) => (
+                {weatherData.map((day: any, index) => (
                   <ExpandableDayCard key={index} {...day} />
                 ))}
               </View>
             ) : (
               <EmptyState
                 title="Tidak Ada Data Cuaca"
-                description="Tarik untuk memuat ulang"
+                message="Tarik untuk memuat ulang"
               />
             )}
           </TabsContent>
@@ -160,14 +166,14 @@ export default function ForecastTab() {
           <TabsContent value="wind">
             {windData.length > 0 ? (
               <View className="gap-3">
-                {windData.map((data, index) => (
+                {windData.map((data: any, index) => (
                   <WindCard key={index} {...data} />
                 ))}
               </View>
             ) : (
               <EmptyState
                 title="Tidak Ada Data Angin"
-                description="Tarik untuk memuat ulang"
+                message="Tarik untuk memuat ulang"
               />
             )}
           </TabsContent>
@@ -176,14 +182,14 @@ export default function ForecastTab() {
           <TabsContent value="wave">
             {waveData.length > 0 ? (
               <View className="gap-3">
-                {waveData.map((data, index) => (
+                {waveData.map((data: any, index) => (
                   <WaveCard key={index} {...data} />
                 ))}
               </View>
             ) : (
               <EmptyState
                 title="Tidak Ada Data Gelombang"
-                description="Data maritim tidak tersedia"
+                message="Data maritim tidak tersedia"
               />
             )}
           </TabsContent>
@@ -192,14 +198,14 @@ export default function ForecastTab() {
           <TabsContent value="current">
             {currentData.length > 0 ? (
               <View className="gap-3">
-                {currentData.map((data, index) => (
+                {currentData.map((data: any, index) => (
                   <CurrentCard key={index} {...data} />
                 ))}
               </View>
             ) : (
               <EmptyState
                 title="Tidak Ada Data Arus"
-                description="Data maritim tidak tersedia"
+                message="Data maritim tidak tersedia"
               />
             )}
           </TabsContent>
