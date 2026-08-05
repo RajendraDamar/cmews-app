@@ -191,6 +191,8 @@ app.get('/api/proxy', async (req, res) => {
     return res.status(400).json({ error: 'Missing "url" query parameter' });
   }
 
+  console.log('🔄 [Proxy] Forwarding:', targetUrl);
+
   try {
     // Enable CORS for Expo Web
     res.setHeader('Access-Control-Allow-Origin', '*');

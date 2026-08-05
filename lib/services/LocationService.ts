@@ -32,7 +32,7 @@ export class LocationService {
    * @returns Wilayah code or default Jakarta code if city not found
    */
   getWilayahCodeFromName(cityName: string): string {
-    return WILAYAH_CODES[cityName] || '3171031001'; // Default Jakarta Pusat
+    return WILAYAH_CODES[cityName] || '31.71.03.1001'; // Default Jakarta Pusat
   }
 
   /**

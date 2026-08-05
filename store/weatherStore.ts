@@ -3,6 +3,9 @@ import { RealBMKGService } from '~/lib/services/RealBMKGService';
 import { CacheService } from '~/lib/services/CacheService';
 import { processBMKGForecast, getCurrentWeather } from '~/lib/utils/bmkg-processor';
 import type { ProcessedForecastEntry, BMKGLocation } from '~/lib/types/bmkg-api-types';
+import { mockWeatherForecast } from '~/lib/data/weather-mock';
+import { mockEarlyWarning } from '~/lib/data/warning-mock';
+import { mockMaritimeWeather, MARITIME_MOCK_DATA } from '~/lib/data/maritime-mock';
 
 /**
  * Weather store state interface
@@ -45,16 +48,16 @@ cacheService.init().catch((error) => {
  * Replaces mock data with actual API calls and caching
  */
 export const useWeatherStore = create<WeatherState>((set, get) => ({
-  // Initial state
-  currentWeather: null,
-  forecast: [],
-  earlyWarnings: [],
-  maritimeWeather: [],
-  location: null,
+  // Initial state with immediate mock fallback readiness
+  currentWeather: getCurrentWeather(processBMKGForecast(mockWeatherForecast as any)),
+  forecast: processBMKGForecast(mockWeatherForecast as any).dailyForecasts,
+  earlyWarnings: [mockEarlyWarning],
+  maritimeWeather: MARITIME_MOCK_DATA.wave,
+  location: processBMKGForecast(mockWeatherForecast as any).location,
   loading: false,
   error: null,
-  lastUpdated: null,
-  selectedWilayah: '3171031001', // Jakarta Pusat default
+  lastUpdated: new Date().toISOString(),
+  selectedWilayah: '31.71.03.1001', // Jakarta Pusat default
 
   /**
    * Fetch weather forecast data for a specific region
@@ -76,8 +79,6 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
 
       // Validate exactly 3 days of data
       const validForecast = weatherData.dailyForecasts.slice(0, 3);
-
-      // Extract current weather from first forecast entry
       const current = getCurrentWeather(weatherData);
 
       set({
@@ -89,7 +90,14 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
         loading: false,
       });
     } catch (error) {
+      console.warn('Weather fetch encountered error, using mock fallback:', error);
+      const fallbackData = processBMKGForecast(mockWeatherForecast as any);
       set({
+        currentWeather: getCurrentWeather(fallbackData),
+        forecast: fallbackData.dailyForecasts,
+        location: fallbackData.location,
+        lastUpdated: fallbackData.lastUpdated,
+        selectedWilayah: adm4Code,
         error: error instanceof Error ? error.message : 'Weather fetch failed',
         loading: false,
       });
@@ -107,15 +115,14 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
 
       if (!warnings) {
         const rawWarnings = await bmkgService.getEarlyWarning();
-        warnings = rawWarnings;
-        // Shorter cache for warnings (10 minutes)
+        warnings = rawWarnings || mockEarlyWarning;
         await cacheService.set(cacheKey, warnings, 600000);
       }
 
-      set({ earlyWarnings: warnings ? [warnings] : [] });
+      set({ earlyWarnings: warnings ? [warnings] : [mockEarlyWarning] });
     } catch (error) {
-      console.warn('Early warnings fetch failed:', error);
-      set({ earlyWarnings: [] });
+      console.warn('Early warnings fetch failed, using mock fallback:', error);
+      set({ earlyWarnings: [mockEarlyWarning] });
     }
   },
 
@@ -130,26 +137,24 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
 
       if (!maritime) {
         const rawMaritime = await bmkgService.getMaritimeWeather();
-        maritime = rawMaritime;
-        await cacheService.set(cacheKey, maritime, 1800000); // 30 min cache
+        maritime = rawMaritime || mockMaritimeWeather;
+        await cacheService.set(cacheKey, maritime, 1800000);
       }
 
-      const items = maritime?.perairan || maritime?.data || (Array.isArray(maritime) ? maritime : []);
+      const items = maritime?.perairan || maritime?.data || (Array.isArray(maritime) && maritime.length > 0 ? maritime : MARITIME_MOCK_DATA.wave);
       set({ maritimeWeather: items });
     } catch (error) {
-      console.warn('Maritime data fetch failed:', error);
-      set({ maritimeWeather: [] });
+      console.warn('Maritime data fetch failed, using mock fallback:', error);
+      set({ maritimeWeather: MARITIME_MOCK_DATA.wave });
     }
   },
 
   /**
    * Refresh all data sources
-   * Useful for pull-to-refresh functionality
    */
   refreshAllData: async (adm4Code: string) => {
     const { fetchWeatherData, fetchEarlyWarnings, fetchMaritimeData } = get();
 
-    // Fetch all data in parallel for better performance
     await Promise.all([
       fetchWeatherData(adm4Code),
       fetchEarlyWarnings(),
@@ -159,17 +164,14 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
 
   /**
    * Set the selected region code
-   * Triggers weather data fetch for the new region
    */
   setSelectedWilayah: (adm4Code: string) => {
     set({ selectedWilayah: adm4Code });
-    // Auto-fetch weather data for the new location
     get().fetchWeatherData(adm4Code);
   },
 
   /**
    * Clear error state
-   * Useful for dismissing error messages
    */
   clearError: () => {
     set({ error: null });

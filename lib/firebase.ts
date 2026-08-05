@@ -2,20 +2,13 @@ import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
 import {
   getAuth,
   initializeAuth,
-  getReactNativePersistence,
   Auth,
-  Persistence,
 } from 'firebase/auth';
 import { getFirestore, Firestore } from 'firebase/firestore';
 import { getStorage, FirebaseStorage } from 'firebase/storage';
 import { getMessaging, isSupported, Messaging } from 'firebase/messaging';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
-
-// Augment firebase/auth for React Native platform where getReactNativePersistence is exported at runtime
-declare module 'firebase/auth' {
-  export function getReactNativePersistence(storage: unknown): Persistence;
-}
 
 const firebaseConfig = {
   apiKey: process.env.EXPO_PUBLIC_FIREBASE_API_KEY,
@@ -39,9 +32,16 @@ export function getFirebaseAuth(): Auth {
     authInstance = getAuth(app);
   } else {
     try {
-      authInstance = initializeAuth(app, {
-        persistence: getReactNativePersistence(AsyncStorage),
-      });
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const authModule = require('firebase/auth');
+      const getRNAsyncPersistence = authModule.getReactNativePersistence;
+      if (typeof getRNAsyncPersistence === 'function') {
+        authInstance = initializeAuth(app, {
+          persistence: getRNAsyncPersistence(AsyncStorage),
+        });
+      } else {
+        authInstance = getAuth(app);
+      }
     } catch {
       authInstance = getAuth(app);
     }

@@ -16,17 +16,17 @@ interface SmartChartWrapperProps {
    * Chart component to render (Skia-based)
    */
   children: ReactNode;
-  
+
   /**
    * Height of the chart (for loading placeholder)
    */
   height?: number;
-  
+
   /**
    * Optional loading message
    */
   loadingMessage?: string;
-  
+
   /**
    * Optional error fallback component
    */
@@ -72,9 +72,9 @@ export function SmartChartWrapper({
     if (errorFallback) {
       return <>{errorFallback}</>;
     }
-    
+
     return (
-      <View 
+      <View
         style={{ height, justifyContent: 'center', alignItems: 'center' }}
         className="rounded-lg bg-muted/50"
       >
@@ -89,7 +89,7 @@ export function SmartChartWrapper({
   // Web platform: loading CanvasKit
   if (isLoading || !isReady) {
     return (
-      <View 
+      <View
         style={{ height, justifyContent: 'center', alignItems: 'center' }}
         className="rounded-lg bg-muted/50"
       >

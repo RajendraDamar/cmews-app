@@ -81,8 +81,8 @@ export default function Home() {
   const tempMin = todayTemps.length > 0 ? Math.min(...todayTemps) : 20;
   const tempMax = todayTemps.length > 0 ? Math.max(...todayTemps) : 30;
 
-  // Show loading state if no current weather data
-  const isLoading = loading || !currentWeather;
+  // Show loading state if loading and no current weather data
+  const isLoading = loading && !currentWeather;
 
   return (
     <>
