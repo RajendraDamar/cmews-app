@@ -20,9 +20,9 @@ import { ProfileModal } from '~/components/profile-modal';
 import { Separator } from '~/components/ui/separator';
 
 const navItems = [
-  { path: '/(tabs)', icon: Home, label: 'Home' },
-  { path: '/(tabs)/forecast', icon: CloudRain, label: 'Forecast' },
-  { path: '/(tabs)/maps', icon: Map, label: 'Maps' },
+  { path: '/', icon: Home, label: 'Home' },
+  { path: '/forecast', icon: CloudRain, label: 'Forecast' },
+  { path: '/maps', icon: Map, label: 'Maps' },
 ];
 
 export function Sidebar() {
@@ -33,10 +33,10 @@ export function Sidebar() {
   const [collapsed, setCollapsed] = useState(false);
 
   const isActive = (path: string) => {
-    if (path === '/(tabs)') {
-      return pathname === '/(tabs)' || pathname === '/';
+    if (path === '/') {
+      return pathname === '/' || pathname === '/(tabs)' || pathname === '/(tabs)/index';
     }
-    return pathname.includes(path.replace('/(tabs)', ''));
+    return pathname.includes(path);
   };
 
   const toggleTheme = () => {
@@ -46,14 +46,15 @@ export function Sidebar() {
   return (
     <>
       <View
-        className={`h-full border-r ${collapsed ? 'w-16' : 'w-64'}`}
+        className={`h-full flex-shrink-0 border-r ${collapsed ? 'w-16' : 'w-64'}`}
         style={{
+          flexShrink: 0,
           backgroundColor: colorScheme === 'dark' ? NAV_COLORS.darkBg : NAV_COLORS.lightBg,
           borderColor: colorScheme === 'dark' ? NAV_COLORS.darkBorder : NAV_COLORS.lightBorder,
         }}>
         {/* Logo & Collapse Button */}
         <View
-          className={`h-14 flex-row items-center justify-between border-b px-4 ${collapsed ? 'px-2' : ''}`}
+          className={`h-14 flex-row items-center justify-between border-b ${collapsed ? 'px-2' : 'px-4'}`}
           style={{
             borderColor:
               colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
@@ -67,7 +68,9 @@ export function Sidebar() {
           </View>
           <Pressable
             onPress={() => setCollapsed(!collapsed)}
-            className="rounded-md p-1.5 active:bg-accent">
+            className="items-center justify-center rounded-md p-1.5 hover:bg-muted active:bg-muted/80 active:opacity-80 transition-colors"
+            accessibilityLabel={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            accessibilityRole="button">
             {collapsed ? (
               <ChevronRight
                 size={18}
@@ -91,7 +94,7 @@ export function Sidebar() {
             return (
               <Pressable
                 key={item.path}
-                onPress={() => router.push(item.path as any)}
+                onPress={() => router.replace(item.path as any)}
                 className={`mb-1 flex-row items-center gap-3 rounded-md px-3 py-2 ${
                   active ? 'bg-secondary' : ''
                 } active:bg-accent`}>
@@ -156,7 +159,7 @@ export function Sidebar() {
 
           {/* Settings */}
           <Pressable
-            onPress={() => router.push('/settings')}
+            onPress={() => router.replace('/settings' as any)}
             className="mb-1 flex-row items-center gap-3 rounded-md px-3 py-2 active:bg-accent">
             <Settings
               size={20}

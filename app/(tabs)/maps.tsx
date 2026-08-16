@@ -2,111 +2,19 @@ import { View, Platform, Pressable, useWindowDimensions } from 'react-native';
 import { useState, useRef, useEffect } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CollapsibleSearch } from '~/components/maps/collapsible-search';
-import { SeverityMarker } from '~/components/maps/severity-marker';
 import { ReportBottomSheet } from '~/components/maps/report-bottom-sheet';
 import { ReportFormDialog } from '~/components/maps/report-form-dialog';
 import { DesktopMapPanel } from '~/components/maps/desktop-map-panel';
 import { WeatherLayerToggle } from '~/components/maps/weather-layer-toggle';
 import { MapSkeleton } from '~/components/maps/map-skeleton';
 import { MapErrorState } from '~/components/maps/map-error-state';
-import { Text } from '~/components/ui/text';
+import MapComponent from '~/components/maps/MapComponent';
 import { Plus, Minus, MapPin } from 'lucide-react-native';
 import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { mockWeatherReports } from '~/lib/data/weather-reports-mock';
 import { WeatherReport, WeatherReportFilters } from '~/lib/types/weather-report';
-import { getThemeColor, MAP_STYLES } from '~/lib/constants';
-
-// Import MapLibre theme for web
-if (Platform.OS === 'web') {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require('maplibre-theme/icons.lucide.css');
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require('maplibre-theme/modern.css');
-}
-
-// Conditionally import MapLibre based on platform
-let MapLibreGL: any = null;
-let MapGL: any = null;
-let MapMarker: any = null;
-
-if (Platform.OS !== 'web') {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    MapLibreGL = require('@maplibre/maplibre-react-native').default;
-    MapLibreGL?.setAccessToken?.(null);
-  } catch (error) {
-    console.error('Failed to load MapLibre:', error);
-  }
-} else {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const ReactMapGL = require('react-map-gl/maplibre');
-    MapGL = ReactMapGL.default;
-    MapMarker = ReactMapGL.Marker;
-  } catch (error) {
-    console.error('Failed to load react-map-gl:', error);
-  }
-}
-
-interface WebMapProps {
-  filteredReports: WeatherReport[];
-  selectedReport: WeatherReport | null;
-  onReportSelect: (report: WeatherReport) => void;
-  webViewState: { longitude: number; latitude: number; zoom: number };
-  onMoveWeb: (evt: any) => void;
-}
-
-function WebMap({
-  filteredReports,
-  selectedReport,
-  onReportSelect,
-  webViewState,
-  onMoveWeb,
-}: WebMapProps) {
-  const { colorScheme } = useTheme();
-
-  if (!MapGL) {
-    return (
-      <View className="flex-1 items-center justify-center bg-muted">
-        <Text variant="muted" size="xl">
-          Map unavailable on web
-        </Text>
-      </View>
-    );
-  }
-
-  // Choose map style based on color scheme
-  const mapStyle = colorScheme === 'dark' ? MAP_STYLES.dark : MAP_STYLES.light;
-
-  return (
-    <View className="maplibregl-map" style={{ width: '100%', height: '100%', flex: 1, minHeight: 400 }}>
-      <MapGL
-        {...webViewState}
-        onMove={onMoveWeb}
-        attributionControl={false}
-        style={{ width: '100%', height: '100%' }}
-        mapStyle={mapStyle}
-        dragRotate={true}
-        pitchWithRotate={true}>
-        {MapMarker &&
-          filteredReports.map((report) => (
-            <MapMarker
-              key={report.id}
-              longitude={report.lon}
-              latitude={report.lat}
-              anchor="center">
-              <SeverityMarker
-                report={report}
-                onPress={() => onReportSelect(report)}
-                selected={selectedReport?.id === report.id}
-              />
-            </MapMarker>
-          ))}
-      </MapGL>
-    </View>
-  );
-}
+import { getThemeColor } from '~/lib/constants';
 
 export default function MapsScreen() {
   const { colorScheme } = useTheme();
@@ -156,7 +64,6 @@ export default function MapsScreen() {
   };
 
   const handleLocationPress = () => {
-    // Center to Jakarta
     if (Platform.OS !== 'web' && cameraRef.current) {
       cameraRef.current.setCamera({
         centerCoordinate: [106.8272, -6.1754],
@@ -243,56 +150,17 @@ export default function MapsScreen() {
       return <MapErrorState message={mapError} onRetry={handleRetry} />;
     }
 
-    // Choose map style based on color scheme
-    const mapStyle = colorScheme === 'dark' ? MAP_STYLES.dark : MAP_STYLES.light;
-
     return (
-      <View style={{ flex: 1, height: isDesktop ? '100%' : mapHeight }}>
-        {Platform.OS === 'web' ? (
-          <WebMap
-            filteredReports={filteredReports}
-            selectedReport={selectedReport}
-            onReportSelect={handleReportSelect}
-            webViewState={webViewState}
-            onMoveWeb={(evt: any) => setWebViewState(evt.viewState)}
-          />
-        ) : MapLibreGL ? (
-          <MapLibreGL.MapView
-            style={{ flex: 1 }}
-            styleURL={mapStyle}
-            logoEnabled={false}
-            attributionEnabled={false}
-            compassEnabled={!isDesktop}
-            compassViewMargins={{ x: 16, y: 100 }}
-            rotateEnabled={true}
-            pitchEnabled={true}>
-            <MapLibreGL.Camera
-              ref={cameraRef}
-              zoomLevel={11}
-              centerCoordinate={[106.8272, -6.1754]}
-              animationMode="flyTo"
-              animationDuration={1000}
-            />
-
-            {/* Weather Report Markers */}
-            {filteredReports.map((report) => (
-              <MapLibreGL.MarkerView key={report.id} coordinate={[report.lon, report.lat]}>
-                <SeverityMarker
-                  report={report}
-                  onPress={() => handleReportSelect(report)}
-                  selected={selectedReport?.id === report.id}
-                />
-              </MapLibreGL.MarkerView>
-            ))}
-          </MapLibreGL.MapView>
-        ) : (
-          <MapErrorState
-            message="MapLibre is not available"
-            onRetry={() => {
-              /* Reload the app */
-            }}
-          />
-        )}
+      <View style={Platform.OS === 'web' ? { flex: 1 } : { flex: 1, height: mapHeight }}>
+        <MapComponent
+          filteredReports={filteredReports}
+          selectedReport={selectedReport}
+          onReportSelect={handleReportSelect}
+          webViewState={webViewState}
+          onMoveWeb={(evt: any) => setWebViewState(evt.viewState)}
+          cameraRef={cameraRef}
+          isDesktop={isDesktop}
+        />
       </View>
     );
   };

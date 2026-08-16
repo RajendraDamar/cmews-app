@@ -6,6 +6,12 @@ import { ThemeProvider, useTheme } from '~/lib/theme-provider';
 import { View, Platform } from 'react-native';
 import { useEffect } from 'react';
 import { initializePushNotifications } from '~/lib/notifications/push-service';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+
+if (Platform.OS === 'web') {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require('maplibre-gl/dist/maplibre-gl.css');
+}
 
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
@@ -34,13 +40,21 @@ function ThemedApp() {
   }, []);
 
   return (
-    <View className={`flex-1 ${colorScheme === 'dark' ? 'dark' : ''}`}>
+    <GestureHandlerRootView
+      className="flex-1 bg-background"
+      style={{
+        flex: 1,
+        backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+      }}>
       <Stack
         screenOptions={{
           headerStyle: {
             backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
           },
           headerTintColor: colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)',
+          contentStyle: {
+            backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+          },
         }}>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -49,7 +63,7 @@ function ThemedApp() {
         <Stack.Screen name="privacy" options={{ headerShown: true }} />
       </Stack>
       <PortalHost />
-    </View>
+    </GestureHandlerRootView>
   );
 }
 
@@ -57,12 +71,15 @@ function ThemedApp() {
 export default function RootLayout() {
   useEffect(() => {
     if (Platform.OS === 'web' && typeof document !== 'undefined') {
-      // Inject maplibre-gl CSS for Web map rendering if not already present
-      if (!document.getElementById('maplibre-gl-css')) {
+      // Belt-and-suspenders: ensure maplibre-gl CSS is in the DOM.
+      // The top-level require('maplibre-gl/dist/maplibre-gl.css') handles this
+      // in most cases; this only fires if that link is somehow absent.
+      if (!document.getElementById('maplibre-gl-css') && !document.querySelector('link[href*="maplibre-gl"]')) {
         const link = document.createElement('link');
         link.id = 'maplibre-gl-css';
         link.rel = 'stylesheet';
-        link.href = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css';
+        // 3.6.2 matches the installed package — must stay in sync with package.json
+        link.href = 'https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css';
         document.head.appendChild(link);
       }
     }

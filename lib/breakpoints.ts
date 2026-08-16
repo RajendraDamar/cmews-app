@@ -13,7 +13,10 @@ export function useBreakpoint() {
   return {
     isMobile: width < BREAKPOINTS.md,
     isTablet: width >= BREAKPOINTS.md && width < BREAKPOINTS.lg,
-    isDesktop: width >= BREAKPOINTS.lg,
+    // Match the 768 px (BREAKPOINTS.md) threshold used by app/(tabs)/_layout.tsx.
+    // Previously this was BREAKPOINTS.lg (1024 px), causing screens to render
+    // mobile UI while the layout was already showing the desktop sidebar.
+    isDesktop: width >= BREAKPOINTS.md,
     width,
   };
 }
