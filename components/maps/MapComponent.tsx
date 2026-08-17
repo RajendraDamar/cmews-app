@@ -56,7 +56,10 @@ export default function MapComponent({
       />
 
       {filteredReports.map((report) => (
-        <MapLibreGL.MarkerView key={report.id} coordinate={[report.lon, report.lat]}>
+        <MapLibreGL.MarkerView
+          key={report.id}
+          coordinate={[report.lon, report.lat]}
+          anchor={{ x: 0.5, y: 0.5 }}>
           <SeverityMarker
             report={report}
             onPress={() => onReportSelect(report)}

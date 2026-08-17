@@ -57,7 +57,7 @@ export function SeverityMarker({ report, onPress, selected = false }: SeverityMa
           shadowRadius: 6,
           elevation: 6,
         }}>
-  <Icon size={selected ? 24 : 22} color={theme.primary} />
+        <Icon size={selected ? 24 : 22} color="#FFFFFF" />
       </View>
     </Pressable>
   );
