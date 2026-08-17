@@ -14,7 +14,7 @@ module.exports = defineConfig([
     },
   },
   {
-    ignores: ['dist/*', 'scripts/*', 'public/*'],
+    ignores: ['dist/*', 'scripts/*', 'public/*', '_archive/*'],
   },
   {
     rules: {

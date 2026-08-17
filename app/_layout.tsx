@@ -3,7 +3,7 @@ import '../global.css';
 import { Stack } from 'expo-router';
 import { PortalHost } from '@rn-primitives/portal';
 import { ThemeProvider, useTheme } from '~/lib/theme-provider';
-import { View, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import { useEffect } from 'react';
 import { initializePushNotifications } from '~/lib/notifications/push-service';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';

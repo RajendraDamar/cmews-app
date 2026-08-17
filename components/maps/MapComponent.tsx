@@ -17,8 +17,10 @@ interface NativeMapComponentProps {
   filteredReports: WeatherReport[];
   selectedReport: WeatherReport | null;
   onReportSelect: (report: WeatherReport) => void;
-  cameraRef: any;
+  cameraRef?: any;
   isDesktop?: boolean;
+  webViewState?: { longitude: number; latitude: number; zoom: number };
+  onMoveWeb?: (evt: any) => void;
 }
 
 export default function MapComponent({
