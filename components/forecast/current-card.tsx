@@ -10,6 +10,7 @@ import type { CurrentForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
 import { getThemeColor, COLORS } from '~/lib/constants';
+import { formatCurrentSpeed } from '~/lib/utils/formatters';
 
 export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForecastData) {
   const [isOpen, setIsOpen] = useState(false);
@@ -41,7 +42,7 @@ export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForeca
                 </View>
 
                 <View className="items-end">
-                  <Text className="font-bold">{speed} m/s</Text>
+                  <Text className="font-bold">{formatCurrentSpeed(speed)} m/s</Text>
                 </View>
 
                 <ChevronDown
@@ -76,7 +77,9 @@ export function CurrentCard({ seaArea, speed, direction, hourly }: CurrentForeca
                     <View className="flex-1 items-center">
                       <DirectionArrow direction={entry.direction} size={20} showLabel />
                     </View>
-                    <Text className="w-20 text-right font-semibold">{entry.speed} m/s</Text>
+                    <Text className="w-20 text-right font-semibold">
+                      {formatCurrentSpeed(entry.speed)} m/s
+                    </Text>
                   </View>
                   {index < hourly.length - 1 && <Separator />}
                 </View>

@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
 import * as Haptics from 'expo-haptics';
 import { getThemeColor } from '~/lib/constants';
+import { formatTemp } from '~/lib/utils/formatters';
 
 export function ExpandableDayCard({
   day,
@@ -52,7 +53,7 @@ export function ExpandableDayCard({
 
                 <View className="items-end">
                   <Text className="text-lg font-bold">
-                    {tempMax}° / {tempMin}°
+                    {formatTemp(tempMax)} / {formatTemp(tempMin)}
                   </Text>
                   <Text variant="muted" size="sm">
                     {weather}

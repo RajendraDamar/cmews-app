@@ -9,6 +9,7 @@ import type { WaveForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
 import { getThemeColor, COLORS } from '~/lib/constants';
+import { formatWaveHeight } from '~/lib/utils/formatters';
 
 export function WaveCard({
   seaArea,
@@ -64,7 +65,7 @@ export function WaveCard({
 
                 <View className="items-end">
                   <Text className="font-bold">
-                    {heightMin}-{heightMax} m
+                    {formatWaveHeight(heightMin)}-{formatWaveHeight(heightMax)} m
                   </Text>
                   <Text variant="muted" size="sm">
                     Periode {period}s
@@ -100,7 +101,9 @@ export function WaveCard({
                 <View key={index}>
                   <View className="flex-row items-center justify-between py-2">
                     <Text className="w-16 font-medium">{entry.time}</Text>
-                    <Text className="w-20 text-right font-semibold">{entry.height} m</Text>
+                    <Text className="w-20 text-right font-semibold">
+                      {formatWaveHeight(entry.height)} m
+                    </Text>
                   </View>
                   {index < hourly.length - 1 && <Separator />}
                 </View>

@@ -1,4 +1,4 @@
-import { useWindowDimensions } from 'react-native';
+import { useWindowDimensions, Platform } from 'react-native';
 
 export const BREAKPOINTS = {
   sm: 640,
@@ -8,15 +8,27 @@ export const BREAKPOINTS = {
 };
 
 export function useBreakpoint() {
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
+
+  // On mobile phones, rotating to landscape increases width (> 768) but smallest dimension remains small (< 600).
+  // A physical tablet has smallestDimension >= 600dp (standard Android sw600dp qualifier).
+  const smallestDimension = Math.min(width, height);
+  const isTabletDevice = smallestDimension >= 600;
+
+  // Desktop layout is only enabled for Web with width >= 768, or native tablets with width >= 1024.
+  const isDesktop =
+    Platform.OS === 'web'
+      ? width >= BREAKPOINTS.md
+      : isTabletDevice && width >= BREAKPOINTS.lg;
+
+  const isTablet = isTabletDevice && width >= BREAKPOINTS.md && width < BREAKPOINTS.lg;
 
   return {
-    isMobile: width < BREAKPOINTS.md,
-    isTablet: width >= BREAKPOINTS.md && width < BREAKPOINTS.lg,
-    // Match the 768 px (BREAKPOINTS.md) threshold used by app/(tabs)/_layout.tsx.
-    // Previously this was BREAKPOINTS.lg (1024 px), causing screens to render
-    // mobile UI while the layout was already showing the desktop sidebar.
-    isDesktop: width >= BREAKPOINTS.md,
+    isMobile: !isDesktop,
+    isTablet,
+    isDesktop,
     width,
+    height,
   };
 }
+

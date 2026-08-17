@@ -4,6 +4,7 @@ import { Separator } from '~/components/ui/separator';
 import { PrecipitationIcon } from '~/components/weather/precipitation-icon';
 import { WeatherIcon } from './weather-icon';
 import type { HourlyWeatherData } from '~/lib/types/forecast';
+import { formatTemp } from '~/lib/utils/formatters';
 
 interface HourlyBreakdownProps {
   hourly: HourlyWeatherData[];
@@ -21,7 +22,7 @@ export function HourlyBreakdown({ hourly }: HourlyBreakdownProps) {
               <WeatherIcon weather={entry.weather} size={24} />
             </View>
 
-            <Text className="w-12 text-center font-semibold">{entry.temp}°</Text>
+            <Text className="w-12 text-center font-semibold">{formatTemp(entry.temp)}</Text>
 
             <View className="w-16">
               <PrecipitationIcon percentage={entry.humidity} showPercentage />

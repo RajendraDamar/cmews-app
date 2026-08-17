@@ -10,6 +10,7 @@ import type { WindForecastData } from '~/lib/types/forecast';
 import { useState } from 'react';
 import { useTheme } from '~/lib/theme-provider';
 import { COLORS } from '~/lib/constants';
+import { formatWindSpeed } from '~/lib/utils/formatters';
 
 export function WindCard({ seaArea, direction, speedMin, speedMax, hourly }: WindForecastData) {
   const [isOpen, setIsOpen] = useState(false);
@@ -80,7 +81,7 @@ export function WindCard({ seaArea, direction, speedMin, speedMax, hourly }: Win
 
                 <View className="items-end">
                   <Text className="font-bold">
-                    {speedMin}-{speedMax} km/h
+                    {formatWindSpeed(speedMin)}-{formatWindSpeed(speedMax)} km/h
                   </Text>
                   <Text variant="muted" size="sm">
                     {beaufortDesc}
@@ -119,7 +120,9 @@ export function WindCard({ seaArea, direction, speedMin, speedMax, hourly }: Win
                     <View className="flex-1 items-center">
                       <DirectionArrow direction={entry.direction} size={20} showLabel />
                     </View>
-                    <Text className="w-20 text-right font-semibold">{entry.speed} km/h</Text>
+                    <Text className="w-20 text-right font-semibold">
+                      {formatWindSpeed(entry.speed)} km/h
+                    </Text>
                   </View>
                   {index < hourly.length - 1 && <Separator />}
                 </View>

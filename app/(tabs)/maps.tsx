@@ -79,17 +79,31 @@ export default function MapsScreen() {
     }
   };
 
-  const handleZoomIn = () => {
+  const handleZoomIn = async () => {
     if (Platform.OS !== 'web' && cameraRef.current) {
-      cameraRef.current.zoomTo(15, 500);
+      try {
+        const currentZoom = await cameraRef.current.getZoom();
+        const targetZoom = Math.min((typeof currentZoom === 'number' ? currentZoom : 11) + 1, 18);
+        cameraRef.current.zoomTo(targetZoom, 300);
+      } catch (error) {
+        console.warn('Failed to get native map zoom level:', error);
+        cameraRef.current.zoomTo(14, 300);
+      }
     } else {
       setWebViewState((prev) => ({ ...prev, zoom: Math.min(prev.zoom + 1, 18) }));
     }
   };
 
-  const handleZoomOut = () => {
+  const handleZoomOut = async () => {
     if (Platform.OS !== 'web' && cameraRef.current) {
-      cameraRef.current.zoomTo(9, 500);
+      try {
+        const currentZoom = await cameraRef.current.getZoom();
+        const targetZoom = Math.max((typeof currentZoom === 'number' ? currentZoom : 11) - 1, 3);
+        cameraRef.current.zoomTo(targetZoom, 300);
+      } catch (error) {
+        console.warn('Failed to get native map zoom level:', error);
+        cameraRef.current.zoomTo(10, 300);
+      }
     } else {
       setWebViewState((prev) => ({ ...prev, zoom: Math.max(prev.zoom - 1, 3) }));
     }
