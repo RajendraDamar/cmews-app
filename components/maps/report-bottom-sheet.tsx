@@ -10,6 +10,7 @@ import { Card, CardContent } from '~/components/ui/card';
 import { WeatherReport } from '~/lib/types/weather-report';
 import { UI_CONSTANTS, getThemeColor, COLORS } from '~/lib/constants';
 import { useTheme } from '~/lib/theme-provider';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface ReportBottomSheetProps {
   report: WeatherReport | null;
@@ -40,6 +41,7 @@ const formatTimestamp = (timestamp: string) => {
 
 export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
   const { colorScheme } = useTheme();
+  const insets = useSafeAreaInsets();
 
   if (!report) return null;
 
@@ -47,11 +49,17 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
 
   return (
     <Sheet open={!!report} onOpenChange={onClose}>
-      <SheetContent side="bottom" className="h-[80vh]">
-        <ScrollView showsVerticalScrollIndicator={false} className="flex-1">
+      <SheetContent side="bottom">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className="flex-1"
+          contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}>
           {/* Header */}
           <View className="mb-4">
-            <Text className="mb-2 text-2xl font-bold">{report.location}</Text>
+            <Text className="mb-1 text-2xl font-bold">{report.location}</Text>
+            <Text className="mb-2 text-xs text-muted-foreground">
+              Koordinat: {report.lat.toFixed(4)}, {report.lon.toFixed(4)}
+            </Text>
             <View className="flex-row items-center gap-2">
               <Badge
                 variant={severityBadge.variant}

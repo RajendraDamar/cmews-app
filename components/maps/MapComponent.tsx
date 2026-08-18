@@ -49,10 +49,10 @@ export default function MapComponent({
       pitchEnabled={true}>
       <MapLibreGL.Camera
         ref={cameraRef}
-        zoomLevel={11}
-        centerCoordinate={[106.8272, -6.1754]}
-        animationMode="flyTo"
-        animationDuration={1000}
+        defaultSettings={{
+          centerCoordinate: [106.8272, -6.1754],
+          zoomLevel: 11,
+        }}
       />
 
       {filteredReports.map((report) => (

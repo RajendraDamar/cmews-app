@@ -1,5 +1,5 @@
 import { View, Platform, Pressable, useWindowDimensions } from 'react-native';
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CollapsibleSearch } from '~/components/maps/collapsible-search';
 import { ReportBottomSheet } from '~/components/maps/report-bottom-sheet';
@@ -35,6 +35,8 @@ export default function MapsScreen() {
   const [reports, setReports] = useState<WeatherReport[]>(mockWeatherReports);
   const cameraRef = useRef<any>(null);
 
+  const [nativeZoom, setNativeZoom] = useState(11);
+
   const [webViewState, setWebViewState] = useState({
     longitude: 106.8272,
     latitude: -6.1754,
@@ -64,8 +66,9 @@ export default function MapsScreen() {
   };
 
   const handleLocationPress = () => {
-    if (Platform.OS !== 'web' && cameraRef.current) {
-      cameraRef.current.setCamera({
+    if (Platform.OS !== 'web') {
+      setNativeZoom(11);
+      cameraRef.current?.setCamera({
         centerCoordinate: [106.8272, -6.1754],
         zoomLevel: 11,
         animationDuration: 1000,
@@ -79,52 +82,56 @@ export default function MapsScreen() {
     }
   };
 
-  const handleZoomIn = async () => {
-    if (Platform.OS !== 'web' && cameraRef.current) {
-      try {
-        const currentZoom = await cameraRef.current.getZoom();
-        const targetZoom = Math.min((typeof currentZoom === 'number' ? currentZoom : 11) + 1, 18);
-        cameraRef.current.zoomTo(targetZoom, 300);
-      } catch (error) {
-        console.warn('Failed to get native map zoom level:', error);
-        cameraRef.current.zoomTo(14, 300);
-      }
+  const handleZoomIn = () => {
+    if (Platform.OS !== 'web') {
+      const newZoom = Math.min(nativeZoom + 1, 18);
+      setNativeZoom(newZoom);
+      cameraRef.current?.setCamera({
+        zoomLevel: newZoom,
+        animationDuration: 300,
+      });
     } else {
       setWebViewState((prev) => ({ ...prev, zoom: Math.min(prev.zoom + 1, 18) }));
     }
   };
 
-  const handleZoomOut = async () => {
-    if (Platform.OS !== 'web' && cameraRef.current) {
-      try {
-        const currentZoom = await cameraRef.current.getZoom();
-        const targetZoom = Math.max((typeof currentZoom === 'number' ? currentZoom : 11) - 1, 3);
-        cameraRef.current.zoomTo(targetZoom, 300);
-      } catch (error) {
-        console.warn('Failed to get native map zoom level:', error);
-        cameraRef.current.zoomTo(10, 300);
-      }
+  const handleZoomOut = () => {
+    if (Platform.OS !== 'web') {
+      const newZoom = Math.max(nativeZoom - 1, 3);
+      setNativeZoom(newZoom);
+      cameraRef.current?.setCamera({
+        zoomLevel: newZoom,
+        animationDuration: 300,
+      });
     } else {
       setWebViewState((prev) => ({ ...prev, zoom: Math.max(prev.zoom - 1, 3) }));
     }
   };
 
-  const handleReportSelect = (report: WeatherReport) => {
-    setSelectedReport(report);
-    if (Platform.OS !== 'web' && cameraRef.current) {
-      cameraRef.current.setCamera({
-        centerCoordinate: [report.lon, report.lat],
-        zoomLevel: 14,
-        animationDuration: 1000,
-      });
-    } else {
-      setWebViewState({
-        longitude: report.lon,
-        latitude: report.lat,
-        zoom: 14,
-      });
-    }
-  };
+  const handleReportSelect = useCallback(
+    (report: WeatherReport) => {
+      setSelectedReport(report);
+      if (Platform.OS !== 'web') {
+        setNativeZoom(14);
+        cameraRef.current?.setCamera({
+          centerCoordinate: [report.lon, report.lat],
+          zoomLevel: 14,
+          animationDuration: 1000,
+        });
+      } else {
+        setWebViewState({
+          longitude: report.lon,
+          latitude: report.lat,
+          zoom: 14,
+        });
+      }
+    },
+    [cameraRef]
+  );
+
+  const handleWebMapMove = useCallback((evt: any) => {
+    setWebViewState(evt.viewState);
+  }, []);
 
   const handleReportSubmit = (data: any) => {
     const newReport: WeatherReport = {
@@ -171,7 +178,7 @@ export default function MapsScreen() {
           selectedReport={selectedReport}
           onReportSelect={handleReportSelect}
           webViewState={webViewState}
-          onMoveWeb={(evt: any) => setWebViewState(evt.viewState)}
+          onMoveWeb={handleWebMapMove}
           cameraRef={cameraRef}
           isDesktop={isDesktop}
         />
@@ -228,11 +235,6 @@ export default function MapsScreen() {
               onSubmit={handleReportSubmit}
               onCancel={() => setShowReportForm(false)}
             />
-          )}
-
-          {/* Bottom Sheet for Report Details (Desktop) */}
-          {selectedReport && (
-            <ReportBottomSheet report={selectedReport} onClose={() => setSelectedReport(null)} />
           )}
         </View>
       ) : (
@@ -296,11 +298,6 @@ export default function MapsScreen() {
             <Plus size={28} color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : themeColors.icon.foreground} />
           </Pressable>
 
-          {/* Bottom Sheet for Report Details (Mobile) */}
-          {selectedReport && (
-            <ReportBottomSheet report={selectedReport} onClose={() => setSelectedReport(null)} />
-          )}
-
           {/* Report Form Dialog */}
           {showReportForm && (
             <ReportFormDialog
@@ -310,6 +307,11 @@ export default function MapsScreen() {
             />
           )}
         </>
+      )}
+
+      {/* Bottom Sheet for Report Details (Unified Root Level) */}
+      {selectedReport && (
+        <ReportBottomSheet report={selectedReport} onClose={() => setSelectedReport(null)} />
       )}
     </View>
   );
