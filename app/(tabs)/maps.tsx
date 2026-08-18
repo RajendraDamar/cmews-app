@@ -108,28 +108,25 @@ export default function MapsScreen() {
     }
   };
 
-  const handleReportSelect = useCallback(
-    (report: WeatherReport) => {
-      setSelectedReport(report);
-      if (Platform.OS !== 'web') {
-        setNativeZoom(14);
-        cameraRef.current?.setCamera({
-          centerCoordinate: [report.lon, report.lat],
-          zoomLevel: 14,
-          animationDuration: 1000,
-        });
-      } else {
-        setWebViewState({
-          longitude: report.lon,
-          latitude: report.lat,
-          zoom: 14,
-        });
-      }
-    },
-    [cameraRef]
-  );
+  const handleReportSelect = useCallback((report: WeatherReport) => {
+    setSelectedReport(report);
+    if (Platform.OS !== 'web') {
+      setNativeZoom(14);
+      cameraRef.current?.setCamera({
+        centerCoordinate: [report.lon, report.lat],
+        zoomLevel: 14,
+        animationDuration: 1000,
+      });
+    } else {
+      setWebViewState({
+        longitude: report.lon,
+        latitude: report.lat,
+        zoom: 14,
+      });
+    }
+  }, []);
 
-  const handleWebMapMove = useCallback((evt: any) => {
+  const handleMoveWeb = useCallback((evt: any) => {
     setWebViewState(evt.viewState);
   }, []);
 
@@ -178,7 +175,7 @@ export default function MapsScreen() {
           selectedReport={selectedReport}
           onReportSelect={handleReportSelect}
           webViewState={webViewState}
-          onMoveWeb={handleWebMapMove}
+          onMoveWeb={handleMoveWeb}
           cameraRef={cameraRef}
           isDesktop={isDesktop}
         />
@@ -189,8 +186,9 @@ export default function MapsScreen() {
   return (
     <View className="flex-1">
       {isDesktop ? (
-        <View className="relative flex-1">
-          {renderMap()}
+        <>
+          <View className="relative flex-1">
+            {renderMap()}
           {/* Desktop Map Panel - Minimal sidebar overlay */}
           <DesktopMapPanel
             showWeatherLayer={showWeatherLayer}
@@ -237,6 +235,12 @@ export default function MapsScreen() {
             />
           )}
         </View>
+        
+        {/* Bottom Sheet for Report Details (Desktop) - hoisted outside relative container */}
+        {selectedReport && (
+          <ReportBottomSheet report={selectedReport} onClose={() => setSelectedReport(null)} />
+        )}
+      </>
       ) : (
         <>
           {renderMap()}
@@ -298,6 +302,11 @@ export default function MapsScreen() {
             <Plus size={28} color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : themeColors.icon.foreground} />
           </Pressable>
 
+          {/* Bottom Sheet for Report Details (Mobile) */}
+          {selectedReport && (
+            <ReportBottomSheet report={selectedReport} onClose={() => setSelectedReport(null)} />
+          )}
+
           {/* Report Form Dialog */}
           {showReportForm && (
             <ReportFormDialog
@@ -307,11 +316,6 @@ export default function MapsScreen() {
             />
           )}
         </>
-      )}
-
-      {/* Bottom Sheet for Report Details (Unified Root Level) */}
-      {selectedReport && (
-        <ReportBottomSheet report={selectedReport} onClose={() => setSelectedReport(null)} />
       )}
     </View>
   );

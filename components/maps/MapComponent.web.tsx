@@ -89,8 +89,8 @@ export default function MapComponent({
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
   const markersRef = useRef<any[]>([]);
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
   const { colorScheme } = useTheme();
+  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   const isDesktopViewport = Platform.OS === 'web' && width >= BREAKPOINTS.md;
   const mapPixelHeight = isDesktopViewport ? Math.max(height, 600) : Math.max(height - 60, 600);
@@ -211,6 +211,7 @@ export default function MapComponent({
 
         map.on('load', () => {
           if (!isMounted) return;
+
           setIsMapLoaded(true);
 
           setTimeout(() => {
@@ -233,7 +234,6 @@ export default function MapComponent({
 
     return () => {
       isMounted = false;
-      setIsMapLoaded(false);
       resizeObserver?.disconnect();
       markersRef.current.forEach((m) => m.remove());
       markersRef.current = [];
