@@ -241,7 +241,7 @@ export default function MapsScreen() {
 
           {/* Mobile Overlays */}
           {/* Collapsible Search */}
-          <CollapsibleSearch placeholder="Cari lokasi..." />
+          <CollapsibleSearch placeholder="Cari lokasi..." style={{ top: insets.top + 12 }} />
 
           {/* Weather Layer Toggle (Mobile) */}
           <WeatherLayerToggle

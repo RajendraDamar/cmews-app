@@ -122,26 +122,26 @@ export default function ForecastTab() {
       <View className={`p-4 ${isDesktop ? 'mx-auto w-full max-w-5xl' : ''}`}>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Tab Navigation */}
-          <TabsList className="mb-4 grid grid-cols-4 gap-2">
-            <TabsTrigger value="weather">
+          <TabsList className="mb-4 flex-row w-full gap-2">
+            <TabsTrigger value="weather" className="flex-1">
               <View className="flex-row items-center gap-1.5">
                 <CloudSun size={16} />
                 <Text>Cuaca</Text>
               </View>
             </TabsTrigger>
-            <TabsTrigger value="wind">
+            <TabsTrigger value="wind" className="flex-1">
               <View className="flex-row items-center gap-1.5">
                 <Wind size={16} />
                 <Text>Angin</Text>
               </View>
             </TabsTrigger>
-            <TabsTrigger value="wave">
+            <TabsTrigger value="wave" className="flex-1">
               <View className="flex-row items-center gap-1.5">
                 <Waves size={16} />
                 <Text>Gelombang</Text>
               </View>
             </TabsTrigger>
-            <TabsTrigger value="current">
+            <TabsTrigger value="current" className="flex-1">
               <View className="flex-row items-center gap-1.5">
                 <MoveHorizontal size={16} />
                 <Text>Arus</Text>

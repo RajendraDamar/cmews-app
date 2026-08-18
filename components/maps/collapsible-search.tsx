@@ -5,16 +5,21 @@ import { Text } from '~/components/ui/text';
 import { Search, X } from 'lucide-react-native';
 import { useTheme } from '~/lib/theme-provider';
 import { getThemeColor } from '~/lib/constants';
+import { cn } from '~/lib/utils';
 import * as Haptics from 'expo-haptics';
 
 interface CollapsibleSearchProps {
   placeholder?: string;
   onSearch?: (query: string) => void;
+  style?: any;
+  className?: string;
 }
 
 export function CollapsibleSearch({
   placeholder = 'Cari lokasi...',
   onSearch,
+  style,
+  className,
 }: CollapsibleSearchProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -43,7 +48,7 @@ export function CollapsibleSearch({
   };
 
   return (
-    <View className="absolute left-4 right-4 top-4 z-50">
+    <View className={cn('absolute left-4 right-4 top-4 z-50', className)} style={style}>
       <Card className="overflow-hidden shadow-lg">
         {!isExpanded ? (
           <Pressable

@@ -6,6 +6,7 @@ import { ProfileModal } from '~/components/profile-modal';
 import { useTheme } from '~/lib/theme-provider';
 import { Sidebar } from '~/components/navigation/sidebar';
 import { useBreakpoint } from '~/lib/breakpoints';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function ProfileButton() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -38,6 +39,7 @@ function LogoHeader() {
 
 export default function TabLayout() {
   const { colorScheme } = useTheme();
+  const insets = useSafeAreaInsets();
   // Single source of truth for responsive breakpoints — matches the same hook
   // used by index.tsx, maps.tsx, and all child screens.
   // No SSR hydration guard needed: output is now "single" (SPA mode).
@@ -79,10 +81,9 @@ export default function TabLayout() {
               borderTopColor:
                 colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
               borderTopWidth: 1,
-              // Explicit height bounds the tab bar wrapper div so it cannot
-              // stretch beyond 60px and become an invisible click shield.
-              height: 60,
-              paddingBottom: 8,
+              // Add bottom safe area inset on mobile to prevent gesture bar overlap
+              height: 60 + (isDesktop ? 0 : insets.bottom),
+              paddingBottom: 8 + (isDesktop ? 0 : insets.bottom),
               paddingTop: 8,
             },
             headerStyle: {
