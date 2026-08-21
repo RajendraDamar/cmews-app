@@ -13,3 +13,4 @@ export { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 export { AnimatedCard } from './animated-card';
 export { EmptyState } from './empty-state';
 export { ErrorState } from './error-state';
+export { PageTransition } from './page-transition';

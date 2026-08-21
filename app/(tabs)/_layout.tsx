@@ -20,6 +20,27 @@ function LogoHeader() {
   );
 }
 
+function TabIcon({
+  Icon,
+  color,
+  focused,
+}: {
+  Icon: any;
+  color: string;
+  focused: boolean;
+}) {
+  return (
+    <View className="items-center justify-center pt-0.5">
+      <View
+        className={`items-center justify-center rounded-full px-3 py-1 ${
+          focused ? 'bg-primary/10' : ''
+        }`}>
+        <Icon size={22} color={color} strokeWidth={focused ? 2.4 : 1.8} />
+      </View>
+    </View>
+  );
+}
+
 export default function TabLayout() {
   const { colorScheme } = useTheme();
   const insets = useSafeAreaInsets();
@@ -98,14 +119,18 @@ export default function TabLayout() {
             name="index"
             options={{
               title: 'Home',
-              tabBarIcon: ({ color }) => <Home size={24} color={color} />,
+              tabBarIcon: ({ color, focused }) => (
+                <TabIcon Icon={Home} color={color} focused={focused} />
+              ),
             }}
           />
           <Tabs.Screen
             name="forecast"
             options={{
               title: 'Forecast',
-              tabBarIcon: ({ color }) => <CloudRain size={24} color={color} />,
+              tabBarIcon: ({ color, focused }) => (
+                <TabIcon Icon={CloudRain} color={color} focused={focused} />
+              ),
             }}
           />
           <Tabs.Screen
@@ -113,7 +138,9 @@ export default function TabLayout() {
             options={{
               title: 'Maps',
               headerShown: false,
-              tabBarIcon: ({ color }) => <Map size={24} color={color} />,
+              tabBarIcon: ({ color, focused }) => (
+                <TabIcon Icon={Map} color={color} focused={focused} />
+              ),
             }}
           />
         </Tabs>

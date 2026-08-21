@@ -10,6 +10,7 @@ import { Text } from '~/components/ui/text';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { useWeatherStore } from '~/store/weatherStore';
 import { EmptyState } from '~/components/ui/empty-state';
+import { PageTransition } from '~/components/ui/page-transition';
 import { MARITIME_MOCK_DATA } from '~/lib/data/maritime-mock';
 import { useTheme } from '~/lib/theme-provider';
 
@@ -128,101 +129,103 @@ export default function ForecastTab() {
       style={{
         backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
       }}>
-      <View className={`p-4 ${isDesktop ? 'mx-auto w-full max-w-5xl' : ''}`}>
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          {/* Tab Navigation */}
-          <TabsList className="mb-4 flex-row w-full gap-2">
-            <TabsTrigger value="weather" className="flex-1">
-              <View className="flex-row items-center gap-1.5">
-                <CloudSun size={16} color={activeTab === 'weather' ? activeIconColor : inactiveIconColor} />
-                <Text>Cuaca</Text>
-              </View>
-            </TabsTrigger>
-            <TabsTrigger value="wind" className="flex-1">
-              <View className="flex-row items-center gap-1.5">
-                <Wind size={16} color={activeTab === 'wind' ? activeIconColor : inactiveIconColor} />
-                <Text>Angin</Text>
-              </View>
-            </TabsTrigger>
-            <TabsTrigger value="wave" className="flex-1">
-              <View className="flex-row items-center gap-1.5">
-                <Waves size={16} color={activeTab === 'wave' ? activeIconColor : inactiveIconColor} />
-                <Text>Gelombang</Text>
-              </View>
-            </TabsTrigger>
-            <TabsTrigger value="current" className="flex-1">
-              <View className="flex-row items-center gap-1.5">
-                <MoveHorizontal size={16} color={activeTab === 'current' ? activeIconColor : inactiveIconColor} />
-                <Text>Arus</Text>
-              </View>
-            </TabsTrigger>
-          </TabsList>
+      <PageTransition>
+        <View className={`p-4 ${isDesktop ? 'mx-auto w-full max-w-5xl' : ''}`}>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            {/* Tab Navigation */}
+            <TabsList className="mb-4 flex-row w-full gap-2">
+              <TabsTrigger value="weather" className="flex-1">
+                <View className="flex-row items-center gap-1.5">
+                  <CloudSun size={16} color={activeTab === 'weather' ? activeIconColor : inactiveIconColor} />
+                  <Text>Cuaca</Text>
+                </View>
+              </TabsTrigger>
+              <TabsTrigger value="wind" className="flex-1">
+                <View className="flex-row items-center gap-1.5">
+                  <Wind size={16} color={activeTab === 'wind' ? activeIconColor : inactiveIconColor} />
+                  <Text>Angin</Text>
+                </View>
+              </TabsTrigger>
+              <TabsTrigger value="wave" className="flex-1">
+                <View className="flex-row items-center gap-1.5">
+                  <Waves size={16} color={activeTab === 'wave' ? activeIconColor : inactiveIconColor} />
+                  <Text>Gelombang</Text>
+                </View>
+              </TabsTrigger>
+              <TabsTrigger value="current" className="flex-1">
+                <View className="flex-row items-center gap-1.5">
+                  <MoveHorizontal size={16} color={activeTab === 'current' ? activeIconColor : inactiveIconColor} />
+                  <Text>Arus</Text>
+                </View>
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Weather Tab Content */}
-          <TabsContent value="weather">
-            {weatherData.length > 0 ? (
-              <View className="gap-3">
-                {weatherData.map((day: any, index) => (
-                  <ExpandableDayCard key={index} {...day} />
-                ))}
-              </View>
-            ) : (
-              <EmptyState
-                title="Tidak Ada Data Cuaca"
-                message="Tarik untuk memuat ulang"
-              />
-            )}
-          </TabsContent>
+            {/* Weather Tab Content */}
+            <TabsContent value="weather">
+              {weatherData.length > 0 ? (
+                <View className="gap-3">
+                  {weatherData.map((day: any, index) => (
+                    <ExpandableDayCard key={index} {...day} />
+                  ))}
+                </View>
+              ) : (
+                <EmptyState
+                  title="Tidak Ada Data Cuaca"
+                  message="Tarik untuk memuat ulang"
+                />
+              )}
+            </TabsContent>
 
-          {/* Wind Tab Content */}
-          <TabsContent value="wind">
-            {windData.length > 0 ? (
-              <View className="gap-3">
-                {windData.map((data: any, index) => (
-                  <WindCard key={index} {...data} />
-                ))}
-              </View>
-            ) : (
-              <EmptyState
-                title="Tidak Ada Data Angin"
-                message="Tarik untuk memuat ulang"
-              />
-            )}
-          </TabsContent>
+            {/* Wind Tab Content */}
+            <TabsContent value="wind">
+              {windData.length > 0 ? (
+                <View className="gap-3">
+                  {windData.map((data: any, index) => (
+                    <WindCard key={index} {...data} />
+                  ))}
+                </View>
+              ) : (
+                <EmptyState
+                  title="Tidak Ada Data Angin"
+                  message="Tarik untuk memuat ulang"
+                />
+              )}
+            </TabsContent>
 
-          {/* Wave Tab Content */}
-          <TabsContent value="wave">
-            {waveData.length > 0 ? (
-              <View className="gap-3">
-                {waveData.map((data: any, index) => (
-                  <WaveCard key={index} {...data} />
-                ))}
-              </View>
-            ) : (
-              <EmptyState
-                title="Tidak Ada Data Gelombang"
-                message="Data maritim tidak tersedia"
-              />
-            )}
-          </TabsContent>
+            {/* Wave Tab Content */}
+            <TabsContent value="wave">
+              {waveData.length > 0 ? (
+                <View className="gap-3">
+                  {waveData.map((data: any, index) => (
+                    <WaveCard key={index} {...data} />
+                  ))}
+                </View>
+              ) : (
+                <EmptyState
+                  title="Tidak Ada Data Gelombang"
+                  message="Data maritim tidak tersedia"
+                />
+              )}
+            </TabsContent>
 
-          {/* Current Tab Content */}
-          <TabsContent value="current">
-            {currentData.length > 0 ? (
-              <View className="gap-3">
-                {currentData.map((data: any, index) => (
-                  <CurrentCard key={index} {...data} />
-                ))}
-              </View>
-            ) : (
-              <EmptyState
-                title="Tidak Ada Data Arus"
-                message="Data maritim tidak tersedia"
-              />
-            )}
-          </TabsContent>
-        </Tabs>
-      </View>
+            {/* Current Tab Content */}
+            <TabsContent value="current">
+              {currentData.length > 0 ? (
+                <View className="gap-3">
+                  {currentData.map((data: any, index) => (
+                    <CurrentCard key={index} {...data} />
+                  ))}
+                </View>
+              ) : (
+                <EmptyState
+                  title="Tidak Ada Data Arus"
+                  message="Data maritim tidak tersedia"
+                />
+              )}
+            </TabsContent>
+          </Tabs>
+        </View>
+      </PageTransition>
     </ScrollView>
   );
 }

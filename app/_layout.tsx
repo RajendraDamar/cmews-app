@@ -22,16 +22,6 @@ export const unstable_settings = {
 function ThemedApp() {
   const { colorScheme } = useTheme();
 
-  useEffect(() => {
-    if (Platform.OS === 'web' && typeof document !== 'undefined') {
-      // Update the root HTML element class for web dark mode styling
-      if (colorScheme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    }
-  }, [colorScheme]);
 
   useEffect(() => {
     initializePushNotifications().catch((error) => {
@@ -50,6 +40,9 @@ function ThemedApp() {
       style={bgStyle}>
       <Stack
         screenOptions={{
+          animation: 'slide_from_right',
+          animationDuration: 220,
+          gestureEnabled: true,
           headerStyle: {
             backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
           },
@@ -61,8 +54,8 @@ function ThemedApp() {
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="settings" options={{ headerShown: true }} />
-        <Stack.Screen name="privacy" options={{ headerShown: true }} />
+        <Stack.Screen name="settings" options={{ headerShown: true, title: 'Pengaturan' }} />
+        <Stack.Screen name="privacy" options={{ headerShown: true, title: 'Kebijakan Privasi' }} />
       </Stack>
       <PortalHost />
     </View>

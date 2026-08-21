@@ -1,5 +1,5 @@
 import { ScrollView, View, RefreshControl } from 'react-native';
-import { Skeleton } from '~/components/ui';
+import { Skeleton, PageTransition } from '~/components/ui';
 import { Stack } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { MOCK_WEATHER_ALERTS } from '~/lib/data/weather-mock';
@@ -134,22 +134,22 @@ export default function Home() {
             </View>
           </>
         ) : (
-          <>
+          <PageTransition>
             {/* Location Selector */}
             <View className={isDesktop ? 'mx-auto w-full max-w-6xl' : ''}>
               <LocationSelector
-                provinsi={location?.adm1 || 'Indonesia'}
-                kota={location?.adm2 || 'Memuat...'}
-                kecamatan={location?.adm3 || ''}
-                lastUpdated={lastUpdatedText}
-                onRefresh={handleRefresh}
-                onLocationPress={handleLocationPress}
+                location={{
+                  kecamatan: location?.adm3 || 'Jakarta Pusat',
+                  kota: location?.adm2 || 'Gambir',
+                  provinsi: location?.adm1 || 'DKI Jakarta',
+                }}
+                onPress={handleLocationPress}
               />
             </View>
 
-            {/* Weather Alerts */}
+            {/* Weather Alert (if any) */}
             {alerts.length > 0 && (
-              <View className={`mt-2 ${isDesktop ? 'mx-auto w-full max-w-6xl px-4' : ''}`}>
+              <View className={isDesktop ? 'mx-auto w-full max-w-6xl px-4' : 'px-4'}>
                 {alerts.map((alert) => (
                   <WeatherAlertCard
                     key={alert.id}
@@ -160,11 +160,11 @@ export default function Home() {
               </View>
             )}
 
-            {/* Hero Card and Quick Stats - Responsive Layout */}
+            {/* Hero Card + Quick Stats */}
             {isDesktop ? (
               <View className="mx-auto w-full max-w-6xl px-4">
-                <View className="flex-row gap-4 pt-2">
-                  <View className="w-[40%]">
+                <View className="flex-row gap-6">
+                  <View className="flex-1">
                     <HeroCard
                       temperature={currentWeather?.temperature || 0}
                       weather={currentWeather?.weatherDesc || 'Memuat...'}
@@ -266,7 +266,7 @@ export default function Home() {
                 })}
               />
             </View>
-          </>
+          </PageTransition>
         )}
       </ScrollView>
       

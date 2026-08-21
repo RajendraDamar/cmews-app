@@ -17,7 +17,7 @@ const THEME_STORAGE_KEY = '@cmews-app:theme';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemColorScheme = useColorScheme();
-  const { setColorScheme: setNWColorScheme } = useNativeWindColorScheme();
+  const { colorScheme: nwColorScheme, setColorScheme: setNWColorScheme } = useNativeWindColorScheme();
   const [theme, setThemeState] = useState<Theme>('system');
 
   // Load saved theme preference
@@ -41,8 +41,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   // Sync NativeWind on native and root .dark class on web
   useEffect(() => {
-    // Synchronize NativeWind runtime colorScheme
-    setNWColorScheme(colorScheme);
+    // Only synchronize NativeWind if colorScheme has diverged
+    if (nwColorScheme !== colorScheme) {
+      setNWColorScheme(colorScheme);
+    }
 
     // Sync the document root `.dark` class on web so Tailwind CSS variables match JS theme
     if (Platform.OS === 'web' && typeof document !== 'undefined') {
@@ -53,7 +55,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         root.classList.remove('dark');
       }
     }
-  }, [colorScheme, setNWColorScheme]);
+  }, [colorScheme, nwColorScheme, setNWColorScheme]);
 
   return (
     <ThemeContext.Provider value={{ theme, colorScheme, setTheme }}>
