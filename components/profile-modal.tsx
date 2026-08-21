@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, View, Pressable } from 'react-native';
+import { View, Pressable, Modal } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Settings, Shield, HelpCircle, LogOut, Moon, Sun } from 'lucide-react-native';
 import { Text } from '~/components/ui/text';
@@ -8,6 +8,7 @@ import { Separator } from '~/components/ui/separator';
 import { Popover, PopoverTrigger, PopoverContent } from '~/components/ui/popover';
 import { useTheme } from '~/lib/theme-provider';
 import { useBreakpoint } from '~/lib/breakpoints';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface ProfileModalProps {
   visible: boolean;
@@ -15,46 +16,26 @@ interface ProfileModalProps {
   trigger?: React.ReactNode;
 }
 
-export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
-  const router = useRouter();
-  const { colorScheme, setTheme } = useTheme();
-  const { isDesktop } = useBreakpoint();
+interface MenuItem {
+  icon: any;
+  label: string;
+  onPress: () => void;
+  danger?: boolean;
+}
 
-  const handleNavigation = (route: any) => {
-    onClose();
-    router.push(route);
-  };
+interface ProfileContentProps {
+  colorScheme: 'light' | 'dark';
+  toggleTheme: () => void;
+  menuItems: MenuItem[];
+}
 
-  const toggleTheme = () => {
-    setTheme(colorScheme === 'dark' ? 'light' : 'dark');
-  };
-
-  const menuItems = [
-    {
-      icon: Settings,
-      label: 'Pengaturan',
-      onPress: () => handleNavigation('/settings'),
-    },
-    {
-      icon: Shield,
-      label: 'Privasi',
-      onPress: () => handleNavigation('/privacy'),
-    },
-    {
-      icon: HelpCircle,
-      label: 'Bantuan & Dukungan',
-      onPress: () => {},
-    },
-    {
-      icon: LogOut,
-      label: 'Keluar',
-      onPress: () => handleNavigation('/(auth)/login'),
-      danger: true,
-    },
-  ];
-
-  const ProfileContent = () => (
-    <Card className="w-72">
+function ProfileContent({ colorScheme, toggleTheme, menuItems }: ProfileContentProps) {
+  return (
+    <Card
+      className="w-72 border border-border bg-card shadow-2xl"
+      style={{
+        backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+      }}>
       <CardContent className="p-0">
         {/* Profile Header */}
         <View className="items-center gap-2 p-6">
@@ -122,6 +103,46 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
       </CardContent>
     </Card>
   );
+}
+
+export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
+  const router = useRouter();
+  const { colorScheme, setTheme } = useTheme();
+  const { isDesktop } = useBreakpoint();
+  const insets = useSafeAreaInsets();
+
+  const handleNavigation = (route: any) => {
+    onClose();
+    router.push(route);
+  };
+
+  const toggleTheme = () => {
+    setTheme(colorScheme === 'dark' ? 'light' : 'dark');
+  };
+
+  const menuItems: MenuItem[] = [
+    {
+      icon: Settings,
+      label: 'Pengaturan',
+      onPress: () => handleNavigation('/settings'),
+    },
+    {
+      icon: Shield,
+      label: 'Privasi',
+      onPress: () => handleNavigation('/privacy'),
+    },
+    {
+      icon: HelpCircle,
+      label: 'Bantuan & Dukungan',
+      onPress: () => {},
+    },
+    {
+      icon: LogOut,
+      label: 'Keluar',
+      onPress: () => handleNavigation('/(auth)/login'),
+      danger: true,
+    },
+  ];
 
   // Desktop: Use Popover
   if (isDesktop && trigger) {
@@ -129,24 +150,42 @@ export function ProfileModal({ visible, onClose, trigger }: ProfileModalProps) {
       <Popover>
         <PopoverTrigger asChild>{trigger}</PopoverTrigger>
         <PopoverContent side="bottom" align="start" className="p-0">
-          <ProfileContent />
+          <ProfileContent
+            colorScheme={colorScheme}
+            toggleTheme={toggleTheme}
+            menuItems={menuItems}
+          />
         </PopoverContent>
       </Popover>
     );
   }
 
-  // Mobile: Use Modal
+  // Mobile: Use Modal with transparent fade
   return (
     <Modal
       visible={visible}
       transparent
       animationType="fade"
-      onRequestClose={onClose}
-      statusBarTranslucent>
-      <Pressable className="flex-1 bg-black/50" onPress={onClose}>
-        <View className="flex-1 items-end justify-start pr-4 pt-16">
+      statusBarTranslucent
+      onRequestClose={onClose}>
+      <Pressable
+        className="flex-1 bg-black/50"
+        onPress={onClose}
+        accessibilityLabel="Tutup">
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'flex-end',
+            justifyContent: 'flex-start',
+            paddingRight: 16,
+            paddingTop: insets.top + 52,
+          }}>
           <Pressable onPress={(e) => e.stopPropagation()}>
-            <ProfileContent />
+            <ProfileContent
+              colorScheme={colorScheme}
+              toggleTheme={toggleTheme}
+              menuItems={menuItems}
+            />
           </Pressable>
         </View>
       </Pressable>

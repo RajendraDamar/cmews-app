@@ -1,3 +1,4 @@
+// Reason: Replaced by components/ui/sheet.tsx and components/maps/report-bottom-sheet.tsx with platform-split Reanimated & native modal architecture
 import { View, Pressable, Animated, Dimensions, PanResponder } from 'react-native';
 import { useRef, useState, useEffect } from 'react';
 import { useTheme } from '~/lib/theme-provider';

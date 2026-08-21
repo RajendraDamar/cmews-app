@@ -3,7 +3,7 @@ import '../global.css';
 import { Stack } from 'expo-router';
 import { PortalHost } from '@rn-primitives/portal';
 import { ThemeProvider, useTheme } from '~/lib/theme-provider';
-import { Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 import { useEffect } from 'react';
 import { initializePushNotifications } from '~/lib/notifications/push-service';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -39,13 +39,15 @@ function ThemedApp() {
     });
   }, []);
 
+  const bgStyle = {
+    flex: 1,
+    backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+  };
+
   return (
-    <GestureHandlerRootView
-      className="flex-1 bg-background"
-      style={{
-        flex: 1,
-        backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
-      }}>
+    <View
+      className={colorScheme === 'dark' ? 'dark flex-1 bg-background' : 'flex-1 bg-background'}
+      style={bgStyle}>
       <Stack
         screenOptions={{
           headerStyle: {
@@ -63,7 +65,7 @@ function ThemedApp() {
         <Stack.Screen name="privacy" options={{ headerShown: true }} />
       </Stack>
       <PortalHost />
-    </GestureHandlerRootView>
+    </View>
   );
 }
 
@@ -72,13 +74,10 @@ export default function RootLayout() {
   useEffect(() => {
     if (Platform.OS === 'web' && typeof document !== 'undefined') {
       // Belt-and-suspenders: ensure maplibre-gl CSS is in the DOM.
-      // The top-level require('maplibre-gl/dist/maplibre-gl.css') handles this
-      // in most cases; this only fires if that link is somehow absent.
       if (!document.getElementById('maplibre-gl-css') && !document.querySelector('link[href*="maplibre-gl"]')) {
         const link = document.createElement('link');
         link.id = 'maplibre-gl-css';
         link.rel = 'stylesheet';
-        // 3.6.2 matches the installed package — must stay in sync with package.json
         link.href = 'https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css';
         document.head.appendChild(link);
       }
@@ -86,8 +85,10 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ThemeProvider>
-      <ThemedApp />
-    </ThemeProvider>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <ThemeProvider>
+        <ThemedApp />
+      </ThemeProvider>
+    </GestureHandlerRootView>
   );
 }

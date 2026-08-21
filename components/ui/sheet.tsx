@@ -1,11 +1,10 @@
-// Sheet Component for Bottom Sheet
+// Sheet Component for Bottom Sheet with Platform-Optimized Decoupled Animations
 import * as React from 'react';
 import {
   View,
   Modal,
   Animated,
   useWindowDimensions,
-  PanResponder,
   Pressable,
   Platform,
   StyleProp,
@@ -13,6 +12,24 @@ import {
 } from 'react-native';
 import { cn } from '~/lib/utils';
 import { useTheme } from '~/lib/theme-provider';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+// Conditionally load Reanimated layout animations for native
+let ReanimatedAnimated: any = null;
+let FadeIn: any, FadeOut: any, SlideInDown: any, SlideOutDown: any;
+if (Platform.OS !== 'web') {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const Reanimated = require('react-native-reanimated');
+    ReanimatedAnimated = Reanimated.default;
+    FadeIn = Reanimated.FadeIn;
+    FadeOut = Reanimated.FadeOut;
+    SlideInDown = Reanimated.SlideInDown;
+    SlideOutDown = Reanimated.SlideOutDown;
+  } catch {
+    console.warn('Reanimated not available in Sheet');
+  }
+}
 
 interface SheetProps {
   open: boolean;
@@ -29,17 +46,180 @@ const SheetContext = React.createContext<{
   onOpenChange: () => {},
 });
 
-export function Sheet({ open, onOpenChange, children }: SheetProps) {
+export function useSheet() {
+  return React.useContext(SheetContext);
+}
+
+function WebSheet({ open, onOpenChange, children }: SheetProps) {
+  const [mounted, setMounted] = React.useState(open);
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+  const slideAnim = React.useRef(new Animated.Value(650)).current;
+
+  React.useEffect(() => {
+    if (open) {
+      setMounted(true);
+      fadeAnim.setValue(0);
+      slideAnim.setValue(650);
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 1,
+          duration: 220,
+          useNativeDriver: false,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 0,
+          duration: 260,
+          useNativeDriver: false,
+        }),
+      ]).start();
+    } else if (mounted) {
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 180,
+          useNativeDriver: false,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 650,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+      ]).start(() => {
+        setMounted(false);
+      });
+    }
+  }, [open, mounted, fadeAnim, slideAnim]);
+
+  const handleClose = React.useCallback(() => {
+    onOpenChange(false);
+  }, [onOpenChange]);
+
+  if (!mounted) return null;
+
+  return (
+    <SheetContext.Provider value={{ open, onOpenChange: handleClose }}>
+      {/* In-tree overlay container positioned within the web content */}
+      <View
+        pointerEvents="box-none"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 40,
+          justifyContent: 'flex-end',
+        }}>
+        {/* Independent Fade-in Dark Backdrop */}
+        <Animated.View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            opacity: fadeAnim,
+          }}>
+          <Pressable
+            style={{ flex: 1 }}
+            onPress={handleClose}
+            accessibilityLabel="Tutup"
+          />
+        </Animated.View>
+
+        {/* Independent Slide-up Sheet Card */}
+        <Animated.View
+          style={{
+            transform: [{ translateY: slideAnim }],
+            zIndex: 45,
+          }}>
+          {children}
+        </Animated.View>
+      </View>
+    </SheetContext.Provider>
+  );
+}
+
+function NativeSheet({ open, onOpenChange, children }: SheetProps) {
+  if (!open) return null;
+
   return (
     <SheetContext.Provider value={{ open, onOpenChange }}>
       <Modal
         visible={open}
         transparent
         animationType="none"
+        statusBarTranslucent
         onRequestClose={() => onOpenChange(false)}>
-        {children}
+        <View style={{ flex: 1, justifyContent: 'flex-end' }}>
+          {/* Static Fade-In Dark Backdrop (FadeIn / FadeOut) */}
+          {ReanimatedAnimated ? (
+            <ReanimatedAnimated.View
+              entering={FadeIn?.duration?.(200)}
+              exiting={FadeOut?.duration?.(150)}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              }}>
+              <Pressable
+                style={{ flex: 1 }}
+                onPress={() => onOpenChange(false)}
+                accessibilityLabel="Tutup"
+              />
+            </ReanimatedAnimated.View>
+          ) : (
+            <View
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              }}>
+              <Pressable
+                style={{ flex: 1 }}
+                onPress={() => onOpenChange(false)}
+                accessibilityLabel="Tutup"
+              />
+            </View>
+          )}
+
+          {/* Sliding Sheet Card (SlideInDown / SlideOutDown) */}
+          {ReanimatedAnimated ? (
+            <ReanimatedAnimated.View
+              entering={SlideInDown?.duration?.(260)}
+              exiting={SlideOutDown?.duration?.(200)}
+              style={{ zIndex: 10 }}>
+              {children}
+            </ReanimatedAnimated.View>
+          ) : (
+            <View style={{ zIndex: 10 }}>{children}</View>
+          )}
+        </View>
       </Modal>
     </SheetContext.Provider>
+  );
+}
+
+export function Sheet({ open, onOpenChange, children }: SheetProps) {
+  if (Platform.OS === 'web') {
+    return (
+      <WebSheet open={open} onOpenChange={onOpenChange}>
+        {children}
+      </WebSheet>
+    );
+  }
+
+  return (
+    <NativeSheet open={open} onOpenChange={onOpenChange}>
+      {children}
+    </NativeSheet>
   );
 }
 
@@ -51,129 +231,28 @@ interface SheetContentProps {
 }
 
 export function SheetContent({ children, className, style }: SheetContentProps) {
-  const { open, onOpenChange } = React.useContext(SheetContext);
   const { colorScheme } = useTheme();
+  const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
-  const translateY = React.useRef(new Animated.Value(height)).current;
-  const fadeAnim = React.useRef(new Animated.Value(0)).current;
-
-  const animateIn = React.useCallback(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 200,
-        useNativeDriver: Platform.OS !== 'web',
-      }),
-      Animated.spring(translateY, {
-        toValue: 0,
-        useNativeDriver: Platform.OS !== 'web',
-        tension: 65,
-        friction: 10,
-      }),
-    ]).start();
-  }, [fadeAnim, translateY]);
-
-  const animateOut = React.useCallback(
-    (callback?: () => void) => {
-      Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 150,
-          useNativeDriver: Platform.OS !== 'web',
-        }),
-        Animated.timing(translateY, {
-          toValue: height,
-          duration: 200,
-          useNativeDriver: Platform.OS !== 'web',
-        }),
-      ]).start(() => {
-        if (callback) callback();
-      });
-    },
-    [fadeAnim, height, translateY]
-  );
-
-  React.useEffect(() => {
-    if (open) {
-      translateY.setValue(height);
-      animateIn();
-    }
-  }, [open, height, animateIn, translateY]);
-
-  const handleDismiss = () => {
-    animateOut(() => onOpenChange(false));
-  };
-
-  const panResponder = React.useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: (_, gesture) => gesture.dy > 5,
-      onPanResponderMove: (_, gesture) => {
-        if (gesture.dy > 0) {
-          translateY.setValue(gesture.dy);
-        }
-      },
-      onPanResponderRelease: (_, gesture) => {
-        if (gesture.dy > 120 || gesture.vy > 0.6) {
-          handleDismiss();
-        } else {
-          Animated.spring(translateY, {
-            toValue: 0,
-            useNativeDriver: Platform.OS !== 'web',
-            tension: 65,
-            friction: 10,
-          }).start();
-        }
-      },
-    })
-  ).current;
 
   return (
     <View
-      style={{
-        flex: 1,
-        justifyContent: 'flex-end',
-      }}>
-      {/* Dimmed Backdrop */}
-      <Animated.View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          opacity: fadeAnim,
-        }}>
-        <Pressable
-          onPress={handleDismiss}
-          style={{ flex: 1 }}
-          accessibilityLabel="Tutup"
-        />
-      </Animated.View>
-
-      {/* Sheet Container */}
-      <Animated.View
-        style={[
-          {
-            transform: [{ translateY }],
-            maxHeight: height * 0.85,
-            height: Math.min(height * 0.75, 650),
-            width: '100%',
-          },
-          style,
-        ]}
-        className={cn(
-          'rounded-t-3xl p-6 shadow-2xl md:max-w-2xl md:mx-auto md:rounded-3xl md:mb-6',
-          colorScheme === 'dark' ? 'bg-card border-t border-border' : 'bg-background border-t border-border',
-          className
-        )}>
-        {/* Drag Handle */}
-        <View {...panResponder.panHandlers} className="-mt-2 mb-2 items-center py-2">
-          <View className="h-1.5 w-16 rounded-full bg-muted-foreground/40" />
-        </View>
-        <View className="flex-1">{children}</View>
-      </Animated.View>
+      style={[
+        {
+          maxHeight: height * 0.85,
+          height: Math.min(height * 0.75, 650),
+          width: '100%',
+          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+          paddingBottom: Math.max(insets.bottom, 16),
+        },
+        style,
+      ]}
+      className={cn(
+        'rounded-t-3xl shadow-2xl md:max-w-2xl md:mx-auto md:rounded-3xl md:mb-6 border-t border-border overflow-hidden p-6',
+        colorScheme === 'dark' ? 'dark' : '',
+        className
+      )}>
+      <View className="flex-1">{children}</View>
     </View>
   );
 }

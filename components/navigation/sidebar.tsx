@@ -49,6 +49,7 @@ export function Sidebar() {
         className={`h-full flex-shrink-0 border-r ${collapsed ? 'w-16' : 'w-64'}`}
         style={{
           flexShrink: 0,
+          zIndex: 50,
           backgroundColor: colorScheme === 'dark' ? NAV_COLORS.darkBg : NAV_COLORS.lightBg,
           borderColor: colorScheme === 'dark' ? NAV_COLORS.darkBorder : NAV_COLORS.lightBorder,
         }}>

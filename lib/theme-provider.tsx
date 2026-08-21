@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useColorScheme, Platform } from 'react-native';
+import { useColorScheme as useNativeWindColorScheme } from 'nativewind';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Theme = 'light' | 'dark' | 'system';
@@ -16,6 +17,7 @@ const THEME_STORAGE_KEY = '@cmews-app:theme';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const systemColorScheme = useColorScheme();
+  const { setColorScheme: setNWColorScheme } = useNativeWindColorScheme();
   const [theme, setThemeState] = useState<Theme>('system');
 
   // Load saved theme preference
@@ -36,8 +38,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const colorScheme: 'light' | 'dark' = theme === 'system' ? (systemColorScheme ?? 'light') : theme;
-  // Sync the document root `.dark` class on web so Tailwind CSS variables match JS theme
+
+  // Sync NativeWind on native and root .dark class on web
   useEffect(() => {
+    // Synchronize NativeWind runtime colorScheme
+    setNWColorScheme(colorScheme);
+
+    // Sync the document root `.dark` class on web so Tailwind CSS variables match JS theme
     if (Platform.OS === 'web' && typeof document !== 'undefined') {
       const root = document.documentElement;
       if (colorScheme === 'dark') {
@@ -46,7 +53,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         root.classList.remove('dark');
       }
     }
-  }, [colorScheme]);
+  }, [colorScheme, setNWColorScheme]);
 
   return (
     <ThemeContext.Provider value={{ theme, colorScheme, setTheme }}>

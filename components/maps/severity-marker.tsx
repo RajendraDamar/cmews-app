@@ -7,7 +7,7 @@ import { WeatherReport } from '~/lib/types/weather-report';
 
 interface SeverityMarkerProps {
   report: WeatherReport;
-  onPress: () => void;
+  onPress?: () => void;
   selected?: boolean;
 }
 
@@ -39,26 +39,30 @@ export function SeverityMarker({ report, onPress, selected = false }: SeverityMa
   const { colorScheme } = useTheme();
   const theme = getThemeColor(colorScheme === 'dark');
 
-  return (
-    <Pressable onPress={onPress}>
-      <View
-        style={{
-          width: selected ? 48 : 42,
-          height: selected ? 48 : 42,
-          borderRadius: selected ? 24 : 21,
-          backgroundColor: color,
-          borderWidth: selected ? 4 : 3,
-          borderColor: theme.primaryForeground,
-          justifyContent: 'center',
-          alignItems: 'center',
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 3 },
-          shadowOpacity: 0.3,
-          shadowRadius: 6,
-          elevation: 6,
-        }}>
-        <Icon size={selected ? 24 : 22} color="#FFFFFF" />
-      </View>
-    </Pressable>
+  const markerView = (
+    <View
+      style={{
+        width: 44,
+        height: 44,
+        borderRadius: 22,
+        backgroundColor: color,
+        borderWidth: selected ? 4 : 3,
+        borderColor: selected ? '#FFFFFF' : theme.primaryForeground,
+        justifyContent: 'center',
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.3,
+        shadowRadius: 6,
+        elevation: 6,
+      }}>
+      <Icon size={22} color="#FFFFFF" />
+    </View>
   );
+
+  if (onPress) {
+    return <Pressable onPress={onPress}>{markerView}</Pressable>;
+  }
+
+  return markerView;
 }

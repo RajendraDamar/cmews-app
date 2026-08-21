@@ -95,6 +95,8 @@ export default function MapComponent({
   const isDesktopViewport = Platform.OS === 'web' && width >= BREAKPOINTS.md;
   const mapPixelHeight = isDesktopViewport ? Math.max(height, 600) : Math.max(height - 60, 600);
 
+  const isInteractingRef = useRef(false);
+
   // Dynamically update map style when theme changes without re-mounting
   useEffect(() => {
     if (mapRef.current) {
@@ -102,9 +104,9 @@ export default function MapComponent({
     }
   }, [colorScheme]);
 
-  // Synchronize camera smoothly when webViewState changes externally
+  // Synchronize camera smoothly when webViewState changes externally (not during user gestures)
   useEffect(() => {
-    if (mapRef.current) {
+    if (mapRef.current && !isInteractingRef.current) {
       const center = mapRef.current.getCenter();
       const currentZoom = mapRef.current.getZoom();
       const lngDiff = Math.abs(center.lng - webViewState.longitude);
@@ -136,29 +138,38 @@ export default function MapComponent({
       const borderWidth = isSelected ? 4 : 3;
       const bgColor = getSeverityColor(report.severity);
 
+      // Root element for MapLibre positioning (never overwrite its transform)
       const el = document.createElement('div');
-      el.className = 'cmews-severity-marker';
+      el.className = 'cmews-marker-wrapper';
       el.style.width = `${size}px`;
       el.style.height = `${size}px`;
-      el.style.borderRadius = `${size / 2}px`;
-      el.style.backgroundColor = bgColor;
-      el.style.border = `${borderWidth}px solid #FFFFFF`;
-      el.style.boxShadow = isSelected
+      el.style.cursor = 'pointer';
+
+      // Inner element for visual styling and hover scaling
+      const inner = document.createElement('div');
+      inner.className = 'cmews-severity-marker';
+      inner.style.width = '100%';
+      inner.style.height = '100%';
+      inner.style.borderRadius = `${size / 2}px`;
+      inner.style.backgroundColor = bgColor;
+      inner.style.border = `${borderWidth}px solid #FFFFFF`;
+      inner.style.boxShadow = isSelected
         ? '0 6px 16px rgba(0, 0, 0, 0.45)'
         : '0 4px 10px rgba(0, 0, 0, 0.3)';
-      el.style.display = 'flex';
-      el.style.alignItems = 'center';
-      el.style.justifyContent = 'center';
-      el.style.cursor = 'pointer';
-      el.style.transform = isSelected ? 'scale(1.1)' : 'scale(1)';
-      el.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease, width 0.15s ease, height 0.15s ease';
-      el.innerHTML = getMarkerSvg(report.weather);
+      inner.style.display = 'flex';
+      inner.style.alignItems = 'center';
+      inner.style.justifyContent = 'center';
+      inner.style.transform = isSelected ? 'scale(1.1)' : 'scale(1)';
+      inner.style.transition = 'transform 0.15s ease, box-shadow 0.15s ease, width 0.15s ease, height 0.15s ease';
+      inner.innerHTML = getMarkerSvg(report.weather);
+
+      el.appendChild(inner);
 
       el.onmouseenter = () => {
-        el.style.transform = 'scale(1.15)';
+        inner.style.transform = 'scale(1.15)';
       };
       el.onmouseleave = () => {
-        el.style.transform = isSelected ? 'scale(1.1)' : 'scale(1)';
+        inner.style.transform = isSelected ? 'scale(1.1)' : 'scale(1)';
       };
       el.onclick = (e) => {
         e.stopPropagation();
@@ -198,16 +209,29 @@ export default function MapComponent({
           attributionControl: true,
         });
 
-        map.on('move', () => {
-          const center = map.getCenter();
-          onMoveWeb({
-            viewState: {
-              longitude: center.lng,
-              latitude: center.lat,
-              zoom: map.getZoom(),
-            },
-          });
-        });
+        const handleInteractionStart = () => {
+          isInteractingRef.current = true;
+        };
+
+        const handleInteractionEnd = () => {
+          isInteractingRef.current = false;
+          if (map) {
+            const center = map.getCenter();
+            onMoveWeb({
+              viewState: {
+                longitude: center.lng,
+                latitude: center.lat,
+                zoom: map.getZoom(),
+              },
+            });
+          }
+        };
+
+        map.on('dragstart', handleInteractionStart);
+        map.on('dragend', handleInteractionEnd);
+        map.on('zoomstart', handleInteractionStart);
+        map.on('zoomend', handleInteractionEnd);
+        map.on('moveend', handleInteractionEnd);
 
         map.on('load', () => {
           if (!isMounted) return;

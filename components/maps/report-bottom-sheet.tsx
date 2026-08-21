@@ -1,6 +1,6 @@
 // Report Bottom Sheet Component
-import { View, ScrollView, Image } from 'react-native';
-import { Thermometer, Droplets, Wind, CloudRain } from 'lucide-react-native';
+import { View, ScrollView, Image, Pressable } from 'react-native';
+import { Thermometer, Droplets, Wind, CloudRain, X } from 'lucide-react-native';
 import { Sheet, SheetContent } from '~/components/ui/sheet';
 import { Text } from '~/components/ui/text';
 import { Badge } from '~/components/ui/badge';
@@ -39,151 +39,170 @@ const formatTimestamp = (timestamp: string) => {
   });
 };
 
-export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
+function ReportSheetBody({ report, onClose }: { report: WeatherReport; onClose: () => void }) {
   const { colorScheme } = useTheme();
   const insets = useSafeAreaInsets();
-
-  if (!report) return null;
-
   const severityBadge = getSeverityBadge(report.severity);
+
+  return (
+    <View className="flex-1">
+      {/* Header with Title and Close (X) Button on Top Right */}
+      <View className="mb-3 flex-row items-start justify-between">
+        <View className="flex-1 pr-4">
+          <Text className="mb-1 text-2xl font-bold">{report.location}</Text>
+          <Text className="mb-2 text-xs text-muted-foreground">
+            Koordinat: {report.lat.toFixed(4)}, {report.lon.toFixed(4)}
+          </Text>
+          <View className="flex-row items-center gap-2">
+            <Badge
+              variant={severityBadge.variant}
+              label={severityBadge.label}
+              labelClasses="text-primary-foreground font-semibold"
+            />
+          </View>
+        </View>
+
+        {/* Close Button (X) */}
+        <Pressable
+          onPress={onClose}
+          hitSlop={12}
+          className="h-9 w-9 items-center justify-center rounded-full bg-muted/60 active:bg-muted active:opacity-70"
+          accessibilityLabel="Tutup"
+          accessibilityRole="button">
+          <X size={18} color={colorScheme === 'dark' ? '#f3f4f6' : '#374151'} />
+        </Pressable>
+      </View>
+
+      <Separator className="mb-3" />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}>
+        {/* User Info */}
+        <View className="mb-4 flex-row items-center">
+          <Avatar className="mr-3">
+            <AvatarFallback>
+              <Text className="text-sm font-medium">{report.user.initials}</Text>
+            </AvatarFallback>
+          </Avatar>
+          <View>
+            <Text className="font-medium">{report.user.name}</Text>
+            <Text className="text-sm text-muted-foreground">
+              {formatTimestamp(report.timestamp)}
+            </Text>
+          </View>
+        </View>
+
+        <Separator className="mb-4" />
+
+        {/* Weather Data Grid */}
+        <Text className="mb-3 text-base font-semibold">Data Cuaca</Text>
+        <View className="mb-4 flex-row flex-wrap gap-2">
+          <View className="min-w-[45%] flex-1">
+            <Card className="shadow-sm">
+              <CardContent className="p-4">
+                <View className="flex-row items-center gap-3">
+                  <View className="rounded-lg bg-orange-500/10 p-2">
+                    <Thermometer size={22} color={getThemeColor(colorScheme === 'dark').primary} />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-xs text-muted-foreground">Suhu</Text>
+                    <Text className="text-lg font-bold">{report.temperature}°C</Text>
+                  </View>
+                </View>
+              </CardContent>
+            </Card>
+          </View>
+
+          <View className="min-w-[45%] flex-1">
+            <Card className="shadow-sm">
+              <CardContent className="p-4">
+                <View className="flex-row items-center gap-3">
+                  <View className="rounded-lg bg-blue-500/10 p-2">
+                    <Droplets size={22} color={getThemeColor(colorScheme === 'dark').primary} />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-xs text-muted-foreground">Kelembaban</Text>
+                    <Text className="text-lg font-bold">{report.humidity}%</Text>
+                  </View>
+                </View>
+              </CardContent>
+            </Card>
+          </View>
+
+          <View className="min-w-[45%] flex-1">
+            <Card className="shadow-sm">
+              <CardContent className="p-4">
+                <View className="flex-row items-center gap-3">
+                  <View className="rounded-lg bg-teal-500/10 p-2">
+                    <Wind size={22} color={COLORS.chart.wind} />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-xs text-muted-foreground">Kec. Angin</Text>
+                    <Text className="text-lg font-bold">{report.windSpeed} km/h</Text>
+                  </View>
+                </View>
+              </CardContent>
+            </Card>
+          </View>
+
+          <View className="min-w-[45%] flex-1">
+            <Card className="shadow-sm">
+              <CardContent className="p-4">
+                <View className="flex-row items-center gap-3">
+                  <View className="rounded-lg bg-indigo-500/10 p-2">
+                    <CloudRain size={22} color={getThemeColor(colorScheme === 'dark').primary} />
+                  </View>
+                  <View className="flex-1">
+                    <Text className="text-xs text-muted-foreground">Kondisi</Text>
+                    <Text className="text-sm font-semibold">{report.weather}</Text>
+                  </View>
+                </View>
+              </CardContent>
+            </Card>
+          </View>
+        </View>
+
+        {/* Notes Section */}
+        {report.notes && (
+          <>
+            <Separator className="mb-4" />
+            <View className="mb-4">
+              <Text className="mb-2 font-semibold">Catatan</Text>
+              <Text className="text-muted-foreground">{report.notes}</Text>
+            </View>
+          </>
+        )}
+
+        {/* Photo Section */}
+        {report.photo && (
+          <>
+            <Separator className="mb-4" />
+            <View className="mb-4">
+              <Text className="mb-2 font-semibold">Foto</Text>
+              <View className="w-full overflow-hidden rounded-lg" style={{ aspectRatio: UI_CONSTANTS.imageAspectRatio }}>
+                <Image
+                  source={{ uri: report.photo }}
+                  className="h-full w-full"
+                  resizeMode="cover"
+                />
+              </View>
+            </View>
+          </>
+        )}
+      </ScrollView>
+    </View>
+  );
+}
+
+export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
+  if (!report) return null;
 
   return (
     <Sheet open={!!report} onOpenChange={onClose}>
       <SheetContent side="bottom">
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          className="flex-1"
-          contentContainerStyle={{ paddingBottom: insets.bottom + 24 }}>
-          {/* Header */}
-          <View className="mb-4">
-            <Text className="mb-1 text-2xl font-bold">{report.location}</Text>
-            <Text className="mb-2 text-xs text-muted-foreground">
-              Koordinat: {report.lat.toFixed(4)}, {report.lon.toFixed(4)}
-            </Text>
-            <View className="flex-row items-center gap-2">
-              <Badge
-                variant={severityBadge.variant}
-                label={severityBadge.label}
-                labelClasses="text-primary-foreground font-semibold"
-              />
-            </View>
-          </View>
-
-          <Separator className="mb-4" />
-
-          {/* User Info */}
-          <View className="mb-4 flex-row items-center">
-            <Avatar className="mr-3">
-              <AvatarFallback>
-                <Text className="text-sm font-medium">{report.user.initials}</Text>
-              </AvatarFallback>
-            </Avatar>
-            <View>
-              <Text className="font-medium">{report.user.name}</Text>
-              <Text className="text-sm text-muted-foreground">
-                {formatTimestamp(report.timestamp)}
-              </Text>
-            </View>
-          </View>
-
-          <Separator className="mb-4" />
-
-          {/* Weather Data Grid */}
-          <Text className="mb-3 text-base font-semibold">Data Cuaca</Text>
-          <View className="mb-4 flex-row flex-wrap gap-2">
-            <View className="min-w-[45%] flex-1">
-              <Card className="shadow-sm">
-                <CardContent className="p-4">
-                  <View className="flex-row items-center gap-3">
-                    <View className="rounded-lg bg-orange-500/10 p-2">
-                      <Thermometer size={22} color={getThemeColor(colorScheme === 'dark').primary} />
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-xs text-muted-foreground">Suhu</Text>
-                      <Text className="text-lg font-bold">{report.temperature}°C</Text>
-                    </View>
-                  </View>
-                </CardContent>
-              </Card>
-            </View>
-
-            <View className="min-w-[45%] flex-1">
-              <Card className="shadow-sm">
-                <CardContent className="p-4">
-                  <View className="flex-row items-center gap-3">
-                    <View className="rounded-lg bg-blue-500/10 p-2">
-                      <Droplets size={22} color={getThemeColor(colorScheme === 'dark').primary} />
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-xs text-muted-foreground">Kelembaban</Text>
-                      <Text className="text-lg font-bold">{report.humidity}%</Text>
-                    </View>
-                  </View>
-                </CardContent>
-              </Card>
-            </View>
-
-            <View className="min-w-[45%] flex-1">
-              <Card className="shadow-sm">
-                <CardContent className="p-4">
-                  <View className="flex-row items-center gap-3">
-                    <View className="rounded-lg bg-teal-500/10 p-2">
-                      <Wind size={22} color={COLORS.chart.wind} />
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-xs text-muted-foreground">Kec. Angin</Text>
-                      <Text className="text-lg font-bold">{report.windSpeed} km/h</Text>
-                    </View>
-                  </View>
-                </CardContent>
-              </Card>
-            </View>
-
-            <View className="min-w-[45%] flex-1">
-              <Card className="shadow-sm">
-                <CardContent className="p-4">
-                  <View className="flex-row items-center gap-3">
-                    <View className="rounded-lg bg-indigo-500/10 p-2">
-                      <CloudRain size={22} color={getThemeColor(colorScheme === 'dark').primary} />
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-xs text-muted-foreground">Kondisi</Text>
-                      <Text className="text-sm font-semibold">{report.weather}</Text>
-                    </View>
-                  </View>
-                </CardContent>
-              </Card>
-            </View>
-          </View>
-
-          {/* Notes Section */}
-          {report.notes && (
-            <>
-              <Separator className="mb-4" />
-              <View className="mb-4">
-                <Text className="mb-2 font-semibold">Catatan</Text>
-                <Text className="text-muted-foreground">{report.notes}</Text>
-              </View>
-            </>
-          )}
-
-          {/* Photo Section */}
-          {report.photo && (
-            <>
-              <Separator className="mb-4" />
-              <View className="mb-4">
-                <Text className="mb-2 font-semibold">Foto</Text>
-                <View className="w-full overflow-hidden rounded-lg" style={{ aspectRatio: UI_CONSTANTS.imageAspectRatio }}>
-                  <Image
-                    source={{ uri: report.photo }}
-                    className="h-full w-full"
-                    resizeMode="cover"
-                  />
-                </View>
-              </View>
-            </>
-          )}
-        </ScrollView>
+        <ReportSheetBody report={report} onClose={onClose} />
       </SheetContent>
     </Sheet>
   );

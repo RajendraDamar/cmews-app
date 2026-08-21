@@ -1,29 +1,12 @@
 import { Tabs } from 'expo-router';
 import { View, Pressable } from 'react-native';
 import { Home, CloudRain, Map, User, Cloud } from 'lucide-react-native';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { ProfileModal } from '~/components/profile-modal';
 import { useTheme } from '~/lib/theme-provider';
 import { Sidebar } from '~/components/navigation/sidebar';
 import { useBreakpoint } from '~/lib/breakpoints';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
-function ProfileButton() {
-  const [modalVisible, setModalVisible] = useState(false);
-  const { colorScheme } = useTheme();
-
-  return (
-    <>
-      <Pressable onPress={() => setModalVisible(true)} className="mr-4">
-        <User
-          size={24}
-          color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(215.4 16.3% 46.9%)'}
-        />
-      </Pressable>
-      <ProfileModal visible={modalVisible} onClose={() => setModalVisible(false)} />
-    </>
-  );
-}
 
 function LogoHeader() {
   const { colorScheme } = useTheme();
@@ -40,18 +23,29 @@ function LogoHeader() {
 export default function TabLayout() {
   const { colorScheme } = useTheme();
   const insets = useSafeAreaInsets();
-  // Single source of truth for responsive breakpoints — matches the same hook
-  // used by index.tsx, maps.tsx, and all child screens.
-  // No SSR hydration guard needed: output is now "single" (SPA mode).
   const { isDesktop } = useBreakpoint();
+  const [profileModalVisible, setProfileModalVisible] = useState(false);
 
-  // Desktop: sidebar + content in a row. Mobile: column with bottom tabs.
-  // The tab bar is physically unmounted on desktop via tabBar={() => null}.
+  const renderHeaderRight = useCallback(() => (
+    <Pressable
+      onPress={() => setProfileModalVisible(true)}
+      className="mr-4 p-1 active:opacity-70"
+      hitSlop={8}
+      accessibilityLabel="Menu Profil"
+      accessibilityRole="button">
+      <User
+        size={24}
+        color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(215.4 16.3% 46.9%)'}
+      />
+    </Pressable>
+  ), [colorScheme]);
+
   return (
     <View
-      className="flex-1 bg-background"
+      className={colorScheme === 'dark' ? 'dark flex-1 bg-background' : 'flex-1 bg-background'}
       style={{
         flex: 1,
+        backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
         flexDirection: isDesktop ? 'row' : 'column',
       }}>
       {/* Left sidebar — only mounted on desktop web viewports */}
@@ -59,18 +53,19 @@ export default function TabLayout() {
 
       {/* Main content area */}
       <View
-        className="flex-1"
+        className={colorScheme === 'dark' ? 'dark flex-1' : 'flex-1'}
         style={{
           flex: 1,
+          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
         }}>
         <Tabs
-          // Physical tab bar unmounting on desktop — the tabBar prop completely
-          // removes the tab bar component from the DOM tree.
-          // DO NOT use tabBarStyle: { display: 'none' } — React Navigation's
-          // internal DOM wrappers override CSS display rules on web.
           tabBar={isDesktop ? () => null : undefined}
           screenOptions={{
             headerShown: !isDesktop,
+            sceneStyle: {
+              backgroundColor:
+                colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+            },
             tabBarActiveTintColor:
               colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)',
             tabBarInactiveTintColor:
@@ -81,10 +76,11 @@ export default function TabLayout() {
               borderTopColor:
                 colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
               borderTopWidth: 1,
-              // Add bottom safe area inset on mobile to prevent gesture bar overlap
               height: 60 + (isDesktop ? 0 : insets.bottom),
               paddingBottom: 8 + (isDesktop ? 0 : insets.bottom),
               paddingTop: 8,
+              elevation: 8,
+              zIndex: 50,
             },
             headerStyle: {
               backgroundColor:
@@ -96,7 +92,7 @@ export default function TabLayout() {
             headerTintColor:
               colorScheme === 'dark' ? 'hsl(210 40% 98%)' : 'hsl(222.2 47.4% 11.2%)',
             headerLeft: () => <LogoHeader />,
-            headerRight: () => <ProfileButton />,
+            headerRight: renderHeaderRight,
           }}>
           <Tabs.Screen
             name="index"
@@ -122,6 +118,14 @@ export default function TabLayout() {
           />
         </Tabs>
       </View>
+
+      {/* Root-level Profile Modal for Mobile */}
+      {!isDesktop && (
+        <ProfileModal
+          visible={profileModalVisible}
+          onClose={() => setProfileModalVisible(false)}
+        />
+      )}
     </View>
   );
 }

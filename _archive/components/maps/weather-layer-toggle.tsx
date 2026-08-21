@@ -1,3 +1,4 @@
+// Reason: Removed 'Tampilkan Lapisan' toggle button from Web and Mobile maps UI per user request.
 // Weather Layer Toggle Component
 import { View, Pressable } from 'react-native';
 import { Text } from '~/components/ui/text';

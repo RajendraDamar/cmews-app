@@ -17,18 +17,22 @@ interface NativeMapComponentProps {
   filteredReports: WeatherReport[];
   selectedReport: WeatherReport | null;
   onReportSelect: (report: WeatherReport) => void;
+  onReportDeselect?: () => void;
   cameraRef?: any;
   isDesktop?: boolean;
   webViewState?: { longitude: number; latitude: number; zoom: number };
   onMoveWeb?: (evt: any) => void;
+  onMapPress?: (coords: [number, number]) => void;
 }
 
 export default function MapComponent({
   filteredReports,
   selectedReport,
   onReportSelect,
+  onReportDeselect,
   cameraRef,
   isDesktop = false,
+  onMapPress,
 }: NativeMapComponentProps) {
   const { colorScheme } = useTheme();
   const mapStyle = colorScheme === 'dark' ? MAP_STYLES.dark : MAP_STYLES.light;
@@ -40,13 +44,19 @@ export default function MapComponent({
   return (
     <MapLibreGL.MapView
       style={{ flex: 1 }}
+      mapStyle={mapStyle}
       styleURL={mapStyle}
       logoEnabled={false}
       attributionEnabled={false}
       compassEnabled={!isDesktop}
       compassViewMargins={{ x: 16, y: 100 }}
       rotateEnabled={true}
-      pitchEnabled={true}>
+      pitchEnabled={true}
+      onPress={(feature: any) => {
+        if (feature?.geometry?.coordinates && onMapPress) {
+          onMapPress(feature.geometry.coordinates as [number, number]);
+        }
+      }}>
       <MapLibreGL.Camera
         ref={cameraRef}
         defaultSettings={{
@@ -56,16 +66,18 @@ export default function MapComponent({
       />
 
       {filteredReports.map((report) => (
-        <MapLibreGL.MarkerView
+        <MapLibreGL.PointAnnotation
           key={report.id}
+          id={report.id}
           coordinate={[report.lon, report.lat]}
-          anchor={{ x: 0.5, y: 0.5 }}>
+          anchor={{ x: 0.5, y: 0.5 }}
+          onSelected={() => onReportSelect(report)}>
           <SeverityMarker
             report={report}
             onPress={() => onReportSelect(report)}
             selected={selectedReport?.id === report.id}
           />
-        </MapLibreGL.MarkerView>
+        </MapLibreGL.PointAnnotation>
       ))}
     </MapLibreGL.MapView>
   );

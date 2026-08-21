@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { Card, CardContent } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
@@ -49,7 +49,7 @@ export function WaveCard({
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <Card>
         <CollapsibleTrigger asChild>
-          <CardContent className="p-4">
+          <Pressable className="p-4">
             <View className="flex-row items-center justify-between">
               <View className="flex-1">
                 <Text className="text-base font-semibold">{seaArea}</Text>
@@ -81,7 +81,7 @@ export function WaveCard({
                 />
               </View>
             </View>
-          </CardContent>
+          </Pressable>
         </CollapsibleTrigger>
 
         <CollapsibleContent>

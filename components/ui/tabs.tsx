@@ -30,11 +30,12 @@ function TabsTrigger({
   ...props
 }: TabsPrimitive.TriggerProps & React.RefAttributes<TabsPrimitive.TriggerRef>) {
   const { value } = TabsPrimitive.useRootContext();
+  const isActive = value === props.value;
   return (
     <TextClassContext.Provider
       value={cn(
-        'text-foreground dark:text-muted-foreground text-sm font-medium',
-        value === props.value && 'dark:text-foreground'
+        'text-sm font-medium',
+        isActive ? 'text-foreground font-semibold' : 'text-muted-foreground'
       )}>
       <TabsPrimitive.Trigger
         className={cn(
@@ -43,7 +44,7 @@ function TabsTrigger({
             web: 'inline-flex cursor-default whitespace-nowrap transition-[color,box-shadow] focus-visible:border-ring focus-visible:outline-1 focus-visible:outline-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0',
           }),
           props.disabled && 'opacity-50',
-          props.value === value && 'bg-background dark:border-foreground/10 dark:bg-input/30',
+          isActive && 'bg-background shadow-sm dark:border-foreground/10 dark:bg-input/30',
           className
         )}
         {...props}

@@ -88,7 +88,10 @@ export default function Home() {
     <>
       <Stack.Screen options={{ title: 'Cuaca Hari Ini' }} />
       <ScrollView
-        className="flex-1 bg-background"
+        className={colorScheme === 'dark' ? 'dark flex-1 bg-background' : 'flex-1 bg-background'}
+        style={{
+          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+        }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}

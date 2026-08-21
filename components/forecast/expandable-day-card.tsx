@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Pressable } from 'react-native';
 import { Card, CardContent } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
@@ -32,14 +32,20 @@ export function ExpandableDayCard({
     setIsOpen(open);
   };
 
-  const dateObj = new Date(date);
-  const dateStr = dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+  // Safely format ISO date string or fallback to raw string without throwing Invalid Date
+  let dateStr = date;
+  if (date) {
+    const parsedDate = new Date(date);
+    if (!isNaN(parsedDate.getTime())) {
+      dateStr = parsedDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+    }
+  }
 
   return (
     <Collapsible open={isOpen} onOpenChange={handleToggle}>
       <Card>
         <CollapsibleTrigger asChild>
-          <CardContent className="p-4">
+          <Pressable className="p-4">
             <View className="flex-row items-center justify-between">
               <View className="flex-1">
                 <Text className="text-lg font-semibold">{day}</Text>
@@ -69,7 +75,7 @@ export function ExpandableDayCard({
                 />
               </View>
             </View>
-          </CardContent>
+          </Pressable>
         </CollapsibleTrigger>
 
         <CollapsibleContent>

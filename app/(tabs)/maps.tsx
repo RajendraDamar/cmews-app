@@ -1,11 +1,10 @@
-import { View, Platform, Pressable, useWindowDimensions } from 'react-native';
+import { View, Platform, Pressable } from 'react-native';
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CollapsibleSearch } from '~/components/maps/collapsible-search';
 import { ReportBottomSheet } from '~/components/maps/report-bottom-sheet';
 import { ReportFormDialog } from '~/components/maps/report-form-dialog';
 import { DesktopMapPanel } from '~/components/maps/desktop-map-panel';
-import { WeatherLayerToggle } from '~/components/maps/weather-layer-toggle';
 import { MapSkeleton } from '~/components/maps/map-skeleton';
 import { MapErrorState } from '~/components/maps/map-error-state';
 import MapComponent from '~/components/maps/MapComponent';
@@ -20,10 +19,8 @@ export default function MapsScreen() {
   const { colorScheme } = useTheme();
   const { isDesktop } = useBreakpoint();
   const insets = useSafeAreaInsets();
-  const { height } = useWindowDimensions();
   const [selectedReport, setSelectedReport] = useState<WeatherReport | null>(null);
   const [showReportForm, setShowReportForm] = useState(false);
-  const [showWeatherLayer, setShowWeatherLayer] = useState(false);
   const [filters] = useState<WeatherReportFilters>({
     all: true,
     low: true,
@@ -34,6 +31,7 @@ export default function MapsScreen() {
   const [mapError, setMapError] = useState<string | null>(null);
   const [reports, setReports] = useState<WeatherReport[]>(mockWeatherReports);
   const cameraRef = useRef<any>(null);
+  const lastMarkerSelectTimeRef = useRef<number>(0);
 
   const [nativeZoom, setNativeZoom] = useState(11);
 
@@ -44,9 +42,6 @@ export default function MapsScreen() {
   });
 
   const themeColors = getThemeColor(colorScheme === 'dark');
-
-  // Calculate exact map height for full screen
-  const mapHeight = height - insets.top - insets.bottom;
 
   // Simulate map loading
   useEffect(() => {
@@ -109,21 +104,34 @@ export default function MapsScreen() {
   };
 
   const handleReportSelect = useCallback((report: WeatherReport) => {
+    lastMarkerSelectTimeRef.current = Date.now();
     setSelectedReport(report);
     if (Platform.OS !== 'web') {
-      setNativeZoom(14);
       cameraRef.current?.setCamera({
         centerCoordinate: [report.lon, report.lat],
-        zoomLevel: 14,
-        animationDuration: 1000,
+        animationDuration: 300,
       });
     } else {
-      setWebViewState({
+      setWebViewState((prev) => ({
+        ...prev,
         longitude: report.lon,
         latitude: report.lat,
-        zoom: 14,
-      });
+      }));
     }
+  }, []);
+
+  const handleReportDeselect = useCallback(() => {
+    if (Date.now() - lastMarkerSelectTimeRef.current < 500) {
+      return;
+    }
+    setSelectedReport(null);
+  }, []);
+
+  const handleMapPress = useCallback(() => {
+    if (Date.now() - lastMarkerSelectTimeRef.current < 1000) {
+      return;
+    }
+    setSelectedReport(null);
   }, []);
 
   const handleMoveWeb = useCallback((evt: any) => {
@@ -169,15 +177,17 @@ export default function MapsScreen() {
     }
 
     return (
-      <View style={Platform.OS === 'web' ? { flex: 1 } : { flex: 1, height: mapHeight }}>
+      <View style={{ flex: 1 }}>
         <MapComponent
           filteredReports={filteredReports}
           selectedReport={selectedReport}
           onReportSelect={handleReportSelect}
+          onReportDeselect={handleReportDeselect}
           webViewState={webViewState}
           onMoveWeb={handleMoveWeb}
           cameraRef={cameraRef}
           isDesktop={isDesktop}
+          onMapPress={handleMapPress}
         />
       </View>
     );
@@ -191,8 +201,6 @@ export default function MapsScreen() {
             {renderMap()}
           {/* Desktop Map Panel - Minimal sidebar overlay */}
           <DesktopMapPanel
-            showWeatherLayer={showWeatherLayer}
-            onToggleLayer={() => setShowWeatherLayer(!showWeatherLayer)}
             onAddReport={() => setShowReportForm(true)}
           />
 
@@ -245,62 +253,60 @@ export default function MapsScreen() {
         <>
           {renderMap()}
 
-          {/* Mobile Overlays */}
-          {/* Collapsible Search */}
-          <CollapsibleSearch placeholder="Cari lokasi..." style={{ top: insets.top + 12 }} />
+          {/* Mobile Overlays wrapped in pointerEvents="box-none" container */}
+          <View pointerEvents="box-none" className="absolute inset-0">
+            {/* Collapsible Search */}
+            <CollapsibleSearch placeholder="Cari lokasi..." style={{ top: insets.top + 12 }} />
 
-          {/* Weather Layer Toggle (Mobile) */}
-          <WeatherLayerToggle
-            showLayer={showWeatherLayer}
-            onToggle={() => setShowWeatherLayer(!showWeatherLayer)}
-          />
+            {/* Map Controls (Mobile - Right Side) */}
+            <View
+              className="absolute right-4 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+              style={{
+                bottom: insets.bottom + 96,
+                zIndex: 10,
+                shadowColor: themeColors.shadow,
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.15,
+                shadowRadius: 8,
+                elevation: 8,
+              }}>
+              <Pressable
+                onPress={handleZoomIn}
+                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+                <Plus size={20} color={themeColors.icon.foreground} />
+              </Pressable>
 
-          {/* Map Controls (Mobile - Right Side) */}
-          <View
-            className="absolute bottom-32 right-4 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
-            style={{
-              zIndex: 10,
-              shadowColor: themeColors.shadow,
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.15,
-              shadowRadius: 8,
-              elevation: 8,
-            }}>
+              <Pressable
+                onPress={handleZoomOut}
+                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
+                <Minus size={20} color={themeColors.icon.foreground} />
+              </Pressable>
+
+              <Pressable
+                onPress={handleLocationPress}
+                className="h-12 w-12 items-center justify-center active:bg-muted/50">
+                <MapPin size={18} color={themeColors.icon.foreground} />
+              </Pressable>
+            </View>
+
+            {/* Floating Action Button (Mobile) */}
             <Pressable
-              onPress={handleZoomIn}
-              className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-              <Plus size={20} color={themeColors.icon.foreground} />
-            </Pressable>
-
-            <Pressable
-              onPress={handleZoomOut}
-              className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-              <Minus size={20} color={themeColors.icon.foreground} />
-            </Pressable>
-
-            <Pressable
-              onPress={handleLocationPress}
-              className="h-12 w-12 items-center justify-center active:bg-muted/50">
-              <MapPin size={18} color={themeColors.icon.foreground} />
+              onPress={() => setShowReportForm(true)}
+              className="absolute right-6 h-16 w-16 items-center justify-center rounded-full shadow-xl active:scale-95 border bg-card border-border"
+              style={{
+                bottom: insets.bottom + 24,
+                zIndex: 10,
+                shadowColor: themeColors.shadow,
+                shadowOffset: { width: 0, height: 6 },
+                shadowOpacity: 0.25,
+                shadowRadius: 12,
+                elevation: 10,
+              }}
+              accessibilityLabel="Laporkan Cuaca"
+              accessibilityRole="button">
+              <Plus size={28} color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : themeColors.icon.foreground} />
             </Pressable>
           </View>
-
-          {/* Floating Action Button (Mobile) */}
-          <Pressable
-            onPress={() => setShowReportForm(true)}
-            className={`absolute bottom-6 right-6 h-16 w-16 items-center justify-center rounded-full shadow-xl active:scale-95 border bg-card border-border`}
-            style={{
-              zIndex: 10,
-              shadowColor: themeColors.shadow,
-              shadowOffset: { width: 0, height: 6 },
-              shadowOpacity: 0.25,
-              shadowRadius: 12,
-              elevation: 10,
-            }}
-            accessibilityLabel="Laporkan Cuaca"
-            accessibilityRole="button">
-            <Plus size={28} color={colorScheme === 'dark' ? 'hsl(210 40% 98%)' : themeColors.icon.foreground} />
-          </Pressable>
 
           {/* Bottom Sheet for Report Details (Mobile) */}
           {selectedReport && (

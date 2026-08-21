@@ -11,10 +11,15 @@ import { useBreakpoint } from '~/lib/breakpoints';
 import { useWeatherStore } from '~/store/weatherStore';
 import { EmptyState } from '~/components/ui/empty-state';
 import { MARITIME_MOCK_DATA } from '~/lib/data/maritime-mock';
+import { useTheme } from '~/lib/theme-provider';
 
 export default function ForecastTab() {
   const [activeTab, setActiveTab] = useState('weather');
   const { isDesktop } = useBreakpoint();
+  const { colorScheme } = useTheme();
+
+  const activeIconColor = colorScheme === 'dark' ? '#f9fafb' : '#0f172a';
+  const inactiveIconColor = colorScheme === 'dark' ? '#94a3b8' : '#64748b';
   
   // Use real weather store
   const {
@@ -48,7 +53,7 @@ export default function ForecastTab() {
     
     return {
       day: index === 0 ? 'Hari Ini' : dayNames[dateObj.getDay()],
-      date: dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
+      date: firstEntry.datetime,
       weather: firstEntry.weatherDesc,
       tempMin: Math.min(...temps),
       tempMax: Math.max(...temps),
@@ -118,32 +123,36 @@ export default function ForecastTab() {
   }
 
   return (
-    <ScrollView className="flex-1 bg-background">
+    <ScrollView
+      className={colorScheme === 'dark' ? 'dark flex-1 bg-background' : 'flex-1 bg-background'}
+      style={{
+        backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+      }}>
       <View className={`p-4 ${isDesktop ? 'mx-auto w-full max-w-5xl' : ''}`}>
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           {/* Tab Navigation */}
           <TabsList className="mb-4 flex-row w-full gap-2">
             <TabsTrigger value="weather" className="flex-1">
               <View className="flex-row items-center gap-1.5">
-                <CloudSun size={16} />
+                <CloudSun size={16} color={activeTab === 'weather' ? activeIconColor : inactiveIconColor} />
                 <Text>Cuaca</Text>
               </View>
             </TabsTrigger>
             <TabsTrigger value="wind" className="flex-1">
               <View className="flex-row items-center gap-1.5">
-                <Wind size={16} />
+                <Wind size={16} color={activeTab === 'wind' ? activeIconColor : inactiveIconColor} />
                 <Text>Angin</Text>
               </View>
             </TabsTrigger>
             <TabsTrigger value="wave" className="flex-1">
               <View className="flex-row items-center gap-1.5">
-                <Waves size={16} />
+                <Waves size={16} color={activeTab === 'wave' ? activeIconColor : inactiveIconColor} />
                 <Text>Gelombang</Text>
               </View>
             </TabsTrigger>
             <TabsTrigger value="current" className="flex-1">
               <View className="flex-row items-center gap-1.5">
-                <MoveHorizontal size={16} />
+                <MoveHorizontal size={16} color={activeTab === 'current' ? activeIconColor : inactiveIconColor} />
                 <Text>Arus</Text>
               </View>
             </TabsTrigger>
