@@ -11,13 +11,16 @@ interface SeverityMarkerProps {
   selected?: boolean;
 }
 
-const getSeverityColor = (severity: 'low' | 'medium' | 'high') => {
-  switch (severity) {
+const getSeverityColor = (severity?: string) => {
+  switch (severity?.toLowerCase()) {
     case 'low':
+    case 'rendah':
       return '#10B981';
     case 'medium':
+    case 'sedang':
       return '#F59E0B';
     case 'high':
+    case 'tinggi':
       return '#EF4444';
     default:
       return '#10B981';

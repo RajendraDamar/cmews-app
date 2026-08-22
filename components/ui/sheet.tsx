@@ -9,6 +9,7 @@ import {
   Platform,
   StyleProp,
   ViewStyle,
+  StyleSheet,
 } from 'react-native';
 import { cn } from '~/lib/utils';
 import { useTheme } from '~/lib/theme-provider';
@@ -237,7 +238,7 @@ export function SheetContent({ children, className, style }: SheetContentProps) 
 
   return (
     <View
-      style={[
+      style={StyleSheet.flatten([
         {
           maxHeight: height * 0.85,
           height: Math.min(height * 0.75, 650),
@@ -246,7 +247,7 @@ export function SheetContent({ children, className, style }: SheetContentProps) 
           paddingBottom: Math.max(insets.bottom, 16),
         },
         style,
-      ]}
+      ])}
       className={cn(
         'rounded-t-3xl shadow-2xl md:max-w-2xl md:mx-auto md:rounded-3xl md:mb-6 border-t border-border overflow-hidden p-6',
         colorScheme === 'dark' ? 'dark' : '',

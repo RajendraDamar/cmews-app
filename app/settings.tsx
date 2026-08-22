@@ -53,7 +53,11 @@ export default function SettingsScreen() {
           title: 'Pengaturan',
         }} 
       />
-      <ScrollView className="flex-1 bg-background">
+      <ScrollView
+        className="flex-1 bg-background"
+        style={{
+          backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+        }}>
         <View className={`px-4 py-6 ${isDesktop ? 'mx-auto w-full max-w-3xl' : ''}`}>
           <Text className="mb-6 text-3xl font-bold">Pengaturan</Text>
 
@@ -67,6 +71,7 @@ export default function SettingsScreen() {
               <SettingRow
                 icon={<Moon size={20} color={themeColors.muted} />}
                 label="Mode Gelap"
+                onPress={() => handleThemeChange(colorScheme !== 'dark')}
                 trailing={<Switch value={colorScheme === 'dark'} onValueChange={handleThemeChange} />}
               />
             </CardContent>

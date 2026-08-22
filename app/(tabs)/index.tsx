@@ -1,6 +1,5 @@
 import { ScrollView, View, RefreshControl } from 'react-native';
 import { Skeleton, PageTransition } from '~/components/ui';
-import { Stack } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { MOCK_WEATHER_ALERTS } from '~/lib/data/weather-mock';
 import { getRelativeTimeIndonesian } from '~/lib/utils/indonesian-locale';
@@ -86,9 +85,8 @@ export default function Home() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Cuaca Hari Ini' }} />
       <ScrollView
-        className={colorScheme === 'dark' ? 'dark flex-1 bg-background' : 'flex-1 bg-background'}
+        className="flex-1 bg-background"
         style={{
           backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
         }}
@@ -143,6 +141,9 @@ export default function Home() {
                   kota: location?.adm2 || 'Gambir',
                   provinsi: location?.adm1 || 'DKI Jakarta',
                 }}
+                lastUpdated={lastUpdatedText}
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
                 onPress={handleLocationPress}
               />
             </View>
@@ -254,14 +255,20 @@ export default function Home() {
                   const dateObj = new Date(firstEntry.datetime);
                   const dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
                   const temps = dayForecast.map(f => f.temperature);
+                  const minT = temps.length > 0 ? Math.min(...temps) : 22;
+                  const maxT = temps.length > 0 ? Math.max(...temps) : 30;
+                  const isRainy = (firstEntry.weatherDesc || '').toLowerCase().includes('hujan') || (firstEntry.weatherDesc || '').toLowerCase().includes('petir');
+                  const precipitation = isRainy
+                    ? Math.min(Math.max(firstEntry.humidity, 65), 95)
+                    : Math.min(Math.max(Math.round(firstEntry.humidity * 0.25), 10), 30);
                   
                   return {
                     day: index === 0 ? 'Hari Ini' : dayNames[dateObj.getDay()],
                     date: dateObj.toISOString(),
                     weather: firstEntry.weatherDesc,
-                    tempHigh: Math.max(...temps),
-                    tempLow: Math.min(...temps),
-                    precipitation: firstEntry.humidity,
+                    tempHigh: minT === maxT ? maxT + 4 : maxT,
+                    tempLow: minT === maxT ? Math.max(minT - 3, 18) : minT,
+                    precipitation,
                   };
                 })}
               />

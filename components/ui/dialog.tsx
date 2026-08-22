@@ -30,6 +30,8 @@ const DialogClose = DialogPrimitive.Close;
 
 const FullWindowOverlay = Platform.OS === 'ios' ? RNFullWindowOverlay : React.Fragment;
 
+import { useTheme } from '~/lib/theme-provider';
+
 function DialogOverlay({
   className,
   children,
@@ -59,15 +61,19 @@ function DialogOverlay({
     </FullWindowOverlay>
   );
 }
+
 function DialogContent({
   className,
   portalHost,
   children,
+  style,
   ...props
 }: DialogPrimitive.ContentProps &
   React.RefAttributes<DialogPrimitive.ContentRef> & {
     portalHost?: string;
   }) {
+  const { colorScheme } = useTheme();
+
   return (
     <DialogPortal hostName={portalHost}>
       <DialogOverlay>
@@ -79,6 +85,18 @@ function DialogContent({
             }),
             className
           )}
+          style={
+            Platform.OS !== 'web'
+              ? [
+                  {
+                    backgroundColor: colorScheme === 'dark' ? '#0b1329' : '#ffffff',
+                    borderColor:
+                      colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+                  },
+                  style,
+                ]
+              : style
+          }
           {...props}>
           <>{children}</>
           <DialogPrimitive.Close
@@ -118,11 +136,24 @@ function DialogFooter({ className, ...props }: ViewProps) {
 
 function DialogTitle({
   className,
+  style,
   ...props
 }: DialogPrimitive.TitleProps & React.RefAttributes<DialogPrimitive.TitleRef>) {
+  const { colorScheme } = useTheme();
+
   return (
     <DialogPrimitive.Title
       className={cn('text-lg font-semibold leading-none text-foreground', className)}
+      style={
+        Platform.OS !== 'web'
+          ? [
+              {
+                color: colorScheme === 'dark' ? '#f3f4f6' : '#1f2937',
+              },
+              style,
+            ]
+          : style
+      }
       {...props}
     />
   );
@@ -130,11 +161,24 @@ function DialogTitle({
 
 function DialogDescription({
   className,
+  style,
   ...props
 }: DialogPrimitive.DescriptionProps & React.RefAttributes<DialogPrimitive.DescriptionRef>) {
+  const { colorScheme } = useTheme();
+
   return (
     <DialogPrimitive.Description
       className={cn('text-sm text-muted-foreground', className)}
+      style={
+        Platform.OS !== 'web'
+          ? [
+              {
+                color: colorScheme === 'dark' ? '#9ca3af' : '#6b7280',
+              },
+              style,
+            ]
+          : style
+      }
       {...props}
     />
   );

@@ -2,10 +2,15 @@ import * as React from 'react';
 import { TextInput } from 'react-native';
 import { cn } from '~/utils/cn';
 
+import { Platform } from 'react-native';
+import { useTheme } from '~/lib/theme-provider';
+
 const Input = React.forwardRef<
   React.ElementRef<typeof TextInput>,
   React.ComponentPropsWithoutRef<typeof TextInput>
->(({ className, placeholderClassName, ...props }, ref) => {
+>(({ className, placeholderClassName, style, ...props }, ref) => {
+  const { colorScheme } = useTheme();
+
   return (
     <TextInput
       ref={ref}
@@ -14,7 +19,23 @@ const Input = React.forwardRef<
         props.editable === false && 'opacity-50 web:cursor-not-allowed',
         className
       )}
+      placeholderTextColor={
+        props.placeholderTextColor || (colorScheme === 'dark' ? '#9ca3af' : '#6b7280')
+      }
       placeholderClassName={cn('text-muted-foreground', placeholderClassName)}
+      style={
+        Platform.OS !== 'web'
+          ? [
+              {
+                backgroundColor: colorScheme === 'dark' ? '#0b1329' : '#ffffff',
+                borderColor:
+                  colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+                color: colorScheme === 'dark' ? '#f3f4f6' : '#1f2937',
+              },
+              style,
+            ]
+          : style
+      }
       {...props}
     />
   );

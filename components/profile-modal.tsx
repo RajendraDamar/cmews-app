@@ -42,8 +42,15 @@ function ProfileContent({ colorScheme, toggleTheme, menuItems }: ProfileContentP
           <View className="h-16 w-16 items-center justify-center rounded-full bg-primary">
             <Text className="text-2xl font-bold text-primary-foreground">JD</Text>
           </View>
-          <Text className="text-lg font-semibold">John Doe</Text>
-          <Text variant="muted" size="sm">
+          <Text
+            className="text-lg font-semibold"
+            style={{ color: colorScheme === 'dark' ? '#f3f4f6' : '#1f2937' }}>
+            John Doe
+          </Text>
+          <Text
+            variant="muted"
+            size="sm"
+            style={{ color: colorScheme === 'dark' ? '#9ca3af' : '#6b7280' }}>
             john.doe@example.com
           </Text>
         </View>
@@ -61,9 +68,16 @@ function ProfileContent({ colorScheme, toggleTheme, menuItems }: ProfileContentP
               ) : (
                 <Sun size={20} color="hsl(215.4 16.3% 46.9%)" />
               )}
-              <Text className="text-sm">Tema</Text>
+              <Text
+                className="text-sm font-medium"
+                style={{ color: colorScheme === 'dark' ? '#f3f4f6' : '#1f2937' }}>
+                Tema
+              </Text>
             </View>
-            <Text variant="muted" size="sm">
+            <Text
+              variant="muted"
+              size="sm"
+              style={{ color: colorScheme === 'dark' ? '#9ca3af' : '#6b7280' }}>
               {colorScheme === 'dark' ? 'Dark' : 'Light'}
             </Text>
           </Pressable>
@@ -91,7 +105,14 @@ function ProfileContent({ colorScheme, toggleTheme, menuItems }: ProfileContentP
                     }
                   />
                   <Text
-                    className={`flex-1 text-sm ${item.danger ? 'text-destructive' : 'text-foreground'}`}>
+                    className="flex-1 text-sm font-medium"
+                    style={{
+                      color: item.danger
+                        ? 'hsl(0 84.2% 60.2%)'
+                        : colorScheme === 'dark'
+                          ? '#f3f4f6'
+                          : '#1f2937',
+                    }}>
                     {item.label}
                   </Text>
                 </Pressable>

@@ -260,10 +260,13 @@ export default function MapsScreen() {
 
             {/* Map Controls (Mobile - Right Side) */}
             <View
-              className="absolute right-4 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
+              className="absolute right-6 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
               style={{
-                bottom: insets.bottom + 96,
+                bottom: insets.bottom + 104,
                 zIndex: 10,
+                backgroundColor: colorScheme === 'dark' ? '#0b1329' : '#ffffff',
+                borderColor:
+                  colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
                 shadowColor: themeColors.shadow,
                 shadowOffset: { width: 0, height: 4 },
                 shadowOpacity: 0.15,
@@ -296,6 +299,9 @@ export default function MapsScreen() {
               style={{
                 bottom: insets.bottom + 24,
                 zIndex: 10,
+                backgroundColor: colorScheme === 'dark' ? '#0b1329' : '#ffffff',
+                borderColor:
+                  colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
                 shadowColor: themeColors.shadow,
                 shadowOffset: { width: 0, height: 6 },
                 shadowOpacity: 0.25,

@@ -1,18 +1,35 @@
 import * as React from 'react';
-import { View, Text as RNText } from 'react-native';
+import { View, Text as RNText, Platform } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { cn } from '~/utils/cn';
+import { useTheme } from '~/lib/theme-provider';
 
 const Card = React.forwardRef<
   React.ElementRef<typeof View>,
   React.ComponentPropsWithoutRef<typeof View>
->(({ className, ...props }, ref) => (
-  <View
-    ref={ref}
-    className={cn('rounded-lg border border-border bg-card shadow-sm', className)}
-    {...props}
-  />
-));
+>(({ className, style, ...props }, ref) => {
+  const { colorScheme } = useTheme();
+
+  return (
+    <View
+      ref={ref}
+      className={cn('rounded-lg border border-border bg-card shadow-sm', className)}
+      style={
+        Platform.OS !== 'web'
+          ? [
+              {
+                backgroundColor: colorScheme === 'dark' ? '#0b1329' : '#ffffff',
+                borderColor:
+                  colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+              },
+              style,
+            ]
+          : style
+      }
+      {...props}
+    />
+  );
+});
 Card.displayName = 'Card';
 
 const CardHeader = React.forwardRef<

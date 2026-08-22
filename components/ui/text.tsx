@@ -1,7 +1,8 @@
 import * as React from 'react';
-import { Text as RNText } from 'react-native';
+import { Text as RNText, Platform } from 'react-native';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '~/utils/cn';
+import { useTheme } from '~/lib/theme-provider';
 
 const textVariants = cva('', {
   variants: {
@@ -34,12 +35,33 @@ interface TextProps
     VariantProps<typeof textVariants> {}
 
 const Text = React.forwardRef<React.ElementRef<typeof RNText>, TextProps>(
-  ({ className, variant, size, ...props }, ref) => {
+  ({ className, variant = 'default', size, style, ...props }, ref) => {
     const textClass = React.useContext(TextClassContext);
+    const { colorScheme } = useTheme();
+
     return (
       <RNText
         ref={ref}
         className={cn(textVariants({ variant, size }), textClass, className)}
+        style={
+          Platform.OS !== 'web'
+            ? [
+                {
+                  color:
+                    variant === 'default'
+                      ? colorScheme === 'dark'
+                        ? 'hsl(210 40% 98%)'
+                        : 'hsl(222.2 84% 4.9%)'
+                      : variant === 'muted'
+                        ? colorScheme === 'dark'
+                          ? 'hsl(215 20.2% 65.1%)'
+                          : 'hsl(215.4 16.3% 46.9%)'
+                        : undefined,
+                },
+                style,
+              ]
+            : style
+        }
         {...props}
       />
     );

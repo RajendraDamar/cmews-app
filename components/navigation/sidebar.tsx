@@ -73,7 +73,7 @@ export function Sidebar() {
               }}
               onHoverIn={() => setHeaderHovered(true)}
               onHoverOut={() => setHeaderHovered(false)}
-              className="h-10 w-10 items-center justify-center rounded-lg hover:bg-muted active:bg-muted/80 active:opacity-80 web:transition-all"
+              className="h-10 w-10 items-center justify-center rounded-lg web:hover:bg-muted active:bg-muted/80 active:opacity-80 web:transition-all"
               accessibilityLabel="Perluas sidebar"
               accessibilityRole="button">
               {headerHovered ? (
@@ -104,7 +104,7 @@ export function Sidebar() {
               {/* Collapse Button */}
               <Pressable
                 onPress={() => setCollapsed(true)}
-                className="items-center justify-center rounded-lg p-2 hover:bg-muted active:bg-muted/80 active:opacity-80 web:transition-colors"
+                className="items-center justify-center rounded-lg p-2 web:hover:bg-muted active:bg-muted/80 active:opacity-80 web:transition-colors"
                 accessibilityLabel="Ciutkan sidebar"
                 accessibilityRole="button">
                 <ChevronLeft
@@ -129,11 +129,11 @@ export function Sidebar() {
                 className={`relative mb-1.5 flex-row items-center rounded-lg py-2.5 web:transition-all web:duration-200 ${
                   collapsed
                     ? 'h-10 w-10 mx-auto justify-center px-0'
-                    : 'px-3 gap-3 hover:translate-x-1'
+                    : 'px-3 gap-3 web:hover:translate-x-1'
                 } ${
                   active
                     ? 'bg-secondary font-medium shadow-sm'
-                    : 'hover:bg-muted/60'
+                    : 'web:hover:bg-muted/60'
                 } active:scale-[0.98]`}>
                 {/* Active Indicator Accent */}
                 {active && (
@@ -191,7 +191,7 @@ export function Sidebar() {
           {/* Theme Toggle */}
           <Pressable
             onPress={toggleTheme}
-            className={`flex-row items-center rounded-lg py-2.5 hover:bg-muted active:bg-muted/80 web:transition-colors ${
+            className={`flex-row items-center rounded-lg py-2.5 web:hover:bg-muted active:bg-muted/80 web:transition-colors ${
               collapsed ? 'h-10 w-10 mx-auto justify-center px-0' : 'px-3 gap-3'
             }`}
             accessibilityLabel="Ganti tema"
@@ -222,7 +222,7 @@ export function Sidebar() {
           {/* Settings */}
           <Pressable
             onPress={() => router.push('/settings')}
-            className={`flex-row items-center rounded-lg py-2.5 hover:bg-muted active:bg-muted/80 web:transition-colors ${
+            className={`flex-row items-center rounded-lg py-2.5 web:hover:bg-muted active:bg-muted/80 web:transition-colors ${
               collapsed ? 'h-10 w-10 mx-auto justify-center px-0' : 'px-3 gap-3'
             }`}
             accessibilityLabel="Pengaturan"
@@ -256,7 +256,7 @@ export function Sidebar() {
             trigger={
               <Pressable
                 onPress={() => setModalVisible(true)}
-                className={`flex-row items-center rounded-lg py-2.5 hover:bg-muted active:bg-muted/80 web:transition-colors ${
+                className={`flex-row items-center rounded-lg py-2.5 web:hover:bg-muted active:bg-muted/80 web:transition-colors ${
                   collapsed ? 'h-10 w-10 mx-auto justify-center px-0' : 'px-3 gap-3'
                 }`}>
                 <View className="h-5 w-5 items-center justify-center shrink-0">

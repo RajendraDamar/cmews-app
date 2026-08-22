@@ -55,7 +55,11 @@ export function Select({
           'flex-row items-center justify-between rounded-md border border-input bg-background px-3 py-2',
           disabled && 'opacity-50',
           className
-        )}>
+        )}
+        style={{
+          backgroundColor: colorScheme === 'dark' ? '#0b1329' : '#ffffff',
+          borderColor: colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+        }}>
         <Text className={!selectedItem ? 'text-muted-foreground' : ''}>
           {selectedItem?.label || placeholder || 'Pilih...'}
         </Text>
@@ -72,7 +76,12 @@ export function Select({
             className={cn(
               'mx-4 rounded-lg p-2',
               colorScheme === 'dark' ? 'bg-card' : 'bg-background'
-            )}>
+            )}
+            style={{
+              backgroundColor: colorScheme === 'dark' ? '#0b1329' : '#ffffff',
+              borderColor: colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+              borderWidth: 1,
+            }}>
             <FlatList
               data={items}
               keyExtractor={(item) => item.value}

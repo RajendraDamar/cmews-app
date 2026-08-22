@@ -39,15 +39,14 @@ export function PageTransition({ children, className, style }: PageTransitionPro
     return (
       <ReanimatedAnimated.View
         entering={FadeInDown.duration(220).springify().damping(18)}
-        style={[{ flex: 1 }, style]}
-        className={className}>
+        style={[{ flex: 1 }, style]}>
         {children}
       </ReanimatedAnimated.View>
     );
   }
 
   return (
-    <View style={[{ flex: 1 }, style]} className={className}>
+    <View style={[{ flex: 1 }, style]}>
       {children}
     </View>
   );

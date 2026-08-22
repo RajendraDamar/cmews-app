@@ -7,6 +7,7 @@ import { View, Platform } from 'react-native';
 import { useEffect } from 'react';
 import { initializePushNotifications } from '~/lib/notifications/push-service';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 if (Platform.OS === 'web') {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -29,15 +30,12 @@ function ThemedApp() {
     });
   }, []);
 
-  const bgStyle = {
-    flex: 1,
-    backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
-  };
-
   return (
     <View
-      className={colorScheme === 'dark' ? 'dark flex-1 bg-background' : 'flex-1 bg-background'}
-      style={bgStyle}>
+      style={{
+        flex: 1,
+        backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
+      }}>
       <Stack
         screenOptions={{
           animation: 'slide_from_right',
@@ -78,10 +76,12 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <ThemeProvider>
-        <ThemedApp />
-      </ThemeProvider>
-    </GestureHandlerRootView>
+    <SafeAreaProvider style={{ flex: 1 }}>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <ThemeProvider>
+          <ThemedApp />
+        </ThemeProvider>
+      </GestureHandlerRootView>
+    </SafeAreaProvider>
   );
 }

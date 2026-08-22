@@ -63,7 +63,6 @@ export default function TabLayout() {
 
   return (
     <View
-      className={colorScheme === 'dark' ? 'dark flex-1 bg-background' : 'flex-1 bg-background'}
       style={{
         flex: 1,
         backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
@@ -74,7 +73,6 @@ export default function TabLayout() {
 
       {/* Main content area */}
       <View
-        className={colorScheme === 'dark' ? 'dark flex-1' : 'flex-1'}
         style={{
           flex: 1,
           backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
@@ -119,6 +117,7 @@ export default function TabLayout() {
             name="index"
             options={{
               title: 'Home',
+              headerTitle: 'Cuaca Hari Ini',
               tabBarIcon: ({ color, focused }) => (
                 <TabIcon Icon={Home} color={color} focused={focused} />
               ),

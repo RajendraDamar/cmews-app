@@ -88,7 +88,12 @@ export function WilayahSelector({
             className={cn(
               'h-10 w-10 items-center justify-center rounded-md border border-input bg-background',
               isLoadingLocation && 'opacity-50'
-            )}>
+            )}
+            style={{
+              backgroundColor: colorScheme === 'dark' ? '#0b1329' : '#ffffff',
+              borderColor:
+                colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+            }}>
             {isLoadingLocation ? (
               <ActivityIndicator
                 size="small"
@@ -101,7 +106,9 @@ export function WilayahSelector({
         )}
       </View>
 
-      <Text className="text-xs text-muted-foreground">
+      <Text
+        className="text-xs text-muted-foreground"
+        style={{ color: colorScheme === 'dark' ? '#9ca3af' : '#6b7280' }}>
         {showLocationButton
           ? 'Pilih wilayah atau gunakan lokasi otomatis'
           : 'Pilih wilayah Indonesia'}

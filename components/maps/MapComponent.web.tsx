@@ -184,6 +184,14 @@ export default function MapComponent({
     });
   }, [filteredReports, selectedReport, onReportSelect, isMapLoaded]);
 
+  // Update map style when theme changes dynamically
+  useEffect(() => {
+    if (mapRef.current && isMapLoaded) {
+      const activeStyle = colorScheme === 'dark' ? MAP_STYLES.dark : MAP_STYLES.light;
+      mapRef.current.setStyle(activeStyle);
+    }
+  }, [colorScheme, isMapLoaded]);
+
   // Initial Map Setup
   useEffect(() => {
     if (!containerRef.current) return;

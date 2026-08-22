@@ -8,8 +8,10 @@ interface TextareaProps extends TextInputProps {
   className?: string;
 }
 
+import { Platform } from 'react-native';
+
 export const Textarea = React.forwardRef<TextInput, TextareaProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, style, ...props }, ref) => {
     const { colorScheme } = useTheme();
 
     return (
@@ -20,10 +22,22 @@ export const Textarea = React.forwardRef<TextInput, TextareaProps>(
         textAlignVertical="top"
         className={cn(
           'rounded-md border border-input bg-background px-3 py-2 text-base',
-          colorScheme === 'dark' ? 'text-foreground' : 'text-foreground',
           className
         )}
-        placeholderTextColor={colorScheme === 'dark' ? '#6b7280' : '#9ca3af'}
+        placeholderTextColor={colorScheme === 'dark' ? '#9ca3af' : '#6b7280'}
+        style={
+          Platform.OS !== 'web'
+            ? [
+                {
+                  backgroundColor: colorScheme === 'dark' ? '#0b1329' : '#ffffff',
+                  borderColor:
+                    colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
+                  color: colorScheme === 'dark' ? '#f3f4f6' : '#1f2937',
+                },
+                style,
+              ]
+            : style
+        }
         {...props}
       />
     );

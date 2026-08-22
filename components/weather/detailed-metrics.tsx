@@ -42,14 +42,26 @@ function AccordionItem({ title, icon: Icon, children }: AccordionItemProps) {
     <View className="mb-2">
       <Pressable
         onPress={() => setIsOpen(!isOpen)}
-        className="flex-row items-center justify-between rounded-lg bg-muted p-4">
+        className="flex-row items-center justify-between rounded-lg bg-muted p-4"
+        style={{
+          backgroundColor:
+            colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(210 40% 96.1%)',
+        }}>
         <View className="flex-row items-center gap-3">
           <Icon size={20} color={themeColors.primary} />
           <Text className="font-semibold">{title}</Text>
         </View>
         <ChevronIcon size={20} color={themeColors.primary} />
       </Pressable>
-      {isOpen && <View className="mt-2 rounded-lg bg-card p-4">{children}</View>}
+      {isOpen && (
+        <View
+          className="mt-2 rounded-lg bg-card p-4"
+          style={{
+            backgroundColor: colorScheme === 'dark' ? '#0b1329' : 'hsl(0 0% 100%)',
+          }}>
+          {children}
+        </View>
+      )}
     </View>
   );
 }

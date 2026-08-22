@@ -87,3 +87,59 @@
     --ml-c-logo-2: oklch(70.7% 0.165 254.624);
   }
 }
+
+/* Cross-Platform Web Animations & Shimmer Utilities */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes spin-continuous {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes float-drift {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-spin-smooth {
+  animation: spin-continuous 0.9s linear infinite;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+.animate-float-drift {
+  animation: float-drift 4s ease-in-out infinite;
+}
+

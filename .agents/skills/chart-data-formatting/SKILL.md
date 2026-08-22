@@ -1,96 +1,31 @@
 ---
 name: chart-data-formatting
-description: Chart data formatting and rendering guide for cmews-app — covers React Native Chart Kit, Skia charts with SmartChartWrapper, data validation, and BMKG weather data visualization patterns.
+description: Chart data formatting and rendering guide for cmews-app — covers React Native Chart Kit, Skia charts with SmartChartWrapper, data validation, and weather data visualization patterns.
 ---
 
 # Chart Data Formatting Skill
 
-This skill provides the complete reference for implementing charts in cmews-app using real BMKG weather data. Use when creating, modifying, or debugging any chart component.
+Reference for implementing and validating charts in cmews-app. During prototyping, chart data is supplied by the dynamic mock engine.
 
-## Chart Stack
+## Chart Rendering Stack
 
-| Library | Use Case | Platform |
+| Library | Platform | Primary Use Case |
 |:---|:---|:---|
-| React Native Chart Kit | Cross-platform line/bar charts | iOS, Android, Web |
-| @shopify/react-native-skia | High-performance rendering | iOS, Android |
-| SmartChartWrapper | Automatic selection between ChartKit and Skia | All |
+| `@shopify/react-native-skia` | Native (iOS / Android) | High-performance GPU rendering |
+| `react-native-chart-kit` | Cross-platform / Web | Compatibility & Web fallback |
+| `SmartChartWrapper` | All | Automatic runtime selection between Skia and ChartKit |
 
-## Temperature Chart — Real BMKG Data
+## Invariant Chart Rules
 
-```typescript
-// components/charts/ChartKitTemperatureChart.tsx
-export const ChartKitTemperatureChart = ({ wilayahCode }: { wilayahCode: string }) => {
-  const [chartData, setChartData] = useState(null);
+1. **Validation Bounds**: Always filter/sanitize data before passing to chart components:
+   - Temperature range: `15°C <= temp <= 40°C`
+   - Humidity range: `30% <= humidity <= 100%`
+   - Maximum 24 data points per chart (3 days × 8 forecasts).
+2. **Color Palettes**:
+   - Temperature: Warm gradient `rgba(255, 107, 53, opacity)` (`#ff6b35`).
+   - Precipitation / Humidity: Cool blue `rgba(59, 130, 246, opacity)` (`#3b82f6`).
+3. **Locale & Formatting**: Time labels must format as `HH:mm` using `id-ID` locale.
 
-  useEffect(() => {
-    const loadRealData = async () => {
-      try {
-        const bmkgService = new BMKGService();
-        const weatherData = await bmkgService.getWeatherForecast(wilayahCode);
-        const processed = processBMKGForecast(weatherData);
+## References & Examples
 
-        // Take first 24 hours (8 forecasts) for temperature chart
-        const next24Hours = processed.dailyForecasts[0] || [];
-
-        const chartData = {
-          labels: next24Hours.map(item =>
-            new Date(item.datetime).toLocaleTimeString('id-ID', {
-              hour: '2-digit',
-              minute: '2-digit'
-            })
-          ),
-          datasets: [{
-            data: next24Hours.map(item => item.temperature),
-            color: (opacity = 1) => `rgba(255, 107, 53, ${opacity})`
-          }]
-        };
-
-        setChartData(chartData);
-      } catch (error) {
-        console.error('Failed to load real weather data:', error);
-      }
-    };
-
-    loadRealData();
-  }, [wilayahCode]);
-
-  if (!chartData) return <LoadingChartSkeleton />;
-
-  return (
-    <LineChart
-      data={chartData}
-      width={screenWidth - 32}
-      height={200}
-      chartConfig={getChartConfig()}
-      bezier
-    />
-  );
-};
-```
-
-## Chart Data Rules
-
-1. **Always validate data** before passing to chart components
-2. **Maximum 24 data points** for charts (3 days × 8 forecasts)
-3. **Handle empty/invalid data** gracefully with skeleton or error states
-4. **Use SmartChartWrapper** for automatic Skia/ChartKit selection based on platform capabilities
-5. **Temperature colors**: Use warm gradient `rgba(255, 107, 53, opacity)`
-6. **Time labels**: Format as `HH:mm` using `id-ID` locale
-
-## Data Validation Before Rendering
-
-```typescript
-const validateChartData = (data: any[]) => {
-  return data
-    .filter(item => item.temperature >= 15 && item.temperature <= 40)
-    .filter(item => item.humidity >= 30 && item.humidity <= 100)
-    .slice(0, 24);
-};
-```
-
-## SmartChartWrapper Usage
-
-SmartChartWrapper automatically selects the best rendering engine:
-- **Native (iOS/Android)**: Prefers Skia for GPU-accelerated rendering
-- **Web**: Falls back to ChartKit for compatibility
-- Always pass data through validation before SmartChartWrapper
+- Complete component example: [ChartKitTemperatureChart.tsx](./examples/ChartKitTemperatureChart.tsx).

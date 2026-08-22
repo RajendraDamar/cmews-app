@@ -2,6 +2,7 @@ import { TextClassContext } from '~/components/ui/text';
 import { cn } from '~/lib/utils';
 import * as TabsPrimitive from '@rn-primitives/tabs';
 import { Platform } from 'react-native';
+import { useTheme } from '~/lib/theme-provider';
 
 function Tabs({
   className,
@@ -12,14 +13,28 @@ function Tabs({
 
 function TabsList({
   className,
+  style,
   ...props
 }: TabsPrimitive.ListProps & React.RefAttributes<TabsPrimitive.ListRef>) {
+  const { colorScheme } = useTheme();
+
   return (
     <TabsPrimitive.List
       className={cn(
         'flex h-9 flex-row items-center justify-center rounded-lg bg-muted p-[3px]',
         className
       )}
+      style={
+        Platform.OS !== 'web'
+          ? [
+              {
+                backgroundColor:
+                  colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(210 40% 96.1%)',
+              },
+              style,
+            ]
+          : style
+      }
       {...props}
     />
   );
@@ -27,10 +42,13 @@ function TabsList({
 
 function TabsTrigger({
   className,
+  style,
   ...props
 }: TabsPrimitive.TriggerProps & React.RefAttributes<TabsPrimitive.TriggerRef>) {
   const { value } = TabsPrimitive.useRootContext();
+  const { colorScheme } = useTheme();
   const isActive = value === props.value;
+
   return (
     <TextClassContext.Provider
       value={cn(
@@ -47,6 +65,20 @@ function TabsTrigger({
           isActive && 'bg-background shadow-sm dark:border-foreground/10 dark:bg-input/30',
           className
         )}
+        style={(state) => {
+          const userStyle = typeof style === 'function' ? style(state) : style;
+          if (Platform.OS === 'web') return userStyle;
+          return [
+            {
+              backgroundColor: isActive
+                ? colorScheme === 'dark'
+                  ? '#0b1329'
+                  : '#ffffff'
+                : 'transparent',
+            },
+            userStyle,
+          ];
+        }}
         {...props}
       />
     </TextClassContext.Provider>

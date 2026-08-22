@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Platform } from 'react-native';
+import { Text } from '~/components/ui/text';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '~/utils/cn';
+import { useTheme } from '~/lib/theme-provider';
 
 const badgeVariants = cva('items-center rounded-full border flex-row px-2.5 py-0.5', {
   variants: {
@@ -39,10 +41,29 @@ interface BadgeProps
 }
 
 const Badge = React.forwardRef<React.ElementRef<typeof View>, BadgeProps>(
-  ({ className, variant, label, labelClasses, ...props }, ref) => {
+  ({ className, variant, label, labelClasses, style, ...props }, ref) => {
+    const { colorScheme } = useTheme();
+    const isDark = colorScheme === 'dark';
+
     return (
-      <View ref={ref} className={cn(badgeVariants({ variant }), className)} {...props}>
-        <Text className={cn(badgeTextVariants({ variant }), labelClasses)}>{label}</Text>
+      <View
+        ref={ref}
+        className={cn(badgeVariants({ variant }), className)}
+        style={
+          Platform.OS !== 'web' && variant === 'outline'
+            ? [{ borderColor: isDark ? 'hsl(217.2 32.6% 25%)' : 'hsl(214.3 31.8% 85%)' }, style]
+            : style
+        }
+        {...props}>
+        <Text
+          className={cn(badgeTextVariants({ variant }), labelClasses)}
+          style={
+            Platform.OS !== 'web' && variant === 'outline'
+              ? { color: isDark ? '#f8fafc' : '#0f172a' }
+              : undefined
+          }>
+          {label}
+        </Text>
       </View>
     );
   }

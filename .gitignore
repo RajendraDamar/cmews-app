@@ -40,3 +40,8 @@ playwright/.cache/
 serviceAccountKey.json
 test-server/serviceAccountKey.json
 
+# Temporary MCP and debug artifacts
+.playwright-mcp/
+logcat_*.txt
+screenshot_device.png
+

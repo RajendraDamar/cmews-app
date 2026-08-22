@@ -17,14 +17,19 @@ interface ReportBottomSheetProps {
   onClose: () => void;
 }
 
-const getSeverityBadge = (severity: 'low' | 'medium' | 'high') => {
-  switch (severity) {
+const getSeverityBadge = (severity?: string) => {
+  switch (severity?.toLowerCase()) {
     case 'low':
+    case 'rendah':
       return { label: 'Rendah', variant: 'default' as const };
     case 'medium':
+    case 'sedang':
       return { label: 'Sedang', variant: 'secondary' as const };
     case 'high':
+    case 'tinggi':
       return { label: 'Tinggi', variant: 'destructive' as const };
+    default:
+      return { label: 'Informasi', variant: 'secondary' as const };
   }
 };
 
@@ -57,7 +62,11 @@ function ReportSheetBody({ report, onClose }: { report: WeatherReport; onClose: 
             <Badge
               variant={severityBadge.variant}
               label={severityBadge.label}
-              labelClasses="text-primary-foreground font-semibold"
+              labelClasses={
+                severityBadge.variant === 'secondary'
+                  ? 'text-foreground font-semibold'
+                  : 'text-primary-foreground font-semibold'
+              }
             />
           </View>
         </View>
@@ -83,11 +92,11 @@ function ReportSheetBody({ report, onClose }: { report: WeatherReport; onClose: 
         <View className="mb-4 flex-row items-center">
           <Avatar className="mr-3">
             <AvatarFallback>
-              <Text className="text-sm font-medium">{report.user.initials}</Text>
+              <Text className="text-sm font-medium">{report.user?.initials || 'U'}</Text>
             </AvatarFallback>
           </Avatar>
           <View>
-            <Text className="font-medium">{report.user.name}</Text>
+            <Text className="font-medium">{report.user?.name || 'Pengguna'}</Text>
             <Text className="text-sm text-muted-foreground">
               {formatTimestamp(report.timestamp)}
             </Text>
@@ -108,7 +117,11 @@ function ReportSheetBody({ report, onClose }: { report: WeatherReport; onClose: 
                   </View>
                   <View className="flex-1">
                     <Text className="text-xs text-muted-foreground">Suhu</Text>
-                    <Text className="text-lg font-bold">{report.temperature}°C</Text>
+                    <Text className="text-lg font-bold">
+                      {typeof report.temperature === 'number' && !isNaN(report.temperature)
+                        ? `${report.temperature}°C`
+                        : '-'}
+                    </Text>
                   </View>
                 </View>
               </CardContent>
@@ -124,7 +137,11 @@ function ReportSheetBody({ report, onClose }: { report: WeatherReport; onClose: 
                   </View>
                   <View className="flex-1">
                     <Text className="text-xs text-muted-foreground">Kelembaban</Text>
-                    <Text className="text-lg font-bold">{report.humidity}%</Text>
+                    <Text className="text-lg font-bold">
+                      {typeof report.humidity === 'number' && !isNaN(report.humidity)
+                        ? `${report.humidity}%`
+                        : '-'}
+                    </Text>
                   </View>
                 </View>
               </CardContent>
@@ -140,7 +157,11 @@ function ReportSheetBody({ report, onClose }: { report: WeatherReport; onClose: 
                   </View>
                   <View className="flex-1">
                     <Text className="text-xs text-muted-foreground">Kec. Angin</Text>
-                    <Text className="text-lg font-bold">{report.windSpeed} km/h</Text>
+                    <Text className="text-lg font-bold">
+                      {typeof report.windSpeed === 'number' && !isNaN(report.windSpeed)
+                        ? `${report.windSpeed} km/h`
+                        : '-'}
+                    </Text>
                   </View>
                 </View>
               </CardContent>
@@ -156,7 +177,9 @@ function ReportSheetBody({ report, onClose }: { report: WeatherReport; onClose: 
                   </View>
                   <View className="flex-1">
                     <Text className="text-xs text-muted-foreground">Kondisi</Text>
-                    <Text className="text-sm font-semibold">{report.weather}</Text>
+                    <Text className="text-sm font-semibold">
+                      {report.weather || 'Tidak ditentukan'}
+                    </Text>
                   </View>
                 </View>
               </CardContent>

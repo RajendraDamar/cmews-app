@@ -130,7 +130,7 @@ export function ReportFormDialog({ location, onSubmit, onCancel }: ReportFormDia
 
         <DialogFooter className="mt-4 flex-row gap-2">
           <Button variant="outline" onPress={onCancel} label="Batal" className="flex-1" />
-          <Button onPress={handleSubmit} label="Kirim Laporan" className="flex-1" />
+          <Button onPress={handleSubmit} label="Kirim" className="flex-1" />
         </DialogFooter>
       </DialogContent>
     </Dialog>

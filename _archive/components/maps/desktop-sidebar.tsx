@@ -21,14 +21,19 @@ interface DesktopSidebarProps {
   onSelectReport: (report: WeatherReport) => void;
 }
 
-const getSeverityBadge = (severity: 'low' | 'medium' | 'high') => {
-  switch (severity) {
+const getSeverityBadge = (severity?: string) => {
+  switch (severity?.toLowerCase()) {
     case 'low':
+    case 'rendah':
       return { label: 'Rendah', variant: 'default' as const };
     case 'medium':
+    case 'sedang':
       return { label: 'Sedang', variant: 'secondary' as const };
     case 'high':
+    case 'tinggi':
       return { label: 'Tinggi', variant: 'destructive' as const };
+    default:
+      return { label: 'Informasi', variant: 'secondary' as const };
   }
 };
 
