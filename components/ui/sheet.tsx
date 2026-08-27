@@ -44,7 +44,7 @@ const SheetContext = React.createContext<{
   onOpenChange: (open: boolean) => void;
 }>({
   open: false,
-  onOpenChange: () => {},
+  onOpenChange: () => { },
 });
 
 export function useSheet() {
@@ -103,14 +103,14 @@ function WebSheet({ open, onOpenChange, children }: SheetProps) {
       <View
         pointerEvents="box-none"
         style={{
-          position: 'absolute',
+          position: Platform.OS === 'web' ? 'fixed' : 'absolute',
           top: 0,
           left: 0,
           right: 0,
           bottom: 0,
-          zIndex: 40,
+          zIndex: 100, // Increased zIndex to cover the tab bar (which is zIndex: 50)
           justifyContent: 'flex-end',
-        }}>
+        } as any}>
         {/* Independent Fade-in Dark Backdrop */}
         <Animated.View
           style={{
@@ -152,6 +152,7 @@ function NativeSheet({ open, onOpenChange, children }: SheetProps) {
         transparent
         animationType="none"
         statusBarTranslucent
+        navigationBarTranslucent
         onRequestClose={() => onOpenChange(false)}>
         <View style={{ flex: 1, justifyContent: 'flex-end' }}>
           {/* Static Fade-In Dark Backdrop (FadeIn / FadeOut) */}
@@ -234,7 +235,7 @@ interface SheetContentProps {
 export function SheetContent({ children, className, style }: SheetContentProps) {
   const { colorScheme } = useTheme();
   const insets = useSafeAreaInsets();
-  const { height } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
 
   return (
     <View
@@ -245,6 +246,7 @@ export function SheetContent({ children, className, style }: SheetContentProps) 
           width: '100%',
           backgroundColor: colorScheme === 'dark' ? 'hsl(222.2 84% 4.9%)' : 'hsl(0 0% 100%)',
           paddingBottom: Math.max(insets.bottom, 16),
+          marginBottom: width < 768 ? 0 : undefined, // Force 0 on mobile to prevent floating
         },
         style,
       ])}

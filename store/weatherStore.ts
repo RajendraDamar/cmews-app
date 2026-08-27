@@ -57,7 +57,7 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
   loading: false,
   error: null,
   lastUpdated: new Date().toISOString(),
-  selectedWilayah: '31.71.03.1001', // Jakarta Pusat default
+  selectedWilayah: '34.71.01.1001', // Kota Yogyakarta default
 
   /**
    * Fetch weather forecast data for a specific region

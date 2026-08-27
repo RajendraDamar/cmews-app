@@ -76,19 +76,22 @@ export function CollapsibleSearch({
               shadowRadius: 8,
               elevation: 8,
             }}>
-            <View className="flex-1 flex-row items-center gap-2 rounded-lg bg-muted px-3 py-2.5">
+            <Pressable 
+              className="flex-1 flex-row items-center gap-2 rounded-lg bg-muted px-3 py-2.5 opacity-60"
+              onPress={() => alert('Pencarian lokasi sementara dinonaktifkan')}
+            >
               <Search size={20} color={iconColor} />
-              <TextInput
-                value={searchText}
-                onChangeText={setSearchText}
-                placeholder={placeholder}
-                placeholderTextColor={placeholderColor}
-                className="flex-1 text-base text-foreground"
-                autoFocus
-                onSubmitEditing={handleSearch}
-                returnKeyType="search"
-              />
-            </View>
+              <View pointerEvents="none" className="flex-1">
+                <TextInput
+                  value={searchText}
+                  onChangeText={setSearchText}
+                  placeholder="Pencarian dinonaktifkan..."
+                  placeholderTextColor={placeholderColor}
+                  className="w-full text-base text-foreground"
+                  editable={false}
+                />
+              </View>
+            </Pressable>
             <Pressable
               onPress={handleCollapse}
               className="h-10 w-10 items-center justify-center rounded-lg active:bg-muted active:opacity-70">

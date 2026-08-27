@@ -28,6 +28,31 @@ function formatToBMKGAPIDateTime(date: Date): string {
 // Indonesian Provinces with Cities and Districts
 export const MOCK_LOCATIONS: LocationOption[] = [
   {
+    provinsi: 'D.I. Yogyakarta',
+    cities: [
+      {
+        name: 'Kota Yogyakarta',
+        districts: ['Danurejan', 'Gondomanan', 'Kraton', 'Malioboro', 'Kotagede'],
+      },
+      {
+        name: 'Kabupaten Bantul',
+        districts: ['Kretek (Parangtritis)', 'Sanden (Samas)', 'Srandakan (Pandansimo)', 'Bantul', 'Sewon'],
+      },
+      {
+        name: 'Kabupaten Gunungkidul',
+        districts: ['Tanjungsari (Baron & Drini)', 'Tepus (Indrayanti & Timang)', 'Girisubo (Wediombo)', 'Panggang (Gesing)', 'Wonosari'],
+      },
+      {
+        name: 'Kabupaten Kulon Progo',
+        districts: ['Temon (Glagah & YIA)', 'Panjatan (Bugel)', 'Galur (Trisik)', 'Wates', 'Pengasih'],
+      },
+      {
+        name: 'Kabupaten Sleman',
+        districts: ['Pakem (Kaliurang)', 'Cangkringan (Merapi)', 'Prambanan', 'Depok', 'Mlati'],
+      },
+    ],
+  },
+  {
     provinsi: 'DKI Jakarta',
     cities: [
       {
@@ -38,26 +63,22 @@ export const MOCK_LOCATIONS: LocationOption[] = [
         name: 'Jakarta Selatan',
         districts: ['Kebayoran Baru', 'Cilandak', 'Setiabudi'],
       },
-      {
-        name: 'Jakarta Utara',
-        districts: ['Kelapa Gading', 'Tanjung Priok', 'Pademangan'],
-      },
     ],
   },
   {
-    provinsi: 'Jawa Barat',
+    provinsi: 'Jawa Tengah',
     cities: [
       {
-        name: 'Bandung',
-        districts: ['Bandung Wetan', 'Cicendo', 'Coblong'],
+        name: 'Semarang',
+        districts: ['Semarang Tengah', 'Semarang Barat', 'Candisari'],
       },
       {
-        name: 'Bogor',
-        districts: ['Bogor Tengah', 'Bogor Utara', 'Bogor Selatan'],
+        name: 'Surakarta (Solo)',
+        districts: ['Banjarsari', 'Laweyan', 'Pasar Kliwon'],
       },
       {
-        name: 'Bekasi',
-        districts: ['Bekasi Timur', 'Bekasi Barat', 'Bekasi Utara'],
+        name: 'Magelang',
+        districts: ['Magelang Tengah', 'Borobudur', 'Mertoyudan'],
       },
     ],
   },
@@ -68,14 +89,6 @@ export const MOCK_LOCATIONS: LocationOption[] = [
         name: 'Surabaya',
         districts: ['Wonokromo', 'Gubeng', 'Tegalsari'],
       },
-      {
-        name: 'Malang',
-        districts: ['Klojen', 'Blimbing', 'Lowokwaru'],
-      },
-      {
-        name: 'Sidoarjo',
-        districts: ['Sidoarjo', 'Buduran', 'Candi'],
-      },
     ],
   },
   {
@@ -84,31 +97,6 @@ export const MOCK_LOCATIONS: LocationOption[] = [
       {
         name: 'Denpasar',
         districts: ['Denpasar Barat', 'Denpasar Timur', 'Denpasar Selatan'],
-      },
-      {
-        name: 'Badung',
-        districts: ['Kuta', 'Mengwi', 'Abiansemal'],
-      },
-      {
-        name: 'Gianyar',
-        districts: ['Ubud', 'Sukawati', 'Blahbatuh'],
-      },
-    ],
-  },
-  {
-    provinsi: 'Sulawesi Selatan',
-    cities: [
-      {
-        name: 'Makassar',
-        districts: ['Makassar', 'Tamalate', 'Rappocini'],
-      },
-      {
-        name: 'Gowa',
-        districts: ['Somba Opu', 'Bontomarannu', 'Pallangga'],
-      },
-      {
-        name: 'Maros',
-        districts: ['Maros Baru', 'Turikale', 'Lau'],
       },
     ],
   },
@@ -205,41 +193,41 @@ function generateDailyForecast(): BMKGDailyData[] {
   return dailyData;
 }
 
-// Default location: Jakarta Pusat - Menteng
+// Default location: Kota Yogyakarta
 export const DEFAULT_LOCATION: BMKGLocation = {
-  provinsi: 'DKI Jakarta',
-  kota: 'Jakarta Pusat',
-  kecamatan: 'Menteng',
-  lat: -6.1944,
-  lon: 106.8229,
+  provinsi: 'D.I. Yogyakarta',
+  kota: 'Kota Yogyakarta',
+  kecamatan: 'Danurejan',
+  lat: -7.7956,
+  lon: 110.3695,
 };
 
-// Mock current weather data for Jakarta
+// Mock current weather data for D.I. Yogyakarta
 export const MOCK_BMKG_WEATHER: BMKGWeatherData = {
   location: DEFAULT_LOCATION,
   lastUpdated: formatToBMKGDateTime(new Date()),
   currentWeather: {
-    temperature: 28,
+    temperature: 29,
     feelsLike: 32,
     weather: { code: '3', description: 'Cerah Berawan' },
     humidity: 75,
-    windDirection: 'Barat Laut',
-    windSpeed: 12,
+    windDirection: 'Selatan',
+    windSpeed: 14,
   },
   hourlyForecast: generateHourlyForecast(),
   dailyForecast: generateDailyForecast(),
 };
 
-// Mock weather alerts
+// Mock weather alerts for DIY
 export const MOCK_WEATHER_ALERTS: WeatherAlert[] = [
   {
     id: '1',
     type: 'warning',
-    title: 'Peringatan Hujan Lebat',
+    title: 'Peringatan Gelombang Tinggi Pesisir Selatan DIY',
     description:
-      'Potensi hujan lebat disertai petir dan angin kencang untuk wilayah Jakarta Pusat pada malam hari.',
+      'Waspada potensi gelombang laut tinggi 2.5 - 4.0 meter di perairan Samudera Hindia selatan D.I. Yogyakarta (Kulon Progo, Bantul, Gunungkidul).',
     validFrom: formatToBMKGDateTime(new Date()),
-    validTo: formatToBMKGDateTime(new Date(Date.now() + 12 * 60 * 60 * 1000)),
+    validTo: formatToBMKGDateTime(new Date(Date.now() + 24 * 60 * 60 * 1000)),
   },
 ];
 
@@ -259,9 +247,9 @@ export function getWeatherForLocation(
     return MOCK_BMKG_WEATHER;
   }
 
-  // Generate mock coordinates (simplified)
-  const lat = -6.0 + Math.random() * 2;
-  const lon = 106.0 + Math.random() * 2;
+  // Generate mock coordinates around DIY
+  const lat = -7.75 + (Math.random() - 0.5) * 0.4;
+  const lon = 110.37 + (Math.random() - 0.5) * 0.4;
 
   // Generate random weather variations for different locations
   const baseTemp = 25 + Math.random() * 8;
@@ -290,16 +278,16 @@ export function getWeatherForLocation(
   };
 }
 
-// Export mock weather data for 5 different provinces
+// Export mock weather data
 export const mockWeatherData = {
   location: DEFAULT_LOCATION,
   current: {
     datetime: formatToBMKGDateTime(new Date()),
-    t: 28, // temperature
+    t: 29, // temperature
     hu: 75, // humidity
     weather: 'Cerah Berawan',
-    wd: 'Barat Laut', // wind direction
-    ws: 12, // wind speed
+    wd: 'Selatan', // wind direction
+    ws: 14, // wind speed
   },
   hourly: generateHourlyForecast().slice(0, 24).map((h) => ({
       time: h.datetime,
@@ -321,7 +309,6 @@ export const mockWeatherData = {
 };
 
 // BMKG API-compatible export for service layer
-// This matches the structure expected by MockBMKGService
 // Returns exactly 24 forecast entries (3 days × 8 per day) with 3-hour intervals
 export const mockWeatherForecast = {
   data: (() => {
@@ -333,8 +320,8 @@ export const mockWeatherForecast = {
       const forecastTime = new Date(now.getTime() + i * 3 * 60 * 60 * 1000);
       const hour = forecastTime.getHours();
       
-      // Temperature: 22-32°C realistic range for Indonesian climate
-      let temp = 22 + Math.random() * 10;
+      // Temperature: 22-32°C realistic range for DIY
+      let temp = 23 + Math.random() * 9;
       if (hour >= 6 && hour < 12) temp += 2;
       if (hour >= 12 && hour < 16) temp += 3;
       if (hour >= 22 || hour < 6) temp -= 2;
@@ -356,8 +343,8 @@ export const mockWeatherForecast = {
         t: Math.round(temp),
         hu: Math.round(55 + Math.random() * 30), // 55-85% humidity
         weather_desc: weatherCondition.description,
-        weather_desc_en: weatherCondition.description, // TODO: Add English translations
-        ws: Math.round(5 + Math.random() * 15), // 5-20 km/h wind speed
+        weather_desc_en: weatherCondition.description,
+        ws: Math.round(8 + Math.random() * 16), // 8-24 km/h wind speed
         wd: WIND_DIRECTIONS[Math.floor(Math.random() * WIND_DIRECTIONS.length)],
         tcc: Math.round(30 + Math.random() * 50), // 30-80% cloud coverage
         vs_text: '10', // Visibility in km
@@ -368,11 +355,10 @@ export const mockWeatherForecast = {
     return forecasts;
   })(),
   lokasi: {
-    adm1: 'DKI Jakarta',
-    adm2: 'Jakarta Pusat',
-    adm3: 'Menteng',
-    adm4: 'Menteng',
-    koord: '-6.1944,106.8229',
+    adm1: 'D.I. Yogyakarta',
+    adm2: 'Kota Yogyakarta',
+    adm3: 'Danurejan',
+    adm4: 'Danurejan',
+    koord: '-7.7956,110.3695',
   },
 };
-

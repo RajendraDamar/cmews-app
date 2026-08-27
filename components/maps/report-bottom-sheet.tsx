@@ -3,7 +3,6 @@ import { View, ScrollView, Image, Pressable } from 'react-native';
 import { Thermometer, Droplets, Wind, CloudRain, X } from 'lucide-react-native';
 import { Sheet, SheetContent } from '~/components/ui/sheet';
 import { Text } from '~/components/ui/text';
-import { Badge } from '~/components/ui/badge';
 import { Avatar, AvatarFallback } from '~/components/ui/avatar';
 import { Separator } from '~/components/ui/separator';
 import { Card, CardContent } from '~/components/ui/card';
@@ -21,15 +20,15 @@ const getSeverityBadge = (severity?: string) => {
   switch (severity?.toLowerCase()) {
     case 'low':
     case 'rendah':
-      return { label: 'Rendah', variant: 'default' as const };
+      return { label: 'Rendah', color: '#10B981' };
     case 'medium':
     case 'sedang':
-      return { label: 'Sedang', variant: 'secondary' as const };
+      return { label: 'Sedang', color: '#F59E0B' };
     case 'high':
     case 'tinggi':
-      return { label: 'Tinggi', variant: 'destructive' as const };
+      return { label: 'Tinggi', color: '#EF4444' };
     default:
-      return { label: 'Informasi', variant: 'secondary' as const };
+      return { label: 'Informasi', color: '#10B981' };
   }
 };
 
@@ -59,15 +58,13 @@ function ReportSheetBody({ report, onClose }: { report: WeatherReport; onClose: 
             Koordinat: {report.lat.toFixed(4)}, {report.lon.toFixed(4)}
           </Text>
           <View className="flex-row items-center gap-2">
-            <Badge
-              variant={severityBadge.variant}
-              label={severityBadge.label}
-              labelClasses={
-                severityBadge.variant === 'secondary'
-                  ? 'text-foreground font-semibold'
-                  : 'text-primary-foreground font-semibold'
-              }
-            />
+            <View
+              className="items-center justify-center rounded-full px-2.5 py-0.5"
+              style={{ backgroundColor: severityBadge.color }}>
+              <Text className="text-xs font-semibold" style={{ color: '#FFFFFF' }}>
+                {severityBadge.label}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -223,7 +220,7 @@ export function ReportBottomSheet({ report, onClose }: ReportBottomSheetProps) {
   if (!report) return null;
 
   return (
-    <Sheet open={!!report} onOpenChange={onClose}>
+    <Sheet open={!!report} onOpenChange={(open) => { if (!open) onClose(); }}>
       <SheetContent side="bottom">
         <ReportSheetBody report={report} onClose={onClose} />
       </SheetContent>

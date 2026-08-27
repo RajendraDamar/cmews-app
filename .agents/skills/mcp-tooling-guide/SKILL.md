@@ -18,6 +18,7 @@ This skill defines standard triggers and execution patterns for MCP servers conf
 | **Chart & Timeline Previews** | `visualization` | `render_chart` (Apache ECharts V5 spec) |
 | **GitHub PR & Repo Inspect** | `github` | `search_repositories`, `list_commits`, `get_file_contents` |
 | **Firebase & Firestore Ops** | `firebase-mcp-server` | `firebase_get_environment`, `firestore_query_collection` |
+| **Google NotebookLM Query** | `notebooklm` | `ask_question`, `list_notebooks`, `add_notebook`, `select_notebook` |
 | **Jupyter Notebooks** | `notebooks` | `create_notebook`, `insert_code_cell`, `list_cells` |
 | **Deep Reasoning & Branching** | `sequential-thinking`| `sequentialthinking` |
 

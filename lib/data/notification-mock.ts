@@ -2,7 +2,7 @@ import { notificationService, WeatherNotification } from '../services/Notificati
 import * as Notifications from 'expo-notifications';
 
 /**
- * Mock Notification Data - Pre-configured weather notifications for testing
+ * Mock Notification Data - Pre-configured weather notifications for testing in D.I. Yogyakarta & Coastal Areas
  */
 
 // Time constants for better readability
@@ -11,91 +11,91 @@ const SIX_HOURS_MS = 6 * 60 * 60 * 1000;
 
 export const MOCK_NOTIFICATIONS: WeatherNotification[] = [
   {
-    title: '⚠️ Peringatan Cuaca Ekstrem',
-    body: 'Hujan lebat dan angin kencang diprediksi terjadi di wilayah Jakarta dalam 2 jam ke depan. Harap berhati-hati!',
+    title: '⚠️ Peringatan Cuaca Ekstrem - D.I. Yogyakarta',
+    body: 'Hujan lebat disertai angin kencang diprediksi terjadi di wilayah Sleman dan Kota Yogyakarta dalam 2 jam ke depan. Harap berhati-hati!',
     data: {
       type: 'weather_alert',
       severity: 'warning',
-      location: 'Jakarta',
+      location: 'D.I. Yogyakarta',
       validUntil: new Date(Date.now() + TWO_HOURS_MS).toISOString(),
       weatherCondition: 'heavy_rain',
     },
   },
   {
-    title: '🌊 Peringatan Maritim',
-    body: 'Gelombang tinggi 2.5-4.0 meter di Laut Jawa. Nelayan diminta waspada dan mempertimbangkan untuk tidak melaut.',
+    title: '🌊 Peringatan Maritim - Pesisir Selatan DIY',
+    body: 'Gelombang pasang 2.5-4.0 meter di Pantai Parangtritis & Pantai Glagah. Wisatawan dan nelayan diminta meningkatkan kewaspadaan.',
     data: {
       type: 'maritime',
       severity: 'warning',
-      location: 'Laut Jawa',
+      location: 'Pesisir Selatan DIY',
       waveHeight: '2.5-4.0 meter',
       validUntil: new Date(Date.now() + SIX_HOURS_MS).toISOString(),
     },
   },
   {
-    title: '🌡️ Suhu Tinggi',
-    body: 'Suhu udara mencapai 35°C di Surabaya. Hindari aktivitas di luar ruangan pada siang hari.',
+    title: '🌡️ Suhu Udara - Kota Yogyakarta',
+    body: 'Suhu udara mencapai 33°C di Malioboro siang ini. Jaga hidrasi tubuh Anda.',
     data: {
       type: 'weather_alert',
       severity: 'info',
-      location: 'Surabaya',
-      temperature: 35,
+      location: 'Kota Yogyakarta',
+      temperature: 33,
       humidity: 65,
     },
   },
   {
-    title: '⛈️ Potensi Hujan Petir',
-    body: 'Potensi hujan disertai petir dan angin kencang di Bandung sore hingga malam hari.',
+    title: '⛈️ Potensi Hujan Petir - Lereng Merapi',
+    body: 'Potensi hujan lebat disertai petir di kawasan Kaliurang dan Cangkringan sore hingga malam hari.',
     data: {
       type: 'forecast',
       severity: 'warning',
-      location: 'Bandung',
+      location: 'Kabupaten Sleman',
       weatherCondition: 'thunderstorm',
       timeRange: 'Sore hingga Malam',
     },
   },
   {
-    title: '🚨 Peringatan Dini Gempa',
-    body: 'Gempa bumi magnitude 5.2 terdeteksi di lepas pantai Bali. Tidak ada potensi tsunami.',
+    title: '🚨 Peringatan Dini Gelombang - Pantai Baron & Timang',
+    body: 'Angin kencang 35 knot dan ombak tinggi di pesisir Gunungkidul. Aktivitas melaut ditunda sementara.',
     data: {
       type: 'early_warning',
       severity: 'danger',
-      location: 'Bali',
-      magnitude: 5.2,
-      depth: '10 km',
+      location: 'Kabupaten Gunungkidul',
+      magnitude: 0,
+      depth: '0 km',
       tsunamiThreat: false,
     },
   },
   {
-    title: '☀️ Cuaca Cerah',
-    body: 'Cuaca cerah berawan di Jakarta sepanjang hari. Suhu berkisar 27-32°C.',
+    title: '☀️ Cuaca Cerah Berawan - Pantai Depok & Samas',
+    body: 'Cuaca cerah berawan di pesisir Bantul. Suhu berkisar 28-31°C dengan hembusan angin laut sepoi-sepoi.',
     data: {
       type: 'forecast',
       severity: 'info',
-      location: 'Jakarta',
+      location: 'Kabupaten Bantul',
       weatherCondition: 'partly_cloudy',
-      tempRange: '27-32°C',
+      tempRange: '28-31°C',
     },
   },
   {
-    title: '💨 Angin Kencang',
-    body: 'Angin kencang hingga 45 km/jam di wilayah Makassar. Waspadai pohon tumbang dan papan reklame.',
+    title: '💨 Angin Kencang - Kawasan YIA Kulon Progo',
+    body: 'Hembusan angin mencapai 32 km/jam di sekitar Pantai Glagah dan Bandara YIA.',
     data: {
       type: 'weather_alert',
       severity: 'warning',
-      location: 'Makassar',
-      windSpeed: 45,
-      windDirection: 'Tenggara',
+      location: 'Kabupaten Kulon Progo',
+      windSpeed: 32,
+      windDirection: 'Selatan',
     },
   },
   {
-    title: '🌫️ Kabut Tebal',
-    body: 'Kabut tebal mengurangi jarak pandang di Bogor pagi ini. Pengemudi diminta berhati-hati.',
+    title: '🌫️ Kabut Lereng - Kaliurang Pakem',
+    body: 'Kabut tebal membatasi jarak pandang hingga 100 meter di kawasan wisata Kaliurang.',
     data: {
       type: 'weather_alert',
       severity: 'info',
-      location: 'Bogor',
-      visibility: '50 meter',
+      location: 'Kaliurang, Sleman',
+      visibility: '100 meter',
       timeRange: 'Pagi',
     },
   },

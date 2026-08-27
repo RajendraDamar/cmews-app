@@ -30,7 +30,7 @@ export function WilayahSelector({
   // Convert wilayah code to city name for display
   const getSelectedCityName = (): string => {
     const entry = Object.entries(WILAYAH_CODES).find(([, code]) => code === selectedWilayah);
-    return entry ? entry[0] : 'Jakarta Pusat';
+    return entry ? entry[0] : 'Kota Yogyakarta';
   };
 
   const handleAutoDetectLocation = async () => {

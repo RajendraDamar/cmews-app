@@ -1,5 +1,5 @@
 import { View, Platform, Pressable } from 'react-native';
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CollapsibleSearch } from '~/components/maps/collapsible-search';
 import { ReportBottomSheet } from '~/components/maps/report-bottom-sheet';
@@ -14,6 +14,7 @@ import { useBreakpoint } from '~/lib/breakpoints';
 import { mockWeatherReports } from '~/lib/data/weather-reports-mock';
 import { WeatherReport, WeatherReportFilters } from '~/lib/types/weather-report';
 import { getThemeColor } from '~/lib/constants';
+import * as Location from 'expo-location';
 
 export default function MapsScreen() {
   const { colorScheme } = useTheme();
@@ -34,6 +35,7 @@ export default function MapsScreen() {
   const lastMarkerSelectTimeRef = useRef<number>(0);
 
   const [nativeZoom, setNativeZoom] = useState(11);
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null);
 
   const [webViewState, setWebViewState] = useState({
     longitude: 106.8272,
@@ -43,13 +45,45 @@ export default function MapsScreen() {
 
   const themeColors = getThemeColor(colorScheme === 'dark');
 
-  // Simulate map loading
+  // Request location and simulate map loading
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    let isMounted = true;
 
-    return () => clearTimeout(timer);
+    const initializeLocation = async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync();
+        if (status === 'granted') {
+          const location = await Location.getCurrentPositionAsync({
+            accuracy: Location.Accuracy.Balanced,
+          });
+          if (isMounted) {
+            setUserLocation({
+              latitude: location.coords.latitude,
+              longitude: location.coords.longitude,
+            });
+            if (Platform.OS === 'web') {
+              setWebViewState((prev) => ({
+                ...prev,
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude,
+              }));
+            }
+          }
+        }
+      } catch (error) {
+        console.warn('Error fetching location:', error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
+    };
+
+    initializeLocation();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleRetry = () => {
@@ -60,64 +94,47 @@ export default function MapsScreen() {
     }, 1000);
   };
 
+  const flyToLocation = (lat: number, lon: number) => {
+    const defaultZoom = 11;
+    setNativeZoom(defaultZoom);
+    cameraRef.current?.setCamera({
+      centerCoordinate: [lon, lat],
+      zoomLevel: defaultZoom,
+      animationDuration: 1000,
+      animationMode: 'flyTo',
+    });
+  };
+
   const handleLocationPress = () => {
-    if (Platform.OS !== 'web') {
-      setNativeZoom(11);
-      cameraRef.current?.setCamera({
-        centerCoordinate: [106.8272, -6.1754],
-        zoomLevel: 11,
-        animationDuration: 1000,
-      });
-    } else {
-      setWebViewState({
-        longitude: 106.8272,
-        latitude: -6.1754,
-        zoom: 11,
-      });
-    }
+    // If we have a user location, fly there. Otherwise default to Jakarta.
+    const lat = userLocation ? userLocation.latitude : -6.1754;
+    const lon = userLocation ? userLocation.longitude : 106.8272;
+    flyToLocation(lat, lon);
   };
 
   const handleZoomIn = () => {
-    if (Platform.OS !== 'web') {
-      const newZoom = Math.min(nativeZoom + 1, 18);
-      setNativeZoom(newZoom);
-      cameraRef.current?.setCamera({
-        zoomLevel: newZoom,
-        animationDuration: 300,
-      });
-    } else {
-      setWebViewState((prev) => ({ ...prev, zoom: Math.min(prev.zoom + 1, 18) }));
-    }
+    const newZoom = Math.min(nativeZoom + 1, 18);
+    setNativeZoom(newZoom);
+    cameraRef.current?.setCamera({
+      zoomLevel: newZoom,
+      animationDuration: 300,
+      animationMode: 'flyTo',
+    });
   };
 
   const handleZoomOut = () => {
-    if (Platform.OS !== 'web') {
-      const newZoom = Math.max(nativeZoom - 1, 3);
-      setNativeZoom(newZoom);
-      cameraRef.current?.setCamera({
-        zoomLevel: newZoom,
-        animationDuration: 300,
-      });
-    } else {
-      setWebViewState((prev) => ({ ...prev, zoom: Math.max(prev.zoom - 1, 3) }));
-    }
+    const newZoom = Math.max(nativeZoom - 1, 3);
+    setNativeZoom(newZoom);
+    cameraRef.current?.setCamera({
+      zoomLevel: newZoom,
+      animationDuration: 300,
+      animationMode: 'flyTo',
+    });
   };
 
   const handleReportSelect = useCallback((report: WeatherReport) => {
     lastMarkerSelectTimeRef.current = Date.now();
     setSelectedReport(report);
-    if (Platform.OS !== 'web') {
-      cameraRef.current?.setCamera({
-        centerCoordinate: [report.lon, report.lat],
-        animationDuration: 300,
-      });
-    } else {
-      setWebViewState((prev) => ({
-        ...prev,
-        longitude: report.lon,
-        latitude: report.lat,
-      }));
-    }
   }, []);
 
   const handleReportDeselect = useCallback(() => {
@@ -161,10 +178,12 @@ export default function MapsScreen() {
     setShowReportForm(false);
   };
 
-  const filteredReports = reports.filter((report) => {
-    if (filters.all) return true;
-    return filters[report.severity];
-  });
+  const filteredReports = useMemo(() => {
+    return reports.filter((report) => {
+      if (filters.all) return true;
+      return filters[report.severity];
+    });
+  }, [reports, filters]);
 
   // Map View with Markers
   const renderMap = () => {
@@ -188,6 +207,9 @@ export default function MapsScreen() {
           cameraRef={cameraRef}
           isDesktop={isDesktop}
           onMapPress={handleMapPress}
+          onZoomChange={setNativeZoom}
+          currentZoom={nativeZoom}
+          userLocation={userLocation}
         />
       </View>
     );
@@ -258,39 +280,7 @@ export default function MapsScreen() {
             {/* Collapsible Search */}
             <CollapsibleSearch placeholder="Cari lokasi..." style={{ top: insets.top + 12 }} />
 
-            {/* Map Controls (Mobile - Right Side) */}
-            <View
-              className="absolute right-6 overflow-hidden rounded-xl border border-border bg-card shadow-xl"
-              style={{
-                bottom: insets.bottom + 104,
-                zIndex: 10,
-                backgroundColor: colorScheme === 'dark' ? '#0b1329' : '#ffffff',
-                borderColor:
-                  colorScheme === 'dark' ? 'hsl(217.2 32.6% 17.5%)' : 'hsl(214.3 31.8% 91.4%)',
-                shadowColor: themeColors.shadow,
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.15,
-                shadowRadius: 8,
-                elevation: 8,
-              }}>
-              <Pressable
-                onPress={handleZoomIn}
-                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Plus size={20} color={themeColors.icon.foreground} />
-              </Pressable>
-
-              <Pressable
-                onPress={handleZoomOut}
-                className="h-12 w-12 items-center justify-center border-b border-border active:bg-muted/50">
-                <Minus size={20} color={themeColors.icon.foreground} />
-              </Pressable>
-
-              <Pressable
-                onPress={handleLocationPress}
-                className="h-12 w-12 items-center justify-center active:bg-muted/50">
-                <MapPin size={18} color={themeColors.icon.foreground} />
-              </Pressable>
-            </View>
+            {/* Map Controls (Mobile) removed per request */}
 
             {/* Floating Action Button (Mobile) */}
             <Pressable

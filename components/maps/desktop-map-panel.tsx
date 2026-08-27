@@ -1,20 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Pressable } from 'react-native';
 import { Plus } from 'lucide-react-native';
 import { Input } from '~/components/ui/input';
-// Button intentionally not used here; using Pressable + Text for consistent icon
 import { useTheme } from '~/lib/theme-provider';
 import { getThemeColor } from '~/lib/constants';
 
 interface DesktopMapPanelProps {
   onAddReport: () => void;
+  onSearch?: (query: string) => void;
 }
 
 export function DesktopMapPanel({
   onAddReport,
+  onSearch,
 }: DesktopMapPanelProps) {
   const { colorScheme } = useTheme();
   const themeColors = getThemeColor(colorScheme === 'dark');
+  const [query, setQuery] = useState('');
+
+  const handleSubmit = () => {
+    if (onSearch && query.trim()) {
+      onSearch(query.trim());
+    }
+  };
 
   return (
     <View
@@ -22,9 +30,9 @@ export function DesktopMapPanel({
       style={{
         width: 280,
       }}>
-      {/* Search Input */}
+      {/* Search Input (Restricted) */}
       <View
-        className="rounded-lg border border-border bg-card shadow-lg"
+        className="rounded-lg border border-border bg-card shadow-lg opacity-60"
         style={{
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 2 },
@@ -32,11 +40,20 @@ export function DesktopMapPanel({
           shadowRadius: 4,
           elevation: 4,
         }}>
-        <Input
-          placeholder="Cari lokasi..."
-          className="h-11 border-0"
-          placeholderTextColor={colorScheme === 'dark' ? '#888' : '#999'}
-        />
+        <Pressable onPress={() => alert('Pencarian lokasi sementara dinonaktifkan')}>
+          <View pointerEvents="none">
+            <Input
+              value={query}
+              onChangeText={setQuery}
+              onSubmitEditing={handleSubmit}
+              placeholder="Pencarian dinonaktifkan..."
+              className="h-11 border-0"
+              placeholderTextColor={colorScheme === 'dark' ? '#888' : '#999'}
+              returnKeyType="search"
+              editable={false}
+            />
+          </View>
+        </Pressable>
       </View>
 
       {/* Floating Action Button - Add Report */}

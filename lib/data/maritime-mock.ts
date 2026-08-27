@@ -21,18 +21,18 @@ function formatToBMKGAPIDateTime(date: Date): string {
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 }
 
-// Indonesian sea areas
+// Indonesian sea areas, prioritizing D.I. Yogyakarta coastal waters and South Java Sea
 export const SEA_AREAS = [
-  'Laut Jawa',
-  'Selat Sunda',
-  'Laut Natuna',
-  'Selat Karimata',
-  'Laut Banda',
-  'Selat Makassar',
+  'Samudera Hindia Selatan D.I. Yogyakarta',
+  'Perairan Pantai Bantul - Parangtritis',
+  'Perairan Pantai Gunungkidul - Baron & Drini',
+  'Perairan Pantai Kulon Progo - Glagah (YIA)',
+  'Laut Jawa Bagian Tengah',
+  'Selat Sunda Bagian Selatan',
+  'Samudera Hindia Selatan Jawa Tengah',
+  'Laut Bali',
   'Laut Flores',
-  'Teluk Bone',
   'Laut Sawu',
-  'Laut Arafura',
 ];
 
 // Weather conditions in Indonesian
@@ -105,17 +105,18 @@ function generateWeatherData(timeframe: '24h' | '3d' | '7d'): WeatherDataPoint[]
   const baseDate = new Date();
 
   for (let i = 0; i < intervals; i++) {
-    const datetime = new Date(baseDate.getTime() + i * intervalHours * 60 * 60 * 1000);
-    const hour = datetime.getHours();
-    const isDaytime = hour >= 6 && hour < 18;
+    const timestamp = new Date(baseDate.getTime() + i * intervalHours * 60 * 60 * 1000);
+    const temp = Math.round(25 + Math.random() * 6);
+    const humidity = Math.round(65 + Math.random() * 25);
+    const condition = WEATHER_CONDITIONS[Math.floor(Math.random() * WEATHER_CONDITIONS.length)];
 
     data.push({
-      datetime: formatToBMKGAPIDateTime(datetime),
-      temperature: Math.round(24 + Math.random() * 8 + (isDaytime ? 2 : -2)),
-      humidity: Math.round(60 + Math.random() * 30),
-      precipitation: Math.round(Math.random() * 60),
-      uvIndex: isDaytime ? Math.floor(Math.random() * 8) + 3 : 0,
-      condition: WEATHER_CONDITIONS[Math.floor(Math.random() * WEATHER_CONDITIONS.length)],
+      datetime: formatToBMKGAPIDateTime(timestamp),
+      temperature: temp,
+      humidity,
+      precipitation: condition.includes('Hujan') ? Math.round(20 + Math.random() * 60) : 0,
+      uvIndex: Math.round(2 + Math.random() * 8),
+      condition,
     });
   }
 
@@ -128,11 +129,9 @@ function generateWindData(): WindData[] {
   const baseDate = new Date();
 
   SEA_AREAS.forEach((seaArea) => {
+    const speedMin = Math.round(5 + Math.random() * 15);
+    const speedMax = speedMin + Math.round(5 + Math.random() * 15);
     const direction = getRandomDirection();
-    const speedMin = Math.round(10 + Math.random() * 15);
-    const speedMax = speedMin + Math.round(5 + Math.random() * 10);
-    const avgSpeed = (speedMin + speedMax) / 2;
-    const beaufortScale = Math.min(12, Math.floor(avgSpeed / 5));
 
     data.push({
       seaArea,
@@ -140,8 +139,8 @@ function generateWindData(): WindData[] {
       directionDegrees: direction.degrees,
       speedMin,
       speedMax,
-      beaufortScale,
-      gusts: speedMax + Math.round(Math.random() * 10),
+      beaufortScale: Math.min(12, Math.floor(speedMax / 5)),
+      gusts: speedMax + Math.round(5 + Math.random() * 10),
       timestamp: formatToBMKGAPIDateTime(baseDate),
     });
   });
@@ -155,8 +154,10 @@ function generateWaveData(): WaveData[] {
   const baseDate = new Date();
 
   SEA_AREAS.forEach((seaArea) => {
-    const heightMin = Math.round((0.5 + Math.random() * 1.5) * 10) / 10;
-    const heightMax = heightMin + Math.round((0.5 + Math.random() * 2) * 10) / 10;
+    const isSouthSea = seaArea.includes('Selatan') || seaArea.includes('Pantai');
+    const baseHeight = isSouthSea ? 1.5 + Math.random() * 1.5 : 0.5 + Math.random() * 1.2;
+    const heightMin = Math.round(baseHeight * 10) / 10;
+    const heightMax = heightMin + Math.round((0.8 + Math.random() * 1.5) * 10) / 10;
     const significantHeight = Math.round(((heightMin + heightMax) / 2) * 10) / 10;
     const direction = getRandomDirection();
 
@@ -165,7 +166,7 @@ function generateWaveData(): WaveData[] {
       heightMin,
       heightMax,
       significantHeight,
-      period: Math.round(4 + Math.random() * 8),
+      period: Math.round(6 + Math.random() * 6),
       direction: direction.name,
       seaState: getSeaState(significantHeight),
       timestamp: formatToBMKGAPIDateTime(baseDate),
@@ -182,7 +183,7 @@ function generateCurrentData(): CurrentData[] {
 
   SEA_AREAS.forEach((seaArea) => {
     const direction = getRandomDirection();
-    const speed = Math.round((0.1 + Math.random() * 0.9) * 100) / 100;
+    const speed = Math.round((0.15 + Math.random() * 0.85) * 100) / 100;
 
     data.push({
       seaArea,
@@ -215,12 +216,11 @@ export const getWaveData = generateWaveData;
 export const getCurrentData = generateCurrentData;
 
 // BMKG API-compatible export for service layer
-// This matches the structure expected by MockBMKGService
 export const mockMaritimeWeather = {
   perairan: SEA_AREAS.map((seaArea, index) => {
     const waveData = generateWaveData()[index];
     const windData = generateWindData()[index];
-    const weatherData = generateWeatherData('24h')[index];
+    const weatherData = generateWeatherData('24h')[index % 8];
 
     return {
       code: `ID${String(index + 1).padStart(3, '0')}`,
@@ -234,4 +234,3 @@ export const mockMaritimeWeather = {
     };
   }),
 };
-
