@@ -108,7 +108,7 @@ function ensureMaplibreCSS(): Promise<void> {
     }
 
     const anyMaplibreLink = document.querySelector(
-      'link[href*="maplibre-gl"]'
+      'link[rel="stylesheet"][href*="maplibre-gl"]'
     ) as HTMLLinkElement | null;
     if (anyMaplibreLink) {
       if (anyMaplibreLink.sheet) return resolve();

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { TextInput } from 'react-native';
-import { cn } from '~/utils/cn';
+import { TextInput , Platform } from 'react-native';
+import { cn } from '~/lib/utils';
 
-import { Platform } from 'react-native';
+
 import { useTheme } from '~/lib/theme-provider';
 
 const Input = React.forwardRef<

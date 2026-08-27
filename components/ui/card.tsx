@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, Text as RNText, Platform } from 'react-native';
 import { Text } from '~/components/ui/text';
-import { cn } from '~/utils/cn';
+import { cn } from '~/lib/utils';
 import { useTheme } from '~/lib/theme-provider';
 
 const Card = React.forwardRef<

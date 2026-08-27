@@ -16,7 +16,7 @@ import { Text } from '~/components/ui/text';
 import { useTheme } from '~/lib/theme-provider';
 import { NAV_COLORS } from '~/lib/constants';
 import { useState } from 'react';
-import { ProfileModal } from '~/components/profile-modal';
+import { ProfileModal } from '~/components/navigation/profile-modal';
 import { Separator } from '~/components/ui/separator';
 
 const navItems = [

@@ -3,7 +3,7 @@
 import { View, FlatList, Pressable } from 'react-native';
 import { useState } from 'react';
 import { Search, MapPin, Clock, X } from 'lucide-react-native';
-import { MOCK_MAP_PLACES, MOCK_RECENT_SEARCHES } from '~/constants/mock-data';
+import { MAP_CATEGORIES as SEARCH_CATEGORIES, MOCK_SAVED_PLACES as SAVED_PLACES, MOCK_RECENT_SEARCHES as RECENT_SEARCHES } from '~/lib/data/mock-data';
 import { Input } from '~/components/ui/input';
 import { Text } from '~/components/ui/text';
 import { Card, CardContent } from '~/components/ui/card';

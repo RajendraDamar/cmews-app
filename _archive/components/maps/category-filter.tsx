@@ -12,7 +12,7 @@ import {
   Trees,
   Landmark,
 } from 'lucide-react-native';
-import { MAP_CATEGORIES } from '~/constants/mock-data';
+import { MAP_CATEGORIES } from '~/lib/data/mock-data';
 import { useTheme } from '~/lib/theme-provider';
 import { getThemeColor } from '~/lib/constants';
 

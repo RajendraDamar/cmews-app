@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Text } from '~/components/ui/text';
 import { Separator } from '~/components/ui/separator';
 import { Button } from '~/components/ui/button';
-import { MOCK_SAVED_PLACES } from '~/constants/mock-data';
+import { MOCK_SAVED_PLACES } from '~/lib/data/mock-data';
 import { EmptyPlacesState } from '~/components/maps/empty-states';
 import { useTheme } from '~/lib/theme-provider';
 import { getThemeColor } from '~/lib/constants';

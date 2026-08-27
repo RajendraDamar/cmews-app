@@ -51,7 +51,6 @@ function ThemedApp() {
         }}>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
         <Stack.Screen name="settings" options={{ headerShown: true, title: 'Pengaturan' }} />
         <Stack.Screen name="privacy" options={{ headerShown: true, title: 'Kebijakan Privasi' }} />
       </Stack>

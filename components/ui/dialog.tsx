@@ -7,6 +7,8 @@ import * as React from 'react';
 import { Platform, Text, View, type ViewProps } from 'react-native';
 import { FullWindowOverlay as RNFullWindowOverlay } from 'react-native-screens';
 
+import { useTheme } from '~/lib/theme-provider';
+
 // Conditionally import FadeIn and FadeOut only for native platforms
 let FadeIn: any, FadeOut: any;
 if (Platform.OS !== 'web') {
@@ -29,8 +31,6 @@ const DialogPortal = DialogPrimitive.Portal;
 const DialogClose = DialogPrimitive.Close;
 
 const FullWindowOverlay = Platform.OS === 'ios' ? RNFullWindowOverlay : React.Fragment;
-
-import { useTheme } from '~/lib/theme-provider';
 
 function DialogOverlay({
   className,

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { View, Platform } from 'react-native';
 import { Text } from '~/components/ui/text';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '~/utils/cn';
+import { cn } from '~/lib/utils';
 import { useTheme } from '~/lib/theme-provider';
 
 const badgeVariants = cva('items-center rounded-full border flex-row px-2.5 py-0.5', {

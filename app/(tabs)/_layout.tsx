@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import { View, Pressable } from 'react-native';
 import { Home, CloudRain, Map, User, Cloud } from 'lucide-react-native';
 import { useState, useCallback } from 'react';
-import { ProfileModal } from '~/components/profile-modal';
+import { ProfileModal } from '~/components/navigation/profile-modal';
 import { useTheme } from '~/lib/theme-provider';
 import { Sidebar } from '~/components/navigation/sidebar';
 import { useBreakpoint } from '~/lib/breakpoints';

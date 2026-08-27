@@ -1,14 +1,14 @@
 // Textarea Component
 import * as React from 'react';
-import { TextInput, TextInputProps } from 'react-native';
+import { TextInput, TextInputProps , Platform } from 'react-native';
 import { cn } from '~/lib/utils';
 import { useTheme } from '~/lib/theme-provider';
+
+
 
 interface TextareaProps extends TextInputProps {
   className?: string;
 }
-
-import { Platform } from 'react-native';
 
 export const Textarea = React.forwardRef<TextInput, TextareaProps>(
   ({ className, style, ...props }, ref) => {
