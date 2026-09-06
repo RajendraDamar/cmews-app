@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { RealBMKGService } from '~/lib/services/RealBMKGService';
 import { CacheService } from '~/lib/services/CacheService';
 import { processBMKGForecast, getCurrentWeather } from '~/lib/utils/bmkg-processor';
 import type { ProcessedForecastEntry, BMKGLocation } from '~/lib/types/bmkg-api-types';
@@ -35,7 +34,6 @@ interface WeatherState {
 }
 
 // Service instances
-const bmkgService = new RealBMKGService();
 const cacheService = new CacheService();
 
 // Initialize cache on module load
@@ -66,31 +64,8 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
   fetchWeatherData: async (adm4Code: string) => {
     set({ loading: true, error: null });
 
-    try {
-      const cacheKey = `weather-${adm4Code}`;
-      let weatherData = await cacheService.get(cacheKey);
-
-      // Fetch from API if cache miss
-      if (!weatherData) {
-        const rawData = await bmkgService.getWeatherForecast(adm4Code);
-        weatherData = processBMKGForecast(rawData);
-        await cacheService.set(cacheKey, weatherData, 1800000); // 30 min cache
-      }
-
-      // Validate exactly 3 days of data
-      const validForecast = weatherData.dailyForecasts.slice(0, 3);
-      const current = getCurrentWeather(weatherData);
-
-      set({
-        currentWeather: current,
-        forecast: validForecast,
-        location: weatherData.location,
-        lastUpdated: weatherData.lastUpdated,
-        selectedWilayah: adm4Code,
-        loading: false,
-      });
-    } catch (error) {
-      console.warn('Weather fetch encountered error, using mock fallback:', error);
+    // Enforcing Dynamic Prototyping Phase: Use Mock Data Only
+    setTimeout(() => {
       const fallbackData = processBMKGForecast(mockWeatherForecast as any);
       set({
         currentWeather: getCurrentWeather(fallbackData),
@@ -98,10 +73,10 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
         location: fallbackData.location,
         lastUpdated: fallbackData.lastUpdated,
         selectedWilayah: adm4Code,
-        error: error instanceof Error ? error.message : 'Weather fetch failed',
+        error: null,
         loading: false,
       });
-    }
+    }, 500); // Simulate network latency
   },
 
   /**
@@ -109,21 +84,10 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
    * No caching for real-time alerts
    */
   fetchEarlyWarnings: async () => {
-    try {
-      const cacheKey = 'early-warnings';
-      let warnings = await cacheService.get(cacheKey);
-
-      if (!warnings) {
-        const rawWarnings = await bmkgService.getEarlyWarning();
-        warnings = rawWarnings || mockEarlyWarning;
-        await cacheService.set(cacheKey, warnings, 600000);
-      }
-
-      set({ earlyWarnings: warnings ? [warnings] : [mockEarlyWarning] });
-    } catch (error) {
-      console.warn('Early warnings fetch failed, using mock fallback:', error);
+    // Enforcing Dynamic Prototyping Phase: Use Mock Data Only
+    setTimeout(() => {
       set({ earlyWarnings: [mockEarlyWarning] });
-    }
+    }, 300);
   },
 
   /**
@@ -131,22 +95,10 @@ export const useWeatherStore = create<WeatherState>((set, get) => ({
    * Uses caching with 30-minute TTL
    */
   fetchMaritimeData: async () => {
-    try {
-      const cacheKey = 'maritime-weather';
-      let maritime = await cacheService.get(cacheKey);
-
-      if (!maritime) {
-        const rawMaritime = await bmkgService.getMaritimeWeather();
-        maritime = rawMaritime || mockMaritimeWeather;
-        await cacheService.set(cacheKey, maritime, 1800000);
-      }
-
-      const items = maritime?.perairan || maritime?.data || (Array.isArray(maritime) && maritime.length > 0 ? maritime : MARITIME_MOCK_DATA.wave);
-      set({ maritimeWeather: items });
-    } catch (error) {
-      console.warn('Maritime data fetch failed, using mock fallback:', error);
+    // Enforcing Dynamic Prototyping Phase: Use Mock Data Only
+    setTimeout(() => {
       set({ maritimeWeather: MARITIME_MOCK_DATA.wave });
-    }
+    }, 400);
   },
 
   /**
